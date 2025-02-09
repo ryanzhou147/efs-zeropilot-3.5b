@@ -1,34 +1,27 @@
 #include "system_manager.hpp"
 
-SystemManager::SystemManager(IRCReceiver *rcDriver, IMessageQueue<RCMotorControlMessage_t> *queueDriver, uint32_t invalidThreshold)
-    : rcDriver_(rcDriver), queueDriver_(queueDriver), invalidRCCount_(invalidThreshold) {}
+SystemManager::SystemManager(IRCReceiver *rcDriver, IMessageQueue<RCMotorControlMessage_t> *amQueueDriver, IMessageQueue<RCMotorControlMessage_t> *smQueueDriver)
+    : rcDriver_(rcDriver), amQueueDriver_(amQueueDriver), smQueueDriver_(smQueueDriver) {}
 
 void SystemManager::SMUpdate() {
+    // Kick the watchdog
+    iwdg_->refreshWatchdog();
+
+    // Get RC data from the RC receiver and passthrough to AM if new
     RCControl rcData = rcDriver_->getRCData();
-    
-    // If no new data is recieved for some time, go to failsafe
-    if (!rcData.isDataNew) {
-        invalidRCCount_++;
-        if (invalidRCCount_ > invalidRCCount_) {
-            sendDisarmedToAttitudeManager();
-        }
-    } 
-    else {
-        invalidRCCount_ = 0;
+    if (rcData.isDataNew) {
+        sendRCDataToAttitudeManager(rcData);
     }
 }
 
 void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
-    // TODO: Implement this function
-}
+    RCMotorControlMessage_t rcDataMessage;
 
-void SystemManager::sendDisarmedToAttitudeManager() {
-    RCMotorControlMessage_t disarmedMessage;
+    rcDataMessage.roll = rcData.roll;
+    rcDataMessage.pitch = rcData.pitch;
+    rcDataMessage.yaw = rcData.yaw;
+    rcDataMessage.throttle = rcData.throttle;
+    rcDataMessage.arm = rcData.arm;
 
-    disarmedMessage.roll = 0.0f;
-    disarmedMessage.pitch = 0.0f;
-    disarmedMessage.yaw = 0.0f;
-    disarmedMessage.throttle = -1.0f;
-
-    queueDriver_->push(disarmedMessage);
+    amQueueDriver_->push(rcDataMessage);
 }
