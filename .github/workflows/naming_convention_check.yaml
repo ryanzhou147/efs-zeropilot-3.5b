@@ -1,0 +1,23 @@
+name: Naming Convention Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  clang-tidy:
+    name: Run Clang-Tidy for Naming Conventions
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Clang
+      uses: actions/setup-clang@v1
+      with:
+        clang-version: 'latest'
+
+    - name: Run Clang-Tidy for Naming Conventions
+      run: |
+        find . -type f \( -iname '*.cpp' -o -iname '*.h' \) | xargs clang-tidy --config-file=.clang-tidy --checks='readability-identifier-naming*' --warnings-as-errors=all
