@@ -15,14 +15,24 @@ set(SM_INC
     "include/system_manager/"
 )
 
+# telemetry manager files
+set(TM_SRC
+
+)
+set(TM_INC
+    "include/telemetry_manager"
+)
+
 # combined files
 set(ZP_SRC
     ${AM_SRC}
     ${SM_SRC}
+    ${TM_SRC}
 )
 set(ZP_INC
     "include/driver_ifaces/"
     "include/thread_msgs/"
     ${AM_INC}
     ${SM_INC}
+    ${TM_INC}
 )
