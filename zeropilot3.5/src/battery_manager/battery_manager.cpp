@@ -1,27 +1,35 @@
 #include "battery_manager.hpp"
 
-SystemManager::SystemManager(IRCReceiver *rcDriver, IMessageQueue<RCMotorControlMessage_t> *amQueueDriver, IMessageQueue<RCMotorControlMessage_t> *smQueueDriver)
-    : rcDriver_(rcDriver), amQueueDriver_(amQueueDriver), smQueueDriver_(smQueueDriver) {}
+BatteryManager::BatteryManager(float BATT_LOW_VOLT, float BATT_LOW_MAH, float BATT_CRITICAL_VOLT, float BATT_CRITICAL_MAH, IBatteryReciever *bDriver, IMessageQueue<RCMotorControlMessage_t> *amQueueDriver, IMessageQueue<RCMotorControlMessage_t> *smQueueDriver, IIndependentWatchdog *iwdg)
+    : BATT_LOW_VOLT(BATT_LOW_VOLT), BATT_LOW_MAH(BATT_LOW_MAH), BATT_CRITICAL_VOLT(BATT_CRITICAL_VOLT), BATT_CRITICAL_MAH(BATT_CRITICAL_MAH), bDriver_(bDriver), amQueueDriver_(amQueueDriver), smQueueDriver_(smQueueDriver), iwdg_(iwdg) {}
 
-void SystemManager::SMUpdate() {
+void BatteryManager::BMUpdate() {
     // Kick the watchdog
     iwdg_->refreshWatchdog();
 
-    // Get RC data from the RC receiver and passthrough to AM if new
-    RCControl rcData = rcDriver_->getRCData();
-    if (rcData.isDataNew) {
-        sendRCDataToAttitudeManager(rcData);
-    }
+    // Get BM
+    BatteryCntr batteryData = bDriver_->getBMData(); // placeholder until the battery driver struct and the driver and the getting data function is defined
+    std::string Battery_Logic_Detection(BatteryCntr &batteryData);
 }
+std::string Battery_Logic_Detection(BatteryCntr &batteryData){
+    // very rudemnetry checks rn now as we don't have enough information about what's the neighbourhood of voltage under while we send the auto land command
+    if (batteryData.cVolt <= BATT_LOW_VOLT){
 
-void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
-    RCMotorControlMessage_t rcDataMessage;
+        // send error (umbrella statement will send autoland if very low) 
+    }
+    if (batteryData.cVolt <= BATT_Critical_VOLT){
 
-    rcDataMessage.roll = rcData.roll;
-    rcDataMessage.pitch = rcData.pitch;
-    rcDataMessage.yaw = rcData.yaw;
-    rcDataMessage.throttle = rcData.throttle;
-    rcDataMessage.arm = rcData.arm;
+        // send autoland 
+    }
+    if (batteryData.cMah <= BATT_LOW_MAH){
+        // send error 
+    }
+    if (batteryData.cMah <= BATT_Critical_MAH){
+        // send autoland
+    }
 
-    amQueueDriver_->push(rcDataMessage);
+    else {
+        // send everything okay
+    }
+
 }
