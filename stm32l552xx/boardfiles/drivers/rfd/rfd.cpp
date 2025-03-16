@@ -6,15 +6,19 @@ RFD::~RFD() {}
 
 void RFD::transmit(const uint8_t* data, uint16_t size) {
     if (huart) {
-        HAL_UART_Transmit(huart, const_cast<uint8_t*>(data), size, DELAY);
+        HAL_UART_Transmit_IT(huart, const_cast<uint8_t*>(data), size);
+    }
+}
+
+uint16_t RFD::startReceive(uint8_t* buffer, uint16_t bufferSize) {
+    if (huart) {
+        if (HAL_UART_Receive_IT(huart, buffer, bufferSize) == HAL_OK) {
+            return bufferSize;
+        }
     }
 }
 
 uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
-    if (huart) {
-        if (HAL_UART_Receive(huart, buffer, bufferSize, DELAY) == HAL_OK) {
-            return bufferSize;
-        }
-    }
+    
     return 0;
 }
