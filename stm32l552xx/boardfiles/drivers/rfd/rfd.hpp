@@ -20,4 +20,5 @@ public:
     uint16_t receive(uint8_t* buffer, uint16_t bufferSize) override;
 private:
     UART_HandleTypeDef* huart;
+    uint16_t rxBuffer[BUFFER_SIZE]; // TODO should be global?
 };

@@ -1,5 +1,6 @@
 #include "main.h"
 #include "museq.hpp"
+#include "stm32l552xx.h" // delete eventually TODO
 
 extern "C"
 {
@@ -18,4 +19,14 @@ int _write(int file, char *ptr, int len)
 }
 
 /* interrupt callback functions */
+
+// rfd interrupt callback
+// FIX CALL BACK TODO
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
+  if (huart->Instance == UART4) {  // Ensure callback is for UART4
+      writeIndex = Size % BUFFER_SIZE;
+      HAL_UARTEx_ReceiveToIdle_DMA(&huart4, rxBuffer, BUFFER_SIZE);  // Restart DMA reception
+      __HAL_DMA_DISABLE_IT(&hdma_uart4_rx, DMA_IT_HT);
+  }
+}
 }
