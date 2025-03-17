@@ -24,7 +24,22 @@ uint16_t RFD::startReceive(uint8_t* buffer, uint16_t bufferSize) {
 }
 
 uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
-    // TODO
+    for (uint16_t i = 0; i < bufferSize; i++) {
+        if (!overlapped) {
+            if (writeIndex == readIndex) {
+                return i+1;
+            }
+            buffer[i] = rxBuffer[readIndex];
+            readIndex++;
+        } else {
+            buffer[i] = rxBuffer[readIndex];
+            readIndex++;
+            if (readIndex >= BUFFER_SIZE) {
+                readIndex = 0;
+                overlapped = false;
+            }
+        }
+    }
     return 0;
 }
 
@@ -46,4 +61,24 @@ uint16_t* RFD::getRxBuffer() {
 // Getter for huart
 UART_HandleTypeDef* RFD::getHuart() const {
     return huart;
+}
+
+// Getter for overlapped
+bool RFD::isOverlapped() const {
+    return overlapped;
+}
+
+// Setter for overlapped
+void RFD::setOverlapped(bool value) {
+    overlapped = value;
+}
+
+// Getter for prevWriteIndex
+uint16_t RFD::getPrevWriteIndex() const {
+    return prevWriteIndex;
+}
+
+// Setter for prevWriteIndex
+void RFD::setPrevWriteIndex(uint16_t index) {
+    prevWriteIndex = index;
 }

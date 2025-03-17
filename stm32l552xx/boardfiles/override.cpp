@@ -32,7 +32,15 @@ int _write(int file, char *ptr, int len)
 // }
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
   if (RFD::instance && RFD::instance->getHuart() == huart) { // globally set a uart here? TODO
-      RFD::instance->setWriteIndex(Size % BUFFER_SIZE);
+      uint16_t prevWriteIndex = RFD::instance->getWriteIndex();
+
+      RFD::instance->setWriteIndex(Size % BUFFER_SIZE); // don't need % BUFFER_SIZE here
+
+      // assumes that Size < BUFFER_LENGTH always
+      // also ignoring case where writeIndex then overtakes readIndex
+      if (RFD::instance->getWriteIndex() < RFD::instance->getPrevWriteIndex()) RFD::instance->setOverlapped(true);
+      RFD::instance->setPrevWriteIndex(prevWriteIndex);
+
       HAL_UARTEx_ReceiveToIdle_DMA(RFD::instance->getHuart(), RFD::instance->getRxBuffer(), BUFFER_SIZE);
       // __HAL_DMA_DISABLE_IT(&hdma_uart4_rx, DMA_IT_HT);
   }
