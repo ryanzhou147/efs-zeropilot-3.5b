@@ -31,7 +31,7 @@ int _write(int file, char *ptr, int len)
 //   }
 // }
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
-  if (RFD::instance) { // globally set a uart here? TODO
+  if (RFD::instance && RFD::instance->getHuart() == huart) { // globally set a uart here? TODO
       RFD::instance->setWriteIndex(Size % BUFFER_SIZE);
       HAL_UARTEx_ReceiveToIdle_DMA(RFD::instance->getHuart(), RFD::instance->getRxBuffer(), BUFFER_SIZE);
       // __HAL_DMA_DISABLE_IT(&hdma_uart4_rx, DMA_IT_HT);
