@@ -16,7 +16,7 @@ void RFD::transmit(const uint8_t* data, uint16_t size) {
     }
 }
 
-uint16_t RFD::startReceive(uint8_t* buffer, uint16_t bufferSize) {
+void RFD::startReceive(uint8_t* buffer, uint16_t bufferSize) {
     if (huart) {
         HAL_UARTEx_ReceiveToIdle_DMA(huart, rxBuffer, BUFFER_SIZE);
         // __HAL_DMA_DISABLE_IT(huart->hdmarx, DMA_IT_HT); // error here with DMA_IT_HT TODO
@@ -54,7 +54,7 @@ void RFD::setWriteIndex(uint16_t index) {
 }
 
 // Getter for rxBuffer
-uint16_t* RFD::getRxBuffer() {
+uint8_t* RFD::getRxBuffer() {
     return rxBuffer;
 }
 

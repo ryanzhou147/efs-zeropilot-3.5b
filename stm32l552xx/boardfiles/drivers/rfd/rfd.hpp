@@ -15,7 +15,7 @@ public:
     RFD(UART_HandleTypeDef* huart);
     ~RFD();
 
-    uint16_t startReceive(uint8_t* buffer, uint16_t bufferSize) override;
+    void startReceive(uint8_t* buffer, uint16_t bufferSize) override;
     void transmit(const uint8_t* data, uint16_t size) override;
     uint16_t receive(uint8_t* buffer, uint16_t bufferSize) override;
 
@@ -25,7 +25,7 @@ public:
     uint16_t getWriteIndex() const;
     void setWriteIndex(uint16_t index);
 
-    uint16_t* getRxBuffer();
+    uint8_t* getRxBuffer();
 
     UART_HandleTypeDef* getHuart() const;
     
@@ -36,7 +36,7 @@ public:
     void setPrevWriteIndex(uint16_t index);
 private:
     UART_HandleTypeDef* huart;
-    uint16_t rxBuffer[BUFFER_SIZE];
+    uint8_t rxBuffer[BUFFER_SIZE];
     uint16_t writeIndex = 0;
     uint16_t readIndex = 0;
     bool overlapped = false; // if writeIndex overlaps buffer_size and readindex hasn't
