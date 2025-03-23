@@ -9,7 +9,7 @@
 class CAN : ICAN {
 
 private:
-	map<uint8_t, Node_t> canNodes;
+	std::map<uint8_t, Node_t> canNodes;
 
 public:
 	CAN();
