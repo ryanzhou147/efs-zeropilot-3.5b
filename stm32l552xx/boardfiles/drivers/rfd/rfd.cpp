@@ -40,7 +40,7 @@ uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
             }
         }
     }
-    return 0;
+    return bufferSize;
 }
 
 // Getter for writeIndex
