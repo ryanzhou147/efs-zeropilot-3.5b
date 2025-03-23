@@ -21,15 +21,7 @@ int _write(int file, char *ptr, int len)
 
 /* interrupt callback functions */
 
-// rfd interrupt callback
-// FIX CALL BACK TODO
-// void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
-//   if (huart->Instance == UART4) {  // Ensure callback is for UART4
-//       writeIndex = Size % BUFFER_SIZE;
-//       HAL_UARTEx_ReceiveToIdle_DMA(&huart4, rxBuffer, BUFFER_SIZE);  // Restart DMA reception
-//       __HAL_DMA_DISABLE_IT(&hdma_uart4_rx, DMA_IT_HT);
-//   }
-// }
+// make call back logic into own function then just call it here TODO
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
   if (RFD::instance && RFD::instance->getHuart() == huart) { // globally set a uart here? TODO
       uint16_t prevWriteIndex = RFD::instance->getWriteIndex();
@@ -40,6 +32,12 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
       // also ignoring case where writeIndex then overtakes readIndex
       if (RFD::instance->getWriteIndex() < RFD::instance->getPrevWriteIndex()) RFD::instance->setOverlapped(true);
       RFD::instance->setPrevWriteIndex(prevWriteIndex);
+
+      // TODO convvert to cpp
+      if (RFD::instance->isOverlapped() && (RFD::instance->getWriteIndex() > RFD::instance->getReadIndex())) {
+    	  RFD::instance->setErrorFlag(true);
+    	  RFD::instance->setOverlapped(true);
+      }
 
       HAL_UARTEx_ReceiveToIdle_DMA(RFD::instance->getHuart(), RFD::instance->getRxBuffer(), BUFFER_SIZE);
       // __HAL_DMA_DISABLE_IT(&hdma_uart4_rx, DMA_IT_HT);

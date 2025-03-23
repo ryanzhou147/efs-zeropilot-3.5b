@@ -22,6 +22,8 @@ public:
     static RFD* instance; // assumes only one instance defined at a time
 
     // Getter and Setters
+    uint16_t RFD::getReadIndex() const;
+
     uint16_t getWriteIndex() const;
     void setWriteIndex(uint16_t index);
 
@@ -34,6 +36,8 @@ public:
 
     uint16_t getPrevWriteIndex() const;
     void setPrevWriteIndex(uint16_t index);
+
+    void setErrorFlag(bool flag);
 private:
     UART_HandleTypeDef* huart;
     uint8_t rxBuffer[BUFFER_SIZE];
@@ -41,4 +45,5 @@ private:
     uint16_t readIndex = 0;
     bool overlapped = false; // if writeIndex overlaps buffer_size and readindex hasn't
     uint16_t prevWriteIndex = 0;
+    bool errorFlag = false;
 };

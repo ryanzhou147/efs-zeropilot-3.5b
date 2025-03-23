@@ -27,7 +27,7 @@ uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
     for (uint16_t i = 0; i < bufferSize; i++) {
         if (!overlapped) {
             if (writeIndex == readIndex) {
-                return i+1;
+                return i;
             }
             buffer[i] = rxBuffer[readIndex];
             readIndex++;
@@ -41,6 +41,12 @@ uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
         }
     }
     return bufferSize;
+}
+
+
+// Getter for readIndex
+uint16_t RFD::getReadIndex() const {
+    return readIndex;
 }
 
 // Getter for writeIndex
@@ -81,4 +87,8 @@ uint16_t RFD::getPrevWriteIndex() const {
 // Setter for prevWriteIndex
 void RFD::setPrevWriteIndex(uint16_t index) {
     prevWriteIndex = index;
+}
+
+void RFD::setErrorFlag(bool flag) {
+    errorFlag = flag;
 }
