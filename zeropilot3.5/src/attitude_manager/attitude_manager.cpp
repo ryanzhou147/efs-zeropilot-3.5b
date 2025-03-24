@@ -1,25 +1,23 @@
-//Need to update this cpp later
 #include "attitude_manager.hpp"
 #include "rc_motor_control.hpp"
 #include "direct_mapping.hpp"
 
 
-RCMotorControlMessage_t AttitudeManager::getControlInputs() {
+bool AttitudeManager::getControlInputs(RCMotorControlMessage_t *pControlMsg) {
 
-    RCMotorControlMessage_t sm_control_inputs = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; //Now it holds arm data as well
-
-    // Get data from Queue
+    //If no data in the queue
     if (queue_driver->count()==0) {
-        //Why are we returning RCMotorControlMessage_t? Can we convert it to AM's control inputs struct?
-         return { sm_control_inputs.roll, sm_control_inputs.pitch, sm_control_inputs.yaw, sm_control_inputs.throttle, sm_control_inputs.arm };
+         return false;
     }
-    sm_control_inputs = queue_driver->get();
-    queue_driver->pop();
-    
-    return sm_control_inputs;
+    else {
+
+        *pControlMsg = queue_driver->get();
+        queue_driver->pop();
+        return true;
+    }
 }
 
-AttitudeManager::AttitudeManager(Flightmode* controlAlgorithm,  MotorGroup_t rollMotors, MotorGroup_t pitchMotors, MotorGroup_t yawMotors, MotorGroup_t throttleMotors, IMessageQueue<RCMotorControlMessage_t> *queue_driver)
+AttitudeManager::AttitudeManager(Flightmode* controlAlgorithm,  MotorGroupInstance_t rollMotors, MotorGroupInstance_t pitchMotors, MotorGroupInstance_t yawMotors, MotorGroupInstance_t throttleMotors, IMessageQueue<RCMotorControlMessage_t> *queue_driver)
 :
     controlAlgorithm_(controlAlgorithm),
     rollMotors_(rollMotors),
@@ -34,13 +32,17 @@ AttitudeManager::~AttitudeManager()
 
 void AttitudeManager::runControlLoopIteration() {
     // Get data from Queue and motor outputs
-    RCMotorControlMessage_t control_inputs = getControlInputs();
+    bool res = getControlInputs(&controlMsg);
 
-    if (control_inputs.roll == 0 && control_inputs.pitch == 0 && control_inputs.yaw == 0 && control_inputs.throttle == -1) {
+    if (res != true){
+        //No data in the queue
+    }
+
+    if (controlMsg.roll == 0 && controlMsg.pitch == 0 && controlMsg.yaw == 0 && controlMsg.throttle == -1) {
         // Do something
     }
 
-    RCMotorControlMessage_t motor_outputs = controlAlgorithm_->run_control(control_inputs); // This is a placeholder for the actual control algorithm
+    RCMotorControlMessage_t motor_outputs = controlAlgorithm_->run_control(controlMsg); // This is a placeholder for the actual control algorithm
 
     outputToMotor(yaw, motor_outputs.yaw);
     outputToMotor(pitch, motor_outputs.pitch);
@@ -51,7 +53,7 @@ void AttitudeManager::runControlLoopIteration() {
 
 
 void AttitudeManager::outputToMotor(ControlAxis_e axis, uint8_t percent) {
-    MotorGroup_t* motorGroup = nullptr;
+    MotorGroupInstance_t* motorGroup = nullptr;
 
     switch (axis) {
         case roll:
