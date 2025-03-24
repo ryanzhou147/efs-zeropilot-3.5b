@@ -7,12 +7,6 @@
 #include "rc_motor_control.hpp"
 #include <stdint.h>
 
-
-typedef struct {   
-    MotorInstance_t* motors;
-    uint8_t motorCount;
-} MotorGroupInstance_t;
-
 class AttitudeManager {
    public:
 
