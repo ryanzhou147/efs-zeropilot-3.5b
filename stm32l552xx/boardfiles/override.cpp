@@ -1,6 +1,5 @@
 #include "main.h"
 #include "museq.hpp"
-// #include "stm32l552xx.h" // delete eventually TODO
 #include "rfd.hpp"
 
 extern "C"
