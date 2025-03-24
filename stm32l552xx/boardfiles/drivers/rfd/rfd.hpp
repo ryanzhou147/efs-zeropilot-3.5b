@@ -12,6 +12,9 @@
 class RFD : public IRFD {
 
 public:
+
+    static RFD* instance; // assumes only one instance defined at a time
+
     RFD(UART_HandleTypeDef* huart);
     ~RFD();
 
@@ -19,31 +22,29 @@ public:
     void transmit(const uint8_t* data, uint16_t size) override;
     uint16_t receive(uint8_t* buffer, uint16_t bufferSize) override;
 
-    static RFD* instance; // assumes only one instance defined at a time
-
-    // Getter and Setters
-    uint16_t RFD::getReadIndex() const;
-
-    uint16_t getWriteIndex() const;
-    void setWriteIndex(uint16_t index);
-
-    uint8_t* getRxBuffer();
-
+    // Getters
     UART_HandleTypeDef* getHuart() const;
-    
-    bool isOverlapped() const;
-    void setOverlapped(bool value);
+    bool getErrorFlag() override;
 
-    uint16_t getPrevWriteIndex() const;
-    void setPrevWriteIndex(uint16_t index);
+    // DMA callback
+    void receiveCallback(uint16_t size);
 
-    void setErrorFlag(bool flag);
 private:
     UART_HandleTypeDef* huart;
     uint8_t rxBuffer[BUFFER_SIZE];
-    uint16_t writeIndex = 0;
-    uint16_t readIndex = 0;
-    bool overlapped = false; // if writeIndex overlaps buffer_size and readindex hasn't
-    uint16_t prevWriteIndex = 0;
-    bool errorFlag = false;
+    uint16_t writeIndex;
+    uint16_t readIndex;
+
+    /**
+     * Flag to keep track state in the circular buffer and detect error conditions
+     * 
+     * `true` when writeIndex < readIndex, `false` when writeIndex > readIndex
+     */
+    bool overlapped;
+
+    /**
+     * Flag to record that condition when writeIndex wraps around buffer &
+     * overwrites data that is yet to be read
+     */
+    bool errorFlag;
 };

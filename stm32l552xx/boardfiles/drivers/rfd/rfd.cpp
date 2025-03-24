@@ -1,8 +1,9 @@
 #include "rfd.hpp"
+#include "stm32l5xx_hal_uart.h"
 
 RFD* RFD::instance = nullptr; // global instance
 
-RFD::RFD(UART_HandleTypeDef* huart) : huart(huart) {
+RFD::RFD(UART_HandleTypeDef* huart) : huart(huart), readIndex(0), writeIndex(0), overlapped(false), errorFlag(true){
     instance = this;
 }
 
@@ -12,7 +13,7 @@ RFD::~RFD() {
 
 void RFD::transmit(const uint8_t* data, uint16_t size) {
     if (huart) {
-        HAL_UART_Transmit_DMA(huart, const_cast<uint8_t*>(data), size);
+        HAL_UART_Transmit_DMA(huart, data, size);
     }
 }
 
@@ -26,12 +27,14 @@ void RFD::startReceive(uint8_t* buffer, uint16_t bufferSize) {
 uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
     for (uint16_t i = 0; i < bufferSize; i++) {
         if (!overlapped) {
-            if (writeIndex == readIndex) {
+            // Stop reading if readIndex catches up to writeIndex.
+            if (readIndex == writeIndex) {
                 return i;
             }
             buffer[i] = rxBuffer[readIndex];
             readIndex++;
         } else {
+            // Read until the end of the buffer, then wrap around.
             buffer[i] = rxBuffer[readIndex];
             readIndex++;
             if (readIndex >= BUFFER_SIZE) {
@@ -43,52 +46,27 @@ uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
     return bufferSize;
 }
 
+void RFD::receiveCallback(uint16_t size){
+    
+    uint16_t prevWriteIndex = writeIndex;
+    writeIndex = size % BUFFER_SIZE; // don't need % BUFFER_SIZE here
 
-// Getter for readIndex
-uint16_t RFD::getReadIndex() const {
-    return readIndex;
+    // assumes that size < BUFFER_LENGTH always
+    if (writeIndex < prevWriteIndex) overlapped = true;
+
+    // Overflow: writeIndex wrapped around and surpassed readIndex. (reads not fast enough)
+    if (overlapped && (writeIndex > readIndex)) {
+        errorFlag = true;
+        overlapped = false;
+    }
+
+    HAL_UARTEx_ReceiveToIdle_DMA(huart, rxBuffer, BUFFER_SIZE);
 }
 
-// Getter for writeIndex
-uint16_t RFD::getWriteIndex() const {
-    return writeIndex;
-}
-
-// Setter for writeIndex
-void RFD::setWriteIndex(uint16_t index) {
-    writeIndex = index;
-}
-
-// Getter for rxBuffer
-uint8_t* RFD::getRxBuffer() {
-    return rxBuffer;
-}
-
-// Getter for huart
 UART_HandleTypeDef* RFD::getHuart() const {
     return huart;
 }
 
-// Getter for overlapped
-bool RFD::isOverlapped() const {
-    return overlapped;
-}
-
-// Setter for overlapped
-void RFD::setOverlapped(bool value) {
-    overlapped = value;
-}
-
-// Getter for prevWriteIndex
-uint16_t RFD::getPrevWriteIndex() const {
-    return prevWriteIndex;
-}
-
-// Setter for prevWriteIndex
-void RFD::setPrevWriteIndex(uint16_t index) {
-    prevWriteIndex = index;
-}
-
-void RFD::setErrorFlag(bool flag) {
-    errorFlag = flag;
+bool RFD::getErrorFlag() {
+    return errorFlag;
 }
