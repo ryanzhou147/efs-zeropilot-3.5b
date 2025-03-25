@@ -26,21 +26,20 @@
 
  #include "canard_internals.h"
  #include <string.h>
- #include "stm32l4xx_hal.h"
-
-
+ 
+ 
  #undef MIN
  #undef MAX
  #define MIN(a, b)   (((a) < (b)) ? (a) : (b))
  #define MAX(a, b)   (((a) > (b)) ? (a) : (b))
-
-
+ 
+ 
  #define TRANSFER_TIMEOUT_USEC                       2000000U
  #define IFACE_SWITCH_DELAY_USEC                     1000000U
-
+ 
  #define TRANSFER_ID_BIT_LEN                         5U
  #define ANON_MSG_DATA_TYPE_ID_BIT_LEN               2U
-
+ 
  #define SOURCE_ID_FROM_ID(x)                        ((uint8_t) (((x) >> 0U)  & 0x7FU))
  #define SERVICE_NOT_MSG_FROM_ID(x)                  ((bool)    (((x) >> 7U)  & 0x1U))
  #define REQUEST_NOT_RESPONSE_FROM_ID(x)             ((bool)    (((x) >> 15U) & 0x1U))
@@ -48,20 +47,20 @@
  #define PRIORITY_FROM_ID(x)                         ((uint8_t) (((x) >> 24U) & 0x1FU))
  #define MSG_TYPE_FROM_ID(x)                         ((uint16_t)(((x) >> 8U)  & 0xFFFFU))
  #define SRV_TYPE_FROM_ID(x)                         ((uint8_t) (((x) >> 16U) & 0xFFU))
-
+ 
  #define MAKE_TRANSFER_DESCRIPTOR(data_type_id, transfer_type, src_node_id, dst_node_id)             \
      (((uint32_t)(data_type_id)) | (((uint32_t)(transfer_type)) << 16U) |                            \
      (((uint32_t)(src_node_id)) << 18U) | (((uint32_t)(dst_node_id)) << 25U))
-
+ 
  #define TRANSFER_ID_FROM_TAIL_BYTE(x)               ((uint8_t)((x) & 0x1FU))
-
+ 
  // The extra cast to unsigned is needed to squelch warnings from clang-tidy
  #define IS_START_OF_TRANSFER(x)                     ((bool)(((uint32_t)(x) >> 7U) & 0x1U))
  #define IS_END_OF_TRANSFER(x)                       ((bool)(((uint32_t)(x) >> 6U) & 0x1U))
  #define TOGGLE_BIT(x)                               ((bool)(((uint32_t)(x) >> 5U) & 0x1U))
-
-
-
+ 
+ 
+ 
  /*
   * API functions
   */
@@ -73,7 +72,7 @@
                  void* user_reference)
  {
      CANARD_ASSERT(out_ins != NULL);
-
+ 
      /*
       * Checking memory layout.
       * This condition is supposed to be true for all 32-bit and smaller platforms.
@@ -81,9 +80,9 @@
       * Refer to the design documentation for more info.
       */
      CANARD_ASSERT(CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE >= 5);
-
+ 
      memset(out_ins, 0, sizeof(*out_ins));
-
+ 
      out_ins->node_id = CANARD_BROADCAST_NODE_ID;
      out_ins->on_reception = on_reception;
      out_ins->should_accept = should_accept;
@@ -98,20 +97,20 @@
      {
          pool_capacity = 0xFFFFU;
      }
-
+ 
      initPoolAllocator(&out_ins->allocator, mem_arena, (uint16_t)pool_capacity);
  }
-
- void* canardGetUserReference(CanardInstance* ins)
+ 
+ void* canardGetUserReference(const CanardInstance* ins)
  {
      CANARD_ASSERT(ins != NULL);
      return ins->user_reference;
  }
-
+ 
  void canardSetLocalNodeID(CanardInstance* ins, uint8_t self_node_id)
  {
      CANARD_ASSERT(ins != NULL);
-
+ 
      if ((ins->node_id == CANARD_BROADCAST_NODE_ID) &&
          (self_node_id >= CANARD_MIN_NODE_ID) &&
          (self_node_id <= CANARD_MAX_NODE_ID))
@@ -123,23 +122,23 @@
          CANARD_ASSERT(false);
      }
  }
-
+ 
  uint8_t canardGetLocalNodeID(const CanardInstance* ins)
  {
      return ins->node_id;
  }
-
+ 
  void canardForgetLocalNodeID(CanardInstance* ins) {
      ins->node_id = CANARD_BROADCAST_NODE_ID;
  }
-
+ 
  void canardInitTxTransfer(CanardTxTransfer* transfer)
  {
      CANARD_ASSERT(transfer != NULL);
      memset(transfer, 0, sizeof(*transfer));
  }
-
-
+ 
+ 
  int16_t canardBroadcast(CanardInstance* ins,
                          uint64_t data_type_signature,
                          uint16_t data_type_id,
@@ -176,10 +175,10 @@
          .canfd = canfd,
  #endif
      };
-
+ 
      return canardBroadcastObj(ins, &transfer_object);
  }
-
+ 
  int16_t canardBroadcastObj(CanardInstance* ins, CanardTxTransfer* transfer_object)
  {
      if (transfer_object->payload == NULL && transfer_object->payload_len > 0)
@@ -190,24 +189,24 @@
      {
          return -CANARD_ERROR_INVALID_ARGUMENT;
      }
-
+ 
      uint32_t can_id = 0;
      uint16_t crc = 0xFFFFU;
-
+ 
      if (canardGetLocalNodeID(ins) == 0)
      {
          if (transfer_object->payload_len > 7)
          {
              return -CANARD_ERROR_NODE_ID_NOT_SET;
          }
-
+ 
          static const uint16_t DTIDMask = (1U << ANON_MSG_DATA_TYPE_ID_BIT_LEN) - 1U;
-
+ 
          if ((transfer_object->data_type_id & DTIDMask) != transfer_object->data_type_id)
          {
              return -CANARD_ERROR_INVALID_ARGUMENT;
          }
-
+ 
          // anonymous transfer, random discriminator
          const uint16_t discriminator = (uint16_t)((crcAdd(0xFFFFU, transfer_object->payload, transfer_object->payload_len)) & 0x7FFEU);
          can_id = ((uint32_t) transfer_object->priority << 24U) | ((uint32_t) discriminator << 9U) |
@@ -218,16 +217,16 @@
          can_id = ((uint32_t) transfer_object->priority << 24U) | ((uint32_t) transfer_object->data_type_id << 8U) | (uint32_t) canardGetLocalNodeID(ins);
          crc = calculateCRC(transfer_object);
      }
-
+ 
      const int16_t result = enqueueTxFrames(ins, can_id, crc, transfer_object);
-
+ 
      if (result > 0) {
          incrementTransferID(transfer_object->inout_transfer_id);
      }
-
+ 
      return result;
  }
-
+ 
  /*
    the following FromIdx and ToIdx functions allow for the
    CanardBufferBlock and CanartRxState structures to have the same size
@@ -246,7 +245,7 @@
      return (CanardBufferBlock *)idx;
  #endif
  }
-
+ 
  CANARD_INTERNAL canard_buffer_idx_t canardBufferToIdx(CanardPoolAllocator* allocator, const CanardBufferBlock *buf)
  {
  #if CANARD_64_BIT
@@ -259,7 +258,7 @@
      return (canard_buffer_idx_t)buf;
  #endif
  }
-
+ 
  CANARD_INTERNAL CanardRxState *canardRxFromIdx(CanardPoolAllocator* allocator, canard_buffer_idx_t idx)
  {
  #if CANARD_64_BIT
@@ -272,7 +271,7 @@
      return (CanardRxState *)idx;
  #endif
  }
-
+ 
  CANARD_INTERNAL canard_buffer_idx_t canardRxToIdx(CanardPoolAllocator* allocator, const CanardRxState *rx)
  {
  #if CANARD_64_BIT
@@ -285,7 +284,7 @@
      return (canard_buffer_idx_t)rx;
  #endif
  }
-
+ 
  CANARD_INTERNAL uint16_t calculateCRC(const CanardTxTransfer* transfer_object)
  {
      uint16_t crc = 0xFFFFU;
@@ -311,7 +310,7 @@
      }
      return crc;
  }
-
+ 
  int16_t canardRequestOrRespond(CanardInstance* ins,
                                 uint8_t destination_node_id,
                                 uint64_t data_type_signature,
@@ -352,7 +351,7 @@
      };
      return canardRequestOrRespondObj(ins, destination_node_id, &transfer_object);
  }
-
+ 
  int16_t canardRequestOrRespondObj(CanardInstance* ins, uint8_t destination_node_id, CanardTxTransfer* transfer_object)
  {
      if (transfer_object->payload == NULL && transfer_object->payload_len > 0)
@@ -367,24 +366,24 @@
      {
          return -CANARD_ERROR_NODE_ID_NOT_SET;
      }
-
+ 
      const uint32_t can_id = ((uint32_t) transfer_object->priority << 24U) | ((uint32_t) transfer_object->data_type_id << 16U) |
                              ((uint32_t) transfer_object->transfer_type << 15U) | ((uint32_t) destination_node_id << 8U) |
                              (1U << 7U) | (uint32_t) canardGetLocalNodeID(ins);
-
+ 
      uint16_t crc = calculateCRC(transfer_object);
-
-
+ 
+ 
      const int16_t result = enqueueTxFrames(ins, can_id, crc, transfer_object);
-
+ 
      if (result > 0 && transfer_object->transfer_type == CanardTransferTypeRequest)                      // Response Transfer ID must not be altered
      {
          incrementTransferID(transfer_object->inout_transfer_id);
      }
-
+ 
      return result;
  }
-
+ 
  CanardCANFrame* canardPeekTxQueue(const CanardInstance* ins)
  {
      if (ins->tx_queue == NULL)
@@ -393,23 +392,23 @@
      }
      return &ins->tx_queue->frame;
  }
-
+ 
  void canardPopTxQueue(CanardInstance* ins)
  {
      CanardTxQueueItem* item = ins->tx_queue;
      ins->tx_queue = item->next;
      freeBlock(&ins->allocator, item);
  }
-
+ 
  int16_t canardHandleRxFrame(CanardInstance* ins, const CanardCANFrame* frame, uint64_t timestamp_usec)
  {
      const CanardTransferType transfer_type = extractTransferType(frame->id);
      const uint8_t destination_node_id = (transfer_type == CanardTransferTypeBroadcast) ?
                                          (uint8_t)CANARD_BROADCAST_NODE_ID :
                                          DEST_ID_FROM_ID(frame->id);
-
+ 
      // TODO: This function should maintain statistics of transfer errors and such.
-
+ 
      if ((frame->id & CANARD_CAN_FRAME_EFF) == 0 ||
          (frame->id & CANARD_CAN_FRAME_RTR) != 0 ||
          (frame->id & CANARD_CAN_FRAME_ERR) != 0 ||
@@ -417,44 +416,31 @@
      {
          return -CANARD_ERROR_RX_INCOMPATIBLE_PACKET;
      }
-
+ 
      if (transfer_type != CanardTransferTypeBroadcast &&
          destination_node_id != canardGetLocalNodeID(ins))
      {
          return -CANARD_ERROR_RX_WRONG_ADDRESS;
      }
-
+ 
      const uint8_t priority = PRIORITY_FROM_ID(frame->id);
      const uint8_t source_node_id = SOURCE_ID_FROM_ID(frame->id);
      const uint16_t data_type_id = extractDataType(frame->id);
-     // printf("Transfer Type: %u, Received Data ID: %u\r\n", (uint32_t)transfer_type, (uint32_t)data_type_id);
      const uint32_t transfer_descriptor =
              MAKE_TRANSFER_DESCRIPTOR(data_type_id, transfer_type, source_node_id, destination_node_id);
-
+ 
      const uint8_t tail_byte = frame->data[frame->data_len - 1];
-
-     if (IS_START_OF_TRANSFER(tail_byte)){
-         // printf("IS START  ");
-     } else {
-         // printf("NOT START    ");
-     }
-
-     if (IS_END_OF_TRANSFER(tail_byte)){
-         // printf("IS END\r\n");
-     } else {
-         // printf("NOT END\r\n");
-     }
-
+ 
      uint64_t data_type_signature = 0;
      CanardRxState* rx_state = NULL;
-
+ 
      if (IS_START_OF_TRANSFER(tail_byte))
      {
-
+ 
          if (ins->should_accept(ins, &data_type_signature, data_type_id, transfer_type, source_node_id))
          {
              rx_state = traverseRxStates(ins, transfer_descriptor);
-
+ 
              if(rx_state == NULL)
              {
                  return -CANARD_ERROR_OUT_OF_MEMORY;
@@ -468,15 +454,15 @@
      else
      {
          rx_state = findRxState(ins, transfer_descriptor);
-
+ 
          if (rx_state == NULL)
          {
              return -CANARD_ERROR_RX_MISSED_START;
          }
      }
-
+ 
      CANARD_ASSERT(rx_state != NULL);    // All paths that lead to NULL should be terminated with return above
-
+ 
      // Resolving the state flags:
      const bool not_initialized = rx_state->timestamp_usec == 0;
      const bool tid_timed_out = (timestamp_usec - rx_state->timestamp_usec) > TRANSFER_TIMEOUT_USEC;
@@ -487,13 +473,13 @@
      const bool iface_switch_allowed = (timestamp_usec - rx_state->timestamp_usec) > IFACE_SWITCH_DELAY_USEC;
      const bool non_wrapped_tid = computeTransferIDForwardDistance(TRANSFER_ID_FROM_TAIL_BYTE(tail_byte), (uint8_t) rx_state->transfer_id) < (1 << (TRANSFER_ID_BIT_LEN-1));
      const bool incomplete_frame = rx_state->buffer_blocks != CANARD_BUFFER_IDX_NONE;
-
+ 
      const bool need_restart =
              (not_initialized) ||
              (tid_timed_out) ||
              (same_iface && first_frame && (not_previous_tid || incomplete_frame)) ||
              (iface_switch_allowed && first_frame && non_wrapped_tid);
-
+ 
      if (need_restart)
      {
          rx_state->transfer_id = TRANSFER_ID_FROM_TAIL_BYTE(tail_byte);
@@ -506,13 +492,13 @@
              return -CANARD_ERROR_RX_MISSED_START;
          }
      }
-
+ 
      if (frame->iface_id != rx_state->iface_id)
      {
          // drop frame if coming from unexpected interface
          return CANARD_OK;
      }
-
+ 
      if (IS_START_OF_TRANSFER(tail_byte) && IS_END_OF_TRANSFER(tail_byte)) // single frame transfer
      {
          rx_state->timestamp_usec = timestamp_usec;
@@ -532,30 +518,30 @@
              .tao = !ins->tao_disabled
  #endif
          };
-
+ 
          ins->on_reception(ins, &rx_transfer);
-
+ 
          prepareForNextTransfer(rx_state);
          return CANARD_OK;
      }
-
+ 
      if (TOGGLE_BIT(tail_byte) != rx_state->next_toggle)
      {
          return -CANARD_ERROR_RX_WRONG_TOGGLE;
      }
-
+ 
      if (TRANSFER_ID_FROM_TAIL_BYTE(tail_byte) != rx_state->transfer_id)
      {
          return -CANARD_ERROR_RX_UNEXPECTED_TID;
      }
-
+ 
      if (IS_START_OF_TRANSFER(tail_byte) && !IS_END_OF_TRANSFER(tail_byte))      // Beginning of multi frame transfer
      {
          if (frame->data_len <= 3)
          {
              return -CANARD_ERROR_RX_SHORT_FRAME;
          }
-
+ 
          // take off the crc and store the payload
          rx_state->timestamp_usec = timestamp_usec;
          rx_state->payload_len = 0;
@@ -588,9 +574,9 @@
      else                                                                            // End of a multi-frame transfer
      {
          const uint8_t frame_payload_size = (uint8_t)(frame->data_len - 1);
-
+ 
          uint8_t tail_offset = 0;
-
+ 
          if (rx_state->payload_len < CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE)
          {
              // Copy the beginning of the frame into the head, point the tail pointer to the remainder
@@ -614,10 +600,10 @@
                      offset += CANARD_BUFFER_BLOCK_DATA_SIZE;
                  }
                  CANARD_ASSERT(block != NULL);
-
+ 
                  const size_t offset_within_block = rx_state->payload_len - offset;
                  CANARD_ASSERT(offset_within_block <= CANARD_BUFFER_BLOCK_DATA_SIZE);
-
+ 
                  for (size_t i = offset_within_block;
                       (i < CANARD_BUFFER_BLOCK_DATA_SIZE) && (tail_offset < frame_payload_size);
                       i++, tail_offset++)
@@ -626,7 +612,7 @@
                  }
              }
          }
-
+ 
          CanardRxTransfer rx_transfer = {
              .timestamp_usec = timestamp_usec,
              .payload_head = rx_state->buffer_head,
@@ -638,7 +624,7 @@
              .transfer_id = TRANSFER_ID_FROM_TAIL_BYTE(tail_byte),
              .priority = priority,
              .source_node_id = source_node_id,
-
+ 
  #if CANARD_ENABLE_CANFD
              .canfd = frame->canfd,
              .tao = !(frame->canfd || ins->tao_disabled)
@@ -646,20 +632,20 @@
              .tao = !ins->tao_disabled
  #endif
          };
-
+ 
          rx_state->buffer_blocks = CANARD_BUFFER_IDX_NONE;     // Block list ownership has been transferred to rx_transfer!
-
+ 
          // CRC validation
          rx_state->calculated_crc = crcAdd((uint16_t)rx_state->calculated_crc, frame->data, frame->data_len - 1U);
          if (rx_state->calculated_crc == rx_state->payload_crc)
          {
              ins->on_reception(ins, &rx_transfer);
          }
-
+ 
          // Making sure the payload is released even if the application didn't bother with it
          canardReleaseRxTransferPayload(ins, &rx_transfer);
          prepareForNextTransfer(rx_state);
-
+ 
          if (rx_state->calculated_crc == rx_state->payload_crc)
          {
              return CANARD_OK;
@@ -669,15 +655,15 @@
              return -CANARD_ERROR_RX_BAD_CRC;
          }
      }
-
+ 
      rx_state->next_toggle = rx_state->next_toggle ? 0 : 1;
      return CANARD_OK;
  }
-
+ 
  void canardCleanupStaleTransfers(CanardInstance* ins, uint64_t current_time_usec)
  {
      CanardRxState* prev = ins->rx_states, * state = ins->rx_states;
-
+ 
      while (state != NULL)
      {
          if ((current_time_usec - state->timestamp_usec) > TRANSFER_TIMEOUT_USEC)
@@ -704,7 +690,7 @@
              state = canardRxFromIdx(&ins->allocator, state->next);
          }
      }
-
+ 
  #if CANARD_MULTI_IFACE || CANARD_ENABLE_DEADLINE
      // remove stale TX transfers
      CanardTxQueueItem* prev_item = ins->tx_queue, * item = ins->tx_queue;
@@ -740,7 +726,7 @@
      }
  #endif
  }
-
+ 
  int16_t canardDecodeScalar(const CanardRxTransfer* transfer,
                             uint32_t bit_offset,
                             uint8_t bit_length,
@@ -751,17 +737,17 @@
      {
          return -CANARD_ERROR_INVALID_ARGUMENT;
      }
-
+ 
      if (bit_length < 1 || bit_length > 64)
      {
          return -CANARD_ERROR_INVALID_ARGUMENT;
      }
-
+ 
      if (bit_length == 1 && value_is_signed)
      {
          return -CANARD_ERROR_INVALID_ARGUMENT;
      }
-
+ 
      /*
       * Reading raw bytes into the temporary storage.
       * Luckily, C guarantees that every element is aligned at the beginning (lower address) of the union.
@@ -779,17 +765,17 @@
          int64_t  s64;           ///< Also double, possibly float, possibly long double (depends on implementation)
          uint8_t bytes[8];
      } storage;
-
+ 
      memset(&storage, 0, sizeof(storage));   // This is important
-
+ 
      const int16_t result = descatterTransferPayload(transfer, bit_offset, bit_length, &storage.bytes[0]);
      if (result <= 0)
      {
          return result;
      }
-
+ 
      CANARD_ASSERT((result > 0) && (result <= 64) && (result <= bit_length));
-
+ 
      /*
       * The bit copy algorithm assumes that more significant bits have lower index, so we need to shift some.
       * Extra most significant bits will be filled with zeroes, which is fine.
@@ -801,7 +787,7 @@
          // coverity[overrun-local]
          storage.bytes[bit_length / 8U] = (uint8_t)(storage.bytes[bit_length / 8U] >> ((8U - (bit_length % 8U)) & 7U));
      }
-
+ 
      /*
       * Determining the closest standard byte length - this will be needed for byte reordering and sign bit extension.
       */
@@ -816,9 +802,9 @@
          CANARD_ASSERT(false);
          return -CANARD_ERROR_INTERNAL;
      }
-
+ 
      CANARD_ASSERT((std_byte_length > 0) && (std_byte_length <= 8));
-
+ 
      /*
       * Flipping the byte order if needed.
       */
@@ -826,7 +812,7 @@
      {
          swapByteOrder(&storage.bytes[0], std_byte_length);
      }
-
+     
  #if WORD_ADDRESSING_IS_16BITS
      /*
       * Copying 8-bit array to 64-bit storage
@@ -840,7 +826,7 @@
          storage.u64 = temp;
      }
  #endif
-
+ 
      /*
       * Extending the sign bit if needed. I miss templates.
       * Note that we operate on unsigned values in order to avoid undefined behaviors.
@@ -881,7 +867,7 @@
              return -CANARD_ERROR_INTERNAL;
          }
      }
-
+ 
      /*
       * Copying the result out.
       */
@@ -910,12 +896,12 @@
              return -CANARD_ERROR_INTERNAL;
          }
      }
-
+ 
      CANARD_ASSERT(result <= bit_length);
      CANARD_ASSERT(result > 0);
      return result;
  }
-
+ 
  void canardEncodeScalar(void* destination,
                          uint32_t bit_offset,
                          uint8_t bit_length,
@@ -928,19 +914,19 @@
       */
      CANARD_ASSERT(destination != NULL);
      CANARD_ASSERT(value != NULL);
-
+ 
      if (bit_length > 64)
      {
          CANARD_ASSERT(false);
          bit_length = 64;
      }
-
+ 
      if (bit_length < 1)
      {
          CANARD_ASSERT(false);
          bit_length = 1;
      }
-
+ 
      /*
       * Preparing the data in the temporary storage.
       */
@@ -953,11 +939,11 @@
          uint64_t u64;
          uint8_t bytes[8];
      } storage;
-
+ 
      memset(&storage, 0, sizeof(storage));
-
+ 
      uint8_t std_byte_length = 0;
-
+ 
      // Extra most significant bits can be safely ignored here.
      if      (bit_length == 1)   { std_byte_length = sizeof(bool);   storage.boolean = (*((bool*) value) != 0); }
      else if (bit_length <= 8)   { std_byte_length = 1;              storage.u8  = *((uint8_t*) value);  }
@@ -968,9 +954,9 @@
      {
          CANARD_ASSERT(false);
      }
-
+ 
      CANARD_ASSERT(std_byte_length > 0);
-
+     
  #if WORD_ADDRESSING_IS_16BITS
      /*
       * Copying 64-bit storage to 8-bit array
@@ -983,12 +969,12 @@
          }
      }
  #endif
-
+ 
      if (isBigEndian())
      {
          swapByteOrder(&storage.bytes[0], std_byte_length);
      }
-
+ 
      /*
       * The bit copy algorithm assumes that more significant bits have lower index, so we need to shift some.
       * Extra least significant bits will be filled with zeroes, which is fine.
@@ -1001,13 +987,13 @@
          // coverity[overrun-local]
          storage.bytes[bit_length / 8U] = (uint8_t)(storage.bytes[bit_length / 8U] << ((8U - (bit_length % 8U)) & 7U));
      }
-
+ 
      /*
       * Now, the storage contains properly serialized scalar. Copying it out.
       */
      copyBitArray(&storage.bytes[0], 0, bit_length, (uint8_t*) destination, bit_offset);
  }
-
+ 
  void canardReleaseRxTransferPayload(CanardInstance* ins, CanardRxTransfer* transfer)
  {
      while (transfer->payload_middle != NULL)
@@ -1016,41 +1002,41 @@
          freeBlock(&ins->allocator, transfer->payload_middle);
          transfer->payload_middle = temp;
      }
-
+ 
      transfer->payload_middle = NULL;
      transfer->payload_head = NULL;
      transfer->payload_tail = NULL;
      transfer->payload_len = 0;
  }
-
+ 
  CanardPoolAllocatorStatistics canardGetPoolAllocatorStatistics(CanardInstance* ins)
  {
      return ins->allocator.statistics;
  }
-
+ 
  uint16_t canardConvertNativeFloatToFloat16(float value)
  {
      CANARD_ASSERT(sizeof(float) == CANARD_SIZEOF_FLOAT);
-
+ 
      union FP32
      {
          uint32_t u;
          float f;
      };
-
+ 
      const union FP32 f32inf = { 255UL << 23U };
      const union FP32 f16inf = { 31UL << 23U };
      const union FP32 magic = { 15UL << 23U };
      const uint32_t sign_mask = 0x80000000UL;
      const uint32_t round_mask = 0xFFFFF000UL;
-
+ 
      union FP32 in;
      in.f = value;
      uint32_t sign = in.u & sign_mask;
      in.u ^= sign;
-
+ 
      uint16_t out = 0;
-
+ 
      if (in.u >= f32inf.u)
      {
          out = (in.u > f32inf.u) ? (uint16_t)0x7FFFU : (uint16_t)0x7C00U;
@@ -1066,26 +1052,26 @@
          }
          out = (uint16_t)(in.u >> 13U);
      }
-
+ 
      out |= (uint16_t)(sign >> 16U);
-
+ 
      return out;
  }
-
+ 
  float canardConvertFloat16ToNativeFloat(uint16_t value)
  {
      CANARD_ASSERT(sizeof(float) == CANARD_SIZEOF_FLOAT);
-
+ 
      union FP32
      {
          uint32_t u;
          float f;
      };
-
+ 
      const union FP32 magic = { (254UL - 15UL) << 23U };
      const union FP32 was_inf_nan = { (127UL + 16UL) << 23U };
      union FP32 out;
-
+ 
      out.u = (value & 0x7FFFU) << 13U;
      out.f *= magic.f;
      if (out.f >= was_inf_nan.f)
@@ -1093,10 +1079,10 @@
          out.u |= 255UL << 23U;
      }
      out.u |= (value & 0x8000UL) << 16U;
-
+ 
      return out.f;
  }
-
+ 
  /*
   * Internal (static functions)
   */
@@ -1109,18 +1095,18 @@
      }
      return d;
  }
-
+ 
  CANARD_INTERNAL void incrementTransferID(uint8_t* transfer_id)
  {
      CANARD_ASSERT(transfer_id != NULL);
-
+ 
      (*transfer_id)++;
      if (*transfer_id >= 32)
      {
          *transfer_id = 0;
      }
  }
-
+ 
  CANARD_INTERNAL uint16_t dlcToDataLength(uint16_t dlc) {
      /*
      Data Length Code      9  10  11  12  13  14  15
@@ -1143,7 +1129,7 @@
      }
      return 64;
  }
-
+ 
  CANARD_INTERNAL uint16_t dataLengthToDlc(uint16_t data_length) {
      if (data_length <= 8) {
          return data_length;
@@ -1162,7 +1148,7 @@
      }
      return 15;
  }
-
+ 
  CANARD_INTERNAL int16_t enqueueTxFrames(CanardInstance* ins,
                                          uint32_t can_id,
                                          uint16_t crc,
@@ -1171,17 +1157,17 @@
  {
      CANARD_ASSERT(ins != NULL);
      CANARD_ASSERT((can_id & CANARD_CAN_EXT_ID_MASK) == can_id);            // Flags must be cleared
-
+ 
      if (transfer->inout_transfer_id == NULL)
      {
          return -CANARD_ERROR_INVALID_ARGUMENT;
      }
-
+ 
      if ((transfer->payload_len > 0) && (transfer->payload == NULL))
      {
          return -CANARD_ERROR_INVALID_ARGUMENT;
      }
-
+ 
      int16_t result = 0;
  #if CANARD_ENABLE_CANFD
      uint8_t frame_max_data_len = transfer->canfd ? CANARD_CANFD_FRAME_MAX_DATA_LEN:CANARD_CAN_FRAME_MAX_DATA_LEN;
@@ -1195,9 +1181,9 @@
          {
              return -CANARD_ERROR_OUT_OF_MEMORY;
          }
-
+ 
          memcpy(queue_item->frame.data, transfer->payload, transfer->payload_len);
-
+ 
          transfer->payload_len = dlcToDataLength(dataLengthToDlc(transfer->payload_len+1))-1;
          queue_item->frame.data_len = (uint8_t)(transfer->payload_len + 1);
          queue_item->frame.data[transfer->payload_len] = (uint8_t)(0xC0U | (*transfer->inout_transfer_id & 31U));
@@ -1219,18 +1205,32 @@
          uint16_t data_index = 0;
          uint8_t toggle = 0;
          uint8_t sot_eot = 0x80;
-
+ 
+         /*
+           see if we are going to be able to allocate enough blocks for
+           this transfer. If not then stop now, otherwise we will end
+           up doing a partial (corrupt) transfer which will just make
+           the situation worse as it will waste bus bandwidth
+          */
+         const uint16_t total_bytes = transfer->payload_len + 2; // including CRC
+         const uint8_t bytes_per_frame = frame_max_data_len-1; // sot/eot byte consumes one byte
+         const uint16_t frames_needed = (total_bytes + (bytes_per_frame-1)) / bytes_per_frame;
+         const uint16_t blocks_available = ins->allocator.statistics.capacity_blocks - ins->allocator.statistics.current_usage_blocks;
+         if (blocks_available < frames_needed) {
+             return -CANARD_ERROR_OUT_OF_MEMORY;
+         }
+ 
          CanardTxQueueItem* queue_item = NULL;
-
+ 
          while (transfer->payload_len - data_index != 0)
          {
              queue_item = createTxItem(&ins->allocator);
              if (queue_item == NULL)
              {
                  CANARD_ASSERT(false);
-                 return -CANARD_ERROR_OUT_OF_MEMORY;          // TODO: Purge all frames enqueued so far
+                 return -CANARD_ERROR_OUT_OF_MEMORY;
              }
-
+ 
              uint16_t i = 0;
              if (data_index == 0)
              {
@@ -1243,14 +1243,14 @@
              {
                  i = 0;
              }
-
+ 
              for (; i < (frame_max_data_len - 1) && data_index < transfer->payload_len; i++, data_index++)
              {
                  queue_item->frame.data[i] = transfer->payload[data_index];
              }
              // tail byte
              sot_eot = (data_index == transfer->payload_len) ? (uint8_t)0x40 : sot_eot;
-
+             
              i = dlcToDataLength(dataLengthToDlc(i+1))-1;
              queue_item->frame.data[i] = (uint8_t)(sot_eot | ((uint32_t)toggle << 5U) | ((uint32_t)*transfer->inout_transfer_id & 31U));
              queue_item->frame.id = can_id | CANARD_CAN_FRAME_EFF;
@@ -1265,16 +1265,16 @@
              queue_item->frame.canfd = transfer->canfd;
  #endif
              pushTxQueue(ins, queue_item);
-
+ 
              result++;
              toggle ^= 1;
              sot_eot = 0;
          }
      }
-
+ 
      return result;
  }
-
+ 
  /**
   * Puts frame on on the TX queue. Higher priority placed first
   */
@@ -1282,16 +1282,16 @@
  {
      CANARD_ASSERT(ins != NULL);
      CANARD_ASSERT(item->frame.data_len > 0);       // UAVCAN doesn't allow zero-payload frames
-
+ 
      if (ins->tx_queue == NULL)
      {
          ins->tx_queue = item;
          return;
      }
-
+ 
      CanardTxQueueItem* queue = ins->tx_queue;
      CanardTxQueueItem* previous = ins->tx_queue;
-
+ 
      while (queue != NULL)
      {
          if (isPriorityHigher(queue->frame.id, item->frame.id)) // lower number wins
@@ -1323,7 +1323,7 @@
          }
      }
  }
-
+ 
  /**
   * Creates new tx queue item from allocator
   */
@@ -1337,7 +1337,7 @@
      memset(item, 0, sizeof(*item));
      return item;
  }
-
+ 
  /**
   * Returns true if priority of rhs is higher than id
   */
@@ -1345,7 +1345,7 @@
  {
      const uint32_t clean_id = id & CANARD_CAN_EXT_ID_MASK;
      const uint32_t rhs_clean_id = rhs & CANARD_CAN_EXT_ID_MASK;
-
+ 
      /*
       * STD vs EXT - if 11 most significant bits are the same, EXT loses.
       */
@@ -1364,7 +1364,7 @@
              return rhs_ext;
          }
      }
-
+ 
      /*
       * RTR vs Data frame - if frame identifiers and frame types are the same, RTR loses.
       */
@@ -1374,13 +1374,13 @@
      {
          return rhs_rtr;
      }
-
+ 
      /*
       * Plain ID arbitration - greater value loses.
       */
      return clean_id < rhs_clean_id;
  }
-
+ 
  /**
   * preps the rx state for the next transfer. does not delete the state
   */
@@ -1391,7 +1391,7 @@
      state->payload_len = 0;
      state->next_toggle = 0;
  }
-
+ 
  /**
   * returns data type from id
   */
@@ -1411,7 +1411,7 @@
          return (uint16_t) SRV_TYPE_FROM_ID(id);
      }
  }
-
+ 
  /**
   * returns transfer type from id
   */
@@ -1431,11 +1431,11 @@
          return CanardTransferTypeResponse;
      }
  }
-
+ 
  /*
   *  CanardRxState functions
   */
-
+ 
  /**
   * Traverses the list of CanardRxState's and returns a pointer to the CanardRxState
   * with either the Id or a new one at the end
@@ -1443,20 +1443,20 @@
  CANARD_INTERNAL CanardRxState* traverseRxStates(CanardInstance* ins, uint32_t transfer_descriptor)
  {
      CanardRxState* states = ins->rx_states;
-
+ 
      if (states == NULL) // initialize CanardRxStates
      {
          states = createRxState(&ins->allocator, transfer_descriptor);
-
+ 
          if(states == NULL)
          {
              return NULL;
          }
-
+ 
          ins->rx_states = states;
          return states;
      }
-
+ 
      states = findRxState(ins, transfer_descriptor);
      if (states != NULL)
      {
@@ -1467,7 +1467,7 @@
          return prependRxState(ins, transfer_descriptor);
      }
  }
-
+ 
  /**
   * returns pointer to the rx state of transfer descriptor or null if not found
   */
@@ -1484,24 +1484,24 @@
      }
      return NULL;
  }
-
+ 
  /**
   * prepends rx state to the canard instance rx_states
   */
  CANARD_INTERNAL CanardRxState* prependRxState(CanardInstance* ins, uint32_t transfer_descriptor)
  {
      CanardRxState* state = createRxState(&ins->allocator, transfer_descriptor);
-
+ 
      if(state == NULL)
      {
          return NULL;
      }
-
+ 
      state->next = canardRxToIdx(&ins->allocator, ins->rx_states);
      ins->rx_states = state;
      return state;
  }
-
+ 
  CANARD_INTERNAL CanardRxState* createRxState(CanardPoolAllocator* allocator, uint32_t transfer_descriptor)
  {
      CanardRxState init = {
@@ -1509,17 +1509,17 @@
          .buffer_blocks = CANARD_BUFFER_IDX_NONE,
          .dtid_tt_snid_dnid = transfer_descriptor
      };
-
+ 
      CanardRxState* state = (CanardRxState*) allocateBlock(allocator);
      if (state == NULL)
      {
          return NULL;
      }
      memcpy(state, &init, sizeof(*state));
-
+ 
      return state;
  }
-
+ 
  CANARD_INTERNAL uint64_t releaseStatePayload(CanardInstance* ins, CanardRxState* rxstate)
  {
      while (rxstate->buffer_blocks != CANARD_BUFFER_IDX_NONE)
@@ -1532,11 +1532,11 @@
      rxstate->payload_len = 0;
      return CANARD_OK;
  }
-
+ 
  /*
   *  CanardBufferBlock functions
   */
-
+ 
  /**
   * pushes data into the rx state. Fills the buffer head, then appends data to buffer blocks
   */
@@ -1546,7 +1546,7 @@
                                               uint8_t data_len)
  {
      uint16_t data_index = 0;
-
+ 
      // if head is not full, add data to head
      if ((CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE - state->payload_len) > 0)
      {
@@ -1563,13 +1563,13 @@
              return 1;
          }
      } // head is full.
-
+ 
      uint16_t index_at_nth_block =
          (uint16_t)(((state->payload_len) - CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE) % CANARD_BUFFER_BLOCK_DATA_SIZE);
-
+ 
      // get to current block
      CanardBufferBlock* block = NULL;
-
+ 
      // buffer blocks uninitialized
      if (state->buffer_blocks == CANARD_BUFFER_IDX_NONE)
      {
@@ -1579,13 +1579,13 @@
          {
              return -CANARD_ERROR_OUT_OF_MEMORY;
          }
-
+ 
          index_at_nth_block = 0;
      }
      else
      {
          uint16_t nth_block = 1;
-
+ 
          // get to block
          block = canardBufferFromIdx(allocator, state->buffer_blocks);
          while (block->next != NULL)
@@ -1593,11 +1593,11 @@
              nth_block++;
              block = block->next;
          }
-
+ 
          const uint16_t num_buffer_blocks =
              (uint16_t) (((((uint32_t)state->payload_len + data_len) - CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE) /
                           CANARD_BUFFER_BLOCK_DATA_SIZE) + 1U);
-
+ 
          if (num_buffer_blocks > nth_block && index_at_nth_block == 0)
          {
              block->next = createBufferBlock(allocator);
@@ -1608,7 +1608,7 @@
              block = block->next;
          }
      }
-
+ 
      // add data to current block until it becomes full, add new block if necessary
      while (data_index < data_len)
      {
@@ -1618,7 +1618,7 @@
          {
              block->data[i] = data[data_index];
          }
-
+ 
          if (data_index < data_len)
          {
              block->next = createBufferBlock(allocator);
@@ -1630,12 +1630,12 @@
              index_at_nth_block = 0;
          }
      }
-
+ 
      state->payload_len = (uint16_t)(state->payload_len + data_len) & ((1U << CANARD_TRANSFER_PAYLOAD_LEN_BITS) - 1U);
-
+ 
      return 1;
  }
-
+ 
  CANARD_INTERNAL CanardBufferBlock* createBufferBlock(CanardPoolAllocator* allocator)
  {
      CanardBufferBlock* block = (CanardBufferBlock*) allocateBlock(allocator);
@@ -1646,7 +1646,7 @@
      block->next = NULL;
      return block;
  }
-
+ 
  /**
   * Bit array copy routine, originally developed by Ben Dyer for Libuavcan. Thanks Ben.
   */
@@ -1654,23 +1654,23 @@
                          uint8_t* dst, uint32_t dst_offset)
  {
      CANARD_ASSERT(src_len > 0U);
-
+ 
      // Normalizing inputs
      src += src_offset / 8U;
      dst += dst_offset / 8U;
-
+ 
      src_offset %= 8U;
      dst_offset %= 8U;
-
+ 
      const size_t last_bit = src_offset + src_len;
      while (last_bit - src_offset)
      {
          const uint8_t src_bit_offset = (uint8_t)(src_offset % 8U);
          const uint8_t dst_bit_offset = (uint8_t)(dst_offset % 8U);
-
+ 
          const uint8_t max_offset = MAX(src_bit_offset, dst_bit_offset);
          const uint32_t copy_bits = (uint32_t)MIN(last_bit - src_offset, 8U - max_offset);
-
+ 
  #if WORD_ADDRESSING_IS_16BITS
          /*
           * (uint8_t) same as (uint16_t)
@@ -1678,41 +1678,41 @@
           */
          const uint8_t write_mask = (uint8_t)((uint8_t)((0xFF00U >> copy_bits)&0xFF) >> dst_bit_offset)&0xFF;
          const uint8_t src_data = (uint8_t)(((uint32_t)src[src_offset / 8U] << src_bit_offset) >> dst_bit_offset)&0xFF;
-
+ 
          dst[dst_offset / 8U] =
              (uint8_t)(((uint32_t)dst[dst_offset / 8U] & (uint32_t)~write_mask) | (uint32_t)(src_data & write_mask))&0xFF;
  #else
          const uint8_t write_mask = (uint8_t)((uint8_t)(0xFF00U >> copy_bits) >> dst_bit_offset);
          const uint8_t src_data = (uint8_t)(((uint32_t)src[src_offset / 8U] << src_bit_offset) >> dst_bit_offset);
-
+ 
          dst[dst_offset / 8U] =
              (uint8_t)(((uint32_t)dst[dst_offset / 8U] & (uint32_t)~write_mask) | (uint32_t)(src_data & write_mask));
  #endif
-
+ 
          src_offset += copy_bits;
          dst_offset += copy_bits;
      }
  }
-
+ 
  CANARD_INTERNAL int16_t descatterTransferPayload(const CanardRxTransfer* transfer,
                                                   uint32_t bit_offset,
                                                   uint8_t bit_length,
                                                   void* output)
  {
      CANARD_ASSERT(transfer != 0);
-
+ 
      if (bit_offset >= transfer->payload_len * 8)
      {
          return 0;       // Out of range, reading zero bits
      }
-
+ 
      if (bit_offset + bit_length > transfer->payload_len * 8)
      {
          bit_length = (uint8_t)(transfer->payload_len * 8U - bit_offset);
      }
-
+ 
      CANARD_ASSERT(bit_length > 0);
-
+ 
      if ((transfer->payload_middle != NULL) || (transfer->payload_tail != NULL)) // Multi frame
      {
          /*
@@ -1723,68 +1723,68 @@
          uint32_t input_bit_offset = bit_offset;
          uint8_t output_bit_offset = 0;
          uint8_t remaining_bit_length = bit_length;
-
+ 
          // Reading head
          if (input_bit_offset < CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE * 8)
          {
              const uint8_t amount = (uint8_t)MIN(remaining_bit_length,
                                                  CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE * 8U - input_bit_offset);
-
+ 
              copyBitArray(&transfer->payload_head[0], input_bit_offset, amount, (uint8_t*) output, 0);
-
+ 
              input_bit_offset += amount;
              output_bit_offset = (uint8_t)(output_bit_offset + amount);
              remaining_bit_length = (uint8_t)(remaining_bit_length - amount);
          }
-
+ 
          // Reading middle
          uint32_t remaining_bits = (uint32_t)(transfer->payload_len * 8U - CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE * 8U);
          uint32_t block_bit_offset = CANARD_MULTIFRAME_RX_PAYLOAD_HEAD_SIZE * 8U;
          const CanardBufferBlock* block = transfer->payload_middle;
-
+ 
          while ((block != NULL) && (remaining_bit_length > 0))
          {
              CANARD_ASSERT(remaining_bits > 0);
              const uint32_t block_end_bit_offset = block_bit_offset + MIN(CANARD_BUFFER_BLOCK_DATA_SIZE * 8,
                                                                           remaining_bits);
-
+ 
              // Perform copy if we've reached the requested offset, otherwise jump over this block and try next
              if (block_end_bit_offset > input_bit_offset)
              {
                  const uint8_t amount = (uint8_t) MIN(remaining_bit_length, block_end_bit_offset - input_bit_offset);
-
+ 
                  CANARD_ASSERT(input_bit_offset >= block_bit_offset);
                  const uint32_t bit_offset_within_block = input_bit_offset - block_bit_offset;
-
+ 
                  copyBitArray(&block->data[0], bit_offset_within_block, amount, (uint8_t*) output, output_bit_offset);
-
+ 
                  input_bit_offset += amount;
                  output_bit_offset = (uint8_t)(output_bit_offset + amount);
                  remaining_bit_length = (uint8_t)(remaining_bit_length - amount);
              }
-
+ 
              CANARD_ASSERT(block_end_bit_offset > block_bit_offset);
              remaining_bits -= block_end_bit_offset - block_bit_offset;
              block_bit_offset = block_end_bit_offset;
              block = block->next;
          }
-
+ 
          CANARD_ASSERT(remaining_bit_length <= remaining_bits);
-
+ 
          // Reading tail
          if ((transfer->payload_tail != NULL) && (remaining_bit_length > 0))
          {
              CANARD_ASSERT(input_bit_offset >= block_bit_offset);
              const uint32_t offset = input_bit_offset - block_bit_offset;
-
+ 
              copyBitArray(&transfer->payload_tail[0], offset, remaining_bit_length, (uint8_t*) output,
                           output_bit_offset);
-
+ 
              input_bit_offset += remaining_bit_length;
              output_bit_offset = (uint8_t)(output_bit_offset + remaining_bit_length);
              remaining_bit_length = 0;
          }
-
+ 
          CANARD_ASSERT(input_bit_offset <= transfer->payload_len * 8);
          CANARD_ASSERT(output_bit_offset <= 64);
          CANARD_ASSERT(remaining_bit_length == 0);
@@ -1793,10 +1793,10 @@
      {
          copyBitArray(&transfer->payload_head[0], bit_offset, bit_length, (uint8_t*) output, 0);
      }
-
+ 
      return bit_length;
  }
-
+ 
  CANARD_INTERNAL bool isBigEndian(void)
  {
  #if defined(BYTE_ORDER) && defined(BIG_ENDIAN)
@@ -1819,16 +1819,16 @@
      return u.b[1] == 1;                             // Some don't...
  #endif
  }
-
+ 
  CANARD_INTERNAL void swapByteOrder(void* data, unsigned size)
  {
      CANARD_ASSERT(data != NULL);
-
+ 
      uint8_t* const bytes = (uint8_t*) data;
-
+ 
      size_t fwd = 0;
      size_t rev = size - 1;
-
+ 
      while (fwd < rev)
      {
          const uint8_t x = bytes[fwd];
@@ -1838,7 +1838,7 @@
          rev--;
      }
  }
-
+ 
  /*
   * CRC functions
   */
@@ -1858,7 +1858,7 @@
      }
      return crc_val;
  }
-
+ 
  CANARD_INTERNAL uint16_t crcAddSignature(uint16_t crc_val, uint64_t data_type_signature)
  {
      for (uint16_t shift_val = 0; shift_val < 64; shift_val = (uint16_t)(shift_val + 8U))
@@ -1867,7 +1867,7 @@
      }
      return crc_val;
  }
-
+ 
  CANARD_INTERNAL uint16_t crcAdd(uint16_t crc_val, const uint8_t* bytes, size_t len)
  {
      while (len--)
@@ -1876,7 +1876,7 @@
      }
      return crc_val;
  }
-
+ 
  /*
   *  Pool Allocator functions
   */
@@ -1895,7 +1895,7 @@
          current_index++;
      }
      *current_block = NULL;
-
+ 
      allocator->statistics.capacity_blocks = buf_len;
      allocator->statistics.current_usage_blocks = 0;
      allocator->statistics.peak_usage_blocks = 0;
@@ -1903,7 +1903,7 @@
      // or at first call of canard_allocate_sem_take
      allocator->semaphore = NULL;
  }
-
+ 
  CANARD_INTERNAL void* allocateBlock(CanardPoolAllocator* allocator)
  {
  #if CANARD_ALLOCATE_SEM
@@ -1917,11 +1917,11 @@
  #endif
          return NULL;
      }
-
+ 
      // Take first available block and prepares next block for use.
      void* result = allocator->free_list;
      allocator->free_list = allocator->free_list->next;
-
+ 
      // Update statistics
      allocator->statistics.current_usage_blocks++;
      if (allocator->statistics.peak_usage_blocks < allocator->statistics.current_usage_blocks)
@@ -1933,17 +1933,17 @@
  #endif
      return result;
  }
-
+ 
  CANARD_INTERNAL void freeBlock(CanardPoolAllocator* allocator, void* p)
  {
  #if CANARD_ALLOCATE_SEM
      canard_allocate_sem_take(allocator);
  #endif
      CanardPoolAllocatorBlock* block = (CanardPoolAllocatorBlock*) p;
-
+ 
      block->next = allocator->free_list;
      allocator->free_list = block;
-
+ 
      CANARD_ASSERT(allocator->statistics.current_usage_blocks > 0);
      allocator->statistics.current_usage_blocks--;
  #if CANARD_ALLOCATE_SEM
