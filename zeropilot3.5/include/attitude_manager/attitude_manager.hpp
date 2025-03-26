@@ -1,38 +1,43 @@
 #pragma once
 
+#include <cstdint>
 #include "flightmode.hpp"
 #include "queue_iface.hpp"
 #include "motor_iface.hpp"
 #include "motor_datatype.hpp"
-#include "rc_motor_control.hpp"
-#include <stdint.h>
+
+typedef enum {
+    YAW = 0,
+    PITCH,
+    ROLL,
+    THROTTLE
+} ControlAxis_e;
 
 class AttitudeManager {
-   public:
+    public:
+        AttitudeManager(
+            IMessageQueue<RCMotorControlMessage_t> *amQueue, 
+            Flightmode *controlAlgorithm,  
+            MotorGroupInstance_t rollMotors, 
+            MotorGroupInstance_t pitchMotors, 
+            MotorGroupInstance_t yawMotors, 
+            MotorGroupInstance_t throttleMotors
+        );
 
-    //Are we going to use <T> or a definite variabe type? Using a template here causes imcomplete data type issue in cpp
-    AttitudeManager(Flightmode* controlAlgorithm,  MotorGroupInstance_t rollMotors, MotorGroupInstance_t pitchMotors, MotorGroupInstance_t yawMotors, MotorGroupInstance_t throttleMotors, IMessageQueue<RCMotorControlMessage_t> *queue_driver);
+        void runControlLoopIteration();
 
-    void runControlLoopIteration();
+    private:
+        IMessageQueue<RCMotorControlMessage_t> *amQueue;
 
-   private:
+        Flightmode *controlAlgorithm;
+        RCMotorControlMessage_t controlMsg;
 
-    RCMotorControlMessage_t controlMsg;
-    bool getControlInputs(RCMotorControlMessage_t *pControlMsg);
+        MotorGroupInstance_t rollMotors;
+        MotorGroupInstance_t pitchMotors;
+        MotorGroupInstance_t yawMotors;
+        MotorGroupInstance_t throttleMotors;
 
-    void outputToMotor(ControlAxis_e axis, uint8_t percent);
-    //What should go into template? AttitudeManagerInput?
-    Flightmode*controlAlgorithm_;
-    MotorGroupInstance_t rollMotors_;
-    MotorGroupInstance_t pitchMotors_;
-    MotorGroupInstance_t yawMotors_;
-    MotorGroupInstance_t throttleMotors_;
-    IMessageQueue<RCMotorControlMessage_t> *queue_driver;
+        bool getControlInputs(RCMotorControlMessage_t *pControlMsg);
+
+        void outputToMotor(ControlAxis_e axis, uint8_t percent);
 };
-
-    typedef enum {
-        yaw,
-        pitch,
-        roll,
-        throttle
-    } ControlAxis_e;

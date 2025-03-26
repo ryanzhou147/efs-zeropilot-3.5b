@@ -1,15 +1,13 @@
 #pragma once
 
-#include "attitude_manager.hpp"
+#include "rc_motor_control.hpp"
 
 class Flightmode {
     protected:
-    Flightmode() = default;
+        Flightmode() = default;
 
-   public:
-    virtual ~Flightmode() = default;
+    public:
+        virtual ~Flightmode() = default;
 
-    virtual RCMotorControlMessage_t run_control(RCMotorControlMessage_t control_input) = 0;
-    //conversion happens here
-    //run flightmode, get those computed inputs, put it into outputtomotor
+        virtual RCMotorControlMessage_t runControl(RCMotorControlMessage_t controlInput) = 0;
 };

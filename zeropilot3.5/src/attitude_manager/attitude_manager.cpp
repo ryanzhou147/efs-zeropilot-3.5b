@@ -1,84 +1,75 @@
 #include "attitude_manager.hpp"
-#include "rc_motor_control.hpp"
-#include "direct_mapping.hpp"
 
-
-bool AttitudeManager::getControlInputs(RCMotorControlMessage_t *pControlMsg) {
-
-    //If no data in the queue
-    if (queue_driver->count()==0) {
-         return false;
-    }
-    else {
-
-        *pControlMsg = queue_driver->get();
-        queue_driver->pop();
-        return true;
-    }
-}
-
-AttitudeManager::AttitudeManager(Flightmode* controlAlgorithm,  MotorGroupInstance_t rollMotors, MotorGroupInstance_t pitchMotors, MotorGroupInstance_t yawMotors, MotorGroupInstance_t throttleMotors, IMessageQueue<RCMotorControlMessage_t> *queue_driver)
-:
-    controlAlgorithm_(controlAlgorithm),
-    rollMotors_(rollMotors),
-    pitchMotors_(pitchMotors),
-    yawMotors_(yawMotors),
-    throttleMotors_(throttleMotors)
-{}   
-
-
-AttitudeManager::~AttitudeManager()
-{}
+AttitudeManager::AttitudeManager(
+    IMessageQueue<RCMotorControlMessage_t> *amQueue, 
+    Flightmode *controlAlgorithm,  
+    MotorGroupInstance_t rollMotors, 
+    MotorGroupInstance_t pitchMotors, 
+    MotorGroupInstance_t yawMotors, 
+    MotorGroupInstance_t throttleMotors
+) : 
+    amQueue(amQueue),
+    controlAlgorithm(controlAlgorithm),
+    rollMotors(rollMotors),
+    pitchMotors(pitchMotors),
+    yawMotors(yawMotors),
+    throttleMotors(throttleMotors) {} 
 
 void AttitudeManager::runControlLoopIteration() {
     // Get data from Queue and motor outputs
     bool res = getControlInputs(&controlMsg);
 
     if (res != true){
-        //No data in the queue
+        // no data in the queue
+        return;
     }
 
-    if (controlMsg.roll == 0 && controlMsg.pitch == 0 && controlMsg.yaw == 0 && controlMsg.throttle == -1) {
-        // Do something
-    }
+    RCMotorControlMessage_t motorOutputs = controlAlgorithm->runControl(controlMsg);
 
-    RCMotorControlMessage_t motor_outputs = controlAlgorithm_->run_control(controlMsg); // This is a placeholder for the actual control algorithm
-
-    outputToMotor(yaw, motor_outputs.yaw);
-    outputToMotor(pitch, motor_outputs.pitch);
-    outputToMotor(roll, motor_outputs.roll);
-    outputToMotor(throttle, motor_outputs.throttle);
+    outputToMotor(YAW, motorOutputs.yaw);
+    outputToMotor(PITCH, motorOutputs.pitch);
+    outputToMotor(ROLL, motorOutputs.roll);
+    outputToMotor(THROTTLE, motorOutputs.throttle);
 }
 
+bool AttitudeManager::getControlInputs(RCMotorControlMessage_t *pControlMsg) {
+    if (amQueue->count() == 0) {
+        return false;
+    }
 
+    *pControlMsg = amQueue->get();
+    amQueue->pop();
+    return true;
+}
 
 void AttitudeManager::outputToMotor(ControlAxis_e axis, uint8_t percent) {
-    MotorGroupInstance_t* motorGroup = nullptr;
+    MotorGroupInstance_t *motorGroup = nullptr;
 
     switch (axis) {
-        case roll:
-            motorGroup = &rollMotors_; //those &Motors is a motor group with multiple motors movements- details undecided
+        case ROLL:
+            motorGroup = &rollMotors;
             break;
-        case pitch:
-            motorGroup = &pitchMotors_;
+        case PITCH:
+            motorGroup = &pitchMotors;
             break;
-        case yaw:
-            motorGroup = &yawMotors_;
+        case YAW:
+            motorGroup = &yawMotors;
             break;
-        case throttle:
-            motorGroup = &throttleMotors_;
+        case THROTTLE:
+            motorGroup = &throttleMotors;
             break;
         default:
             return;
     }
 
-    for (uint8_t count = 0; count < motorGroup->motorCount; count++) {
-        if (motorGroup->motors[motorCount].isInverted) {
-            motorGroup->motors[motorCount].motorInstance->set(100 - percent);
-        } else {
-            motorGroup->motors[motorCount].motorInstance->set(percent);
+    for (uint8_t i = 0; i < motorGroup->motorCount; i++) {
+        MotorInstance_t *motor = (motorGroup->motors + i);
+        
+        if (motor->isInverted) {
+            motor->motorInstance->set(100 - percent);
+        } 
+        else {
+            motor->motorInstance->set(percent);
         }
     }
-
 }
-

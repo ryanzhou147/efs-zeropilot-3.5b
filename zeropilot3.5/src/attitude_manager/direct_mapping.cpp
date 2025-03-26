@@ -1,7 +1,5 @@
 #include "direct_mapping.hpp"
-#include "rc_motor_control.hpp"
 
-RCMotorControlMessage_t run_control(RCMotorControlMessage_t control_inputs){
-
-    return control_inputs;
+RCMotorControlMessage_t DirectMapping::runControl(RCMotorControlMessage_t controlInputs){
+    return controlInputs;
 }

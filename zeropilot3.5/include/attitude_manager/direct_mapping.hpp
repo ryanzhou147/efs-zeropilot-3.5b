@@ -1,7 +1,10 @@
 #pragma once
+
 #include "flightmode.hpp"
 
 class DirectMapping : public Flightmode {
-   public:
-    RCMotorControlMessage_t run_control(RCMotorControlMessage_t control_input) override;
+    public:
+        DirectMapping() = default;
+
+        RCMotorControlMessage_t runControl(RCMotorControlMessage_t controlInput) override;
 };
