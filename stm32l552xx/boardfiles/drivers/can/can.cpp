@@ -3,7 +3,7 @@
 CAN::CAN() {
 //	this->canInst.on_reception = &this->CanardOnTransferReception;
 //	this->canInst.should_accept = &this->shouldAcceptTransfer;
-	static uint8_t canardMemorypool[1024];
+	static uint8_t canardMemoryPool[1024];
 
 	canardInit(&canInst,
 			canardMemoryPool,
