@@ -1,5 +1,7 @@
 
+#ifdef __cplusplus
 #include <cstdint>
+#endif
 
 
 typedef struct {

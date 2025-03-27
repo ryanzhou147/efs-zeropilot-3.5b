@@ -1,0 +1,30 @@
+!SESSION 2025-03-27 16:20:56.373 -----------------------------------------------
+eclipse.buildId=Version 1.17.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_CA
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2025-03-27 16:22:58.067
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2025-03-27 16:22:58.070
+!MESSAGE Log4j2 initialized with config file C:\Users\adity\University\WARG\efs-zeropilot-3.5b\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2025-03-27 16:23:04.673
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-03-27 16:23:59.210
+!MESSAGE Unexpected overload for binary operator 5: 'operator -'
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-03-27 16:23:59.213
+!MESSAGE Unexpected overload for binary operator 5: 'operator -'
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-03-27 16:24:02.360
+!MESSAGE Unexpected overload for binary operator 28: 'operator =='
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-03-27 16:24:02.363
+!MESSAGE Unexpected overload for binary operator 28: 'operator =='
+
+!ENTRY org.eclipse.cdt.core 4 0 2025-03-27 16:24:02.373
+!MESSAGE Unexpected overload for binary operator 28: 'operator =='

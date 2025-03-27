@@ -21,13 +21,13 @@ private:
 
 	CanardInstance canInst;
 
-	bool CanardShouldAcceptTransfer(const CanardInstance* ins,          ///< Library instance
+	static bool CanardShouldAcceptTransfer(const CanardInstance* ins,          ///< Library instance
 	                                            uint64_t* out_data_type_signature,  ///< Must be set by the application!
 	                                            uint16_t data_type_id,              ///< Refer to the specification
 	                                            CanardTransferType transfer_type,   ///< Refer to CanardTransferType
 	                                            uint8_t source_node_id);
 
-	void CanardOnTransferReception(CanardInstance* ins,                 ///< Library instance
+	static void CanardOnTransferReception(CanardInstance* ins,                 ///< Library instance
 	                                           CanardRxTransfer* transfer);
 
 
