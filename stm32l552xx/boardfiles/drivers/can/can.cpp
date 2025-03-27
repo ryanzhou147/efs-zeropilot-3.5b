@@ -37,7 +37,7 @@ bool CAN::CanardShouldAcceptTransfer(
 	return false;
 }
 
-void CAN::onTransferReceived(
+void CAN::CanardOnTransferReception(
 	CanardInstance *ins,
 	CanardRxTransfer *transfer)
 {
