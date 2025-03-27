@@ -5,6 +5,7 @@
 #include "can_datatypes.hpp"
 #include <canard.h>
 #include "stm32l5xx_hal.h"
+#include <dronecan_msgs.h>
 
 #include <map>
 
