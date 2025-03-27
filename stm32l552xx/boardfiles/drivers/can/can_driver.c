@@ -20,45 +20,45 @@
    * @retval ret == 1: OK, ret < 0: CANARD_ERROR, ret == 0: Check hfdcan->ErrorCode
    */
  int16_t canardSTM32Recieve(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame) {
-     if (rx_frame == NULL) {
-         return -CANARD_ERROR_INVALID_ARGUMENT;
-     }
+ 	if (rx_frame == NULL) {
+ 		return -CANARD_ERROR_INVALID_ARGUMENT;
+ 	}
  
-     FDCAN_RxHeaderTypeDef RxHeader;
-     uint8_t RxData[8];
+ 	FDCAN_RxHeaderTypeDef RxHeader;
+ 	uint8_t RxData[8];
  
-     if (HAL_FDCAN_GetRxMessage(hfdcan, RxLocation, &RxHeader, RxData) == HAL_OK) {
+ 	if (HAL_FDCAN_GetRxMessage(hfdcan, RxLocation, &RxHeader, RxData) == HAL_OK) {
  
-         //	printf("Received message: ID=%lu, DLC=%lu\n", RxHeader.Identifier, RxHeader.DataLength);
-         //
-         //	printf("0x");
-         //	for (int i = 0; i < RxHeader.DataLength; i++) {
-         //		printf("%02x", RxData[i]);
-         //	}
-         //	printf("\n");
+ 		//	printf("Received message: ID=%lu, DLC=%lu\n", RxHeader.Identifier, RxHeader.DataLength);
+ 		//
+ 		//	printf("0x");
+ 		//	for (int i = 0; i < RxHeader.DataLength; i++) {
+ 		//		printf("%02x", RxData[i]);
+ 		//	}
+ 		//	printf("\n");
  
-         // Process ID to canard format
-         rx_frame->id = RxHeader.Identifier;
+ 		// Process ID to canard format
+ 		rx_frame->id = RxHeader.Identifier;
  
-         if (RxHeader.IdType == FDCAN_EXTENDED_ID) { // canard will only process the message if it is extended ID
-             rx_frame->id |= CANARD_CAN_FRAME_EFF;
-         }
+ 		if (RxHeader.IdType == FDCAN_EXTENDED_ID) { // canard will only process the message if it is extended ID
+ 			rx_frame->id |= CANARD_CAN_FRAME_EFF;
+ 		}
  
-         if (RxHeader.RxFrameType == FDCAN_REMOTE_FRAME) { // canard won't process the message if it is a remote frame
-             rx_frame->id |= CANARD_CAN_FRAME_RTR;
-         }
+ 		if (RxHeader.RxFrameType == FDCAN_REMOTE_FRAME) { // canard won't process the message if it is a remote frame
+ 			rx_frame->id |= CANARD_CAN_FRAME_RTR;
+ 		}
  
-         rx_frame->data_len = RxHeader.DataLength;
-         memcpy(rx_frame->data, RxData, RxHeader.DataLength);
+ 		rx_frame->data_len = RxHeader.DataLength;
+ 		memcpy(rx_frame->data, RxData, RxHeader.DataLength);
  
-         // assume a single interface
-         rx_frame->iface_id = 0;
+ 		// assume a single interface
+ 		rx_frame->iface_id = 0;
  
-         return 1;
-     }
+ 		return 1;
+ 	}
  
-     // Either no CAN msg to be read, or an error that can be read from hfdcan->ErrorCode
-     return 0;
+ 	// Either no CAN msg to be read, or an error that can be read from hfdcan->ErrorCode
+ 	return 0;
  }
  
  /**
@@ -131,13 +131,14 @@
      memcpy(id, HALUniqueIDs, 16);
  }
  
+ // TODO: Change to FD_CAN: HAL_FDCAN_RxFifo0Callback
  // The actual ISR, modify this to your needs
- void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+ void HAL_CAN_RxFifo0MsgPendingCallback(FDCAN_HandleTypeDef *hfdcan) {
      // Receiving
      CanardCANFrame rx_frame;
  
      const uint64_t timestamp = HAL_GetTick() * 1000ULL;
-     const int16_t rx_res = canardSTM32Recieve(hcan, CAN_RX_FIFO0, &rx_frame);
+     const int16_t rx_res = canardSTM32Recieve(hfdcan, CAN_RX_FIFO0, &rx_frame);
  
      if (rx_res < 0) {
          printf("Receive error %d\n", rx_res);
@@ -149,11 +150,11 @@
  }
  
  // Call this function very often to check if there are any Tx to process
- void processCanardTxQueue(CAN_HandleTypeDef *hcan) {
+ void processCanardTxQueue(FDCAN_HandleTypeDef *hfdcan) {
      // Transmitting
  
      for (const CanardCANFrame *tx_frame ; (tx_frame = canardPeekTxQueue(&canard)) != NULL;) {
-         const int16_t tx_res = canardSTM32Transmit(hcan, tx_frame);
+         const int16_t tx_res = canardSTM32Transmit(hfdcan, tx_frame);
  
          if (tx_res < 0) {
              printf("Transmit error %d\n", tx_res);
