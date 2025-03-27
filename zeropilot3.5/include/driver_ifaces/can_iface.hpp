@@ -15,5 +15,3 @@ public:
 
 	virtual bool heartBeat();
 };
-
-#endif /* INC_CAN_IFACE_HPP_ */
