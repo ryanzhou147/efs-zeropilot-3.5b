@@ -15,6 +15,8 @@ private:
 	std::map<uint8_t, Node_t> canNodes;
 	uint8_t nextAvailableID = 1;
 
+	FDCAN_HandleTypeDef *fdcan;
+
 	// Returns the id of the allocated node
 	uint8_t initNode();
 	bool removeNode(uint8_t nodeId);
@@ -32,11 +34,12 @@ private:
 
 
 public:
-	CAN();
+	CAN(FDCAN_HandleTypeDef* hfdcan);
 	virtual ~CAN();
 
 	int16_t canardSTM32Receive(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame);
 	int16_t canardSTM32Transmit(FDCAN_HandleTypeDef *hfdcan, const CanardCANFrame* const tx_frame);
 
+	bool routineTasks();
 
 };

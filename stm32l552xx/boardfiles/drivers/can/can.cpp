@@ -1,6 +1,6 @@
 #include "can.hpp"
 
-CAN::CAN() {
+CAN::CAN(FDCAN_HandleTypeDef hfdcan) : hfdcan(hfdcan) {
 //	this->canInst.on_reception = &this->CanardOnTransferReception;
 //	this->canInst.should_accept = &this->shouldAcceptTransfer;
 	static uint8_t canardMemoryPool[1024];
