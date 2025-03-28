@@ -37,7 +37,7 @@ void HAL_Delay(uint32_t Delay) {
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
     // GPS dma callback
     if (&huart2 == huart) {
-      gps->processGPSData();
+      gpsHandle->processGPSData();
     }
 }
 
