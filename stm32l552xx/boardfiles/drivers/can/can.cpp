@@ -88,3 +88,49 @@ void CAN::sendCANTx() {
 bool CAN::routineTasks() {
 	sendCANTx();
 }
+
+
+/*
+Wrapper function with mutex
+*/
+int16_t CAN::canardBroadcastObj(
+	CanardTxTransfer* transfer
+) {
+
+	int16_t res = canardBroadcastObj(&canInst, transfer);
+
+
+	return res;
+}
+
+int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instance
+	uint64_t data_type_signature,   ///< See above
+	uint16_t data_type_id,          ///< Refer to the specification
+	uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID
+	uint8_t priority,               ///< Refer to definitions CANARD_TRANSFER_PRIORITY_*
+	const void* payload,            ///< Transfer payload
+	uint16_t payload_len
+)
+	{
+		CanardTxTransfer transfer_object = {
+			.data_type_signature = data_type_signature,
+			.data_type_id = data_type_id,
+			.inout_transfer_id = inout_transfer_id,
+			.priority = priority,
+			.payload = (uint8_t*)payload,
+			.payload_len = payload_len,
+			#if CANARD_ENABLE_DEADLINE
+					.deadline_usec = tx_deadline,
+			#endif
+			#if CANARD_MULTI_IFACE
+					.iface_mask = iface_mask,
+			#endif
+			#if CANARD_ENABLE_CANFD
+					.canfd = canfd,
+			#endif
+		};
+
+		return canardBroadcastObj(&transfer_object);
+
+
+	}
