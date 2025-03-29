@@ -290,6 +290,7 @@ void handle_GetNodeInfo(CanardInstance *ins, CanardRxTransfer *transfer) {
 	// just setting all 16 bytes to 1 for testing
 	getUniqueID(pkt.hardware_version.unique_id);
 
+    // TODO Change
 	strncpy((char*)pkt.name.data, "ESCNode", sizeof(pkt.name.data));
 	pkt.name.len = strnlen((char*)pkt.name.data, sizeof(pkt.name.data));
 
@@ -314,6 +315,7 @@ void handle_GetNodeInfo(CanardInstance *ins, CanardRxTransfer *transfer) {
  */
 void send_NodeStatus(void) {
     uint8_t buffer[UAVCAN_PROTOCOL_GETNODEINFO_RESPONSE_MAX_SIZE];
+    uavcan_protocol_NodeStatus node_status;
 
     node_status.uptime_sec = HAL_GetTick() / 1000UL;
     node_status.health = UAVCAN_PROTOCOL_NODESTATUS_HEALTH_OK;

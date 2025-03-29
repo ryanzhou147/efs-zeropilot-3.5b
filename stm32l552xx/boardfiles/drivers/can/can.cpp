@@ -39,7 +39,7 @@ bool CAN::CanardShouldAcceptTransfer(
 
 void CAN::CanardOnTransferReception(
 	CanardInstance *ins,
-	CanardRxTransfer *transfer)
+	CanardRxTransfer *transfer) 
 {
     if (transfer->transfer_type == CanardTransferTypeRequest) {
         // check if we want to handle a specific service request
@@ -47,7 +47,42 @@ void CAN::CanardOnTransferReception(
             case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
                 handle_GetNodeInfo(ins, transfer); // TODO need to implement this function
                 break;
-            }
+			}
         }
     }
+}
+
+
+/*
+Function to convert all canard CAN frames and send them through HAL
+
+Consider removing for loop
+*/
+void CAN::sendCANTx() {
+	bool success = true;
+	for (const CanardCANFrame *frame; frame != nullptr; frame = canardPeekTxQueue(&canInst)) {
+		if (HAL_FDCAN_GetTxFifoFreeLevel(hfdcan) > 0) {
+			FDCAN_TxHeaderTypeDef txHeader;
+
+			txHeader.Identifier = frame->id;
+			txHeader.IdType = FDCAN_EXTENDED_ID;
+			txHeader.TxFrameType = FDCAN_DATA_FRAME;
+			txHeader.DataLength = frame->data_len; // Must be betweeon 0-8
+			txHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
+			txHeader.BitRateSwitch = FDCAN_BRS_OFF;
+			txHeader.FDFormat = FDCAN_CLASSIC_CAN;
+			
+			uint8_t *txData = frame->data;
+
+			bool success = HAL_FDCAN_AddMessageToTxFifoQ(hfdcan, &txHeader, txData) == HAL_OK;
+
+			if (success) {
+				canardPopTxQueue(canInst);
+			}
+		}
+	}
+}
+
+bool CAN::routineTasks() {
+	sendCANTx();
 }

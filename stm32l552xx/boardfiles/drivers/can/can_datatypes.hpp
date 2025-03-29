@@ -1,8 +1,6 @@
+#pragma once
 
-#ifdef __cplusplus
 #include <cstdint>
-#endif
-
 
 typedef struct {
 	uint8_t nodeId;
