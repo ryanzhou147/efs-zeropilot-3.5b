@@ -16,7 +16,7 @@ private:
 	uint8_t nextAvailableID = 1;
 
 
-	FDCAN_HandleTypeDef *fdcan;
+	static FDCAN_HandleTypeDef *fdcan;
 
 	// Returns the id of the allocated node
 	uint8_t initNode();
@@ -33,18 +33,16 @@ private:
 	static void CanardOnTransferReception(CanardInstance* ins,                 ///< Library instance
 	                                           CanardRxTransfer* transfer);
 
-	void sendCANTx(
-		// CanardInstance* ins,            ///< Library instance
-		// CanardTxTransfer* transfer      ///< Transfer object
-	);
+	void sendCANTx();
 
 public:
 	CAN(FDCAN_HandleTypeDef* hfdcan);
+	CAN();
+
 	virtual ~CAN();
 
 	int16_t canardSTM32Receive(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame);
-	int16_t canardSTM32Transmit(FDCAN_HandleTypeDef *hfdcan, const CanardCANFrame* const tx_frame);
-
+	
 	bool routineTasks();
 
 

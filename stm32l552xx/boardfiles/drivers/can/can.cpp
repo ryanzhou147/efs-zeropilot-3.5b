@@ -14,6 +14,8 @@ CAN::CAN(FDCAN_HandleTypeDef hfdcan) : hfdcan(hfdcan) {
 	);
 }
 
+CAN::CAN() {}
+
 CAN::~CAN() {
 
 }
