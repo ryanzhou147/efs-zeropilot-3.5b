@@ -74,12 +74,12 @@ void CAN::sendCANTx() {
 			txHeader.BitRateSwitch = FDCAN_BRS_OFF;
 			txHeader.FDFormat = FDCAN_CLASSIC_CAN;
 			
-			uint8_t *txData = frame->data;
+			const uint8_t *txData = frame->data;
 
-			bool success = HAL_FDCAN_AddMessageToTxFifoQ(hfdcan, &txHeader, txData) == HAL_OK;
+			bool success = HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan, &txHeader, txData) == HAL_OK;
 
 			if (success) {
-				canardPopTxQueue(canInst);
+				canardPopTxQueue(&canInst);
 			}
 		}
 	}
