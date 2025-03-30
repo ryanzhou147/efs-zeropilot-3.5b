@@ -47,7 +47,7 @@ void CAN::CanardOnTransferReception(
         // check if we want to handle a specific service request
         switch (transfer->data_type_id) {
             case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
-                handle_GetNodeInfo(ins, transfer); // TODO need to implement this function
+                handle_GetNodeInfo(transfer); // TODO need to implement this function
                 break;
 			}
         }
@@ -131,6 +131,4 @@ int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instan
 		};
 
 		return canardBroadcastObj(&transfer_object);
-
-
 	}
