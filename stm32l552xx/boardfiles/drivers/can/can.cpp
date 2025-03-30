@@ -56,36 +56,6 @@ void CAN::CanardOnTransferReception(
     }
 }
 
-void CAN::handle_ReceiveNodeInfo(CanardRxTransfer *transfer) {
-	// TODO implement this function
-
-	
-	
-	// Assume the node is a dynamic node
-	if (transfer->source_node_id == 0) {
-		// TODO handle anonymous node
-		handle_NodeAllocation(transfer)
-		return;
-	}
-	
-
-}
-
-void CAN::handle_NodeAllocation(CanardRxTransfer *transfer){
-	// TODO implement this function
-	// This function should be called when a node is allocated
-	// It should allocate a new node and add it to the canNodes map
-	// The node ID should be the next available ID
-	// The node should be added to the canNodes map with the ID as the key and the node as the value
-	// The next available ID should be incremented by 1
-	// The function should return the ID of the allocated node
-
-	// Assume all nodes are dymaic at first
-
-
-
-
-}
 
 /*
 Function to convert all canard CAN frames and send them through HAL
@@ -125,7 +95,7 @@ bool CAN::routineTasks() {
 /*
 Wrapper function with mutex
 */
-int16_t CAN::canardBroadcastObj(
+int16_t CAN::broadcastObj(
 	CanardTxTransfer* transfer
 ) {
 	osStatus_t status = osMutexAcquire(canBroadcastMutex, CAN_BROADCAST_MUTEX_TIMEOUT);
@@ -141,7 +111,7 @@ int16_t CAN::canardBroadcastObj(
 
 }
 
-int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instance
+int16_t CAN::broadcast(       ///< Library instance
 	uint64_t data_type_signature,   ///< See above
 	uint16_t data_type_id,          ///< Refer to the specification
 	uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID
@@ -168,5 +138,5 @@ int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instan
 			#endif
 		};
 
-		return canardBroadcastObj(&transfer_object);
+		return broadcastObj(&transfer_object);
 	}
