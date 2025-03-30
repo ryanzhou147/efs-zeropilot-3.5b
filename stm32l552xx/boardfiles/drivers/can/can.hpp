@@ -19,9 +19,7 @@ private:
 	static FDCAN_HandleTypeDef *fdcan;
 
 	// Returns the id of the allocated node
-	void handle_ReceiveNodeInfo(CanardRxTransfer *transfer);
-	bool removeNode();
-
+	
 	CanardInstance canInst;
 
 	static bool CanardShouldAcceptTransfer(const CanardInstance* ins,          ///< Library instance
@@ -67,11 +65,11 @@ public:
 	*
 	* Returns the number of frames enqueued, or negative error code.
 	*/
-	int16_t canardBroadcastObj(
+	int16_t broadcastObj(
 		CanardTxTransfer* transfer      ///< Transfer object
 	);
 
-	int16_t canardBroadcast(CanardInstance* ins,            ///< Library instance
+	int16_t broadcast(CanardInstance* ins,            ///< Library instance
 		uint64_t data_type_signature,   ///< See above
 		uint16_t data_type_id,          ///< Refer to the specification
 		uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID

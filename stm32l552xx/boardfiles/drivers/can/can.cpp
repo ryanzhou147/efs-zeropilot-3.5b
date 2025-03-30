@@ -10,7 +10,7 @@ CAN::CAN(FDCAN_HandleTypeDef hfdcan) : hfdcan(hfdcan) {
 			sizeof(canardMemoryPool),
 			&CAN::CanardOnTransferReception,
 			&CAN::CanardShouldAcceptTransfer,
-			this
+			NULL
 	);
 }
 
@@ -54,36 +54,6 @@ void CAN::CanardOnTransferReception(
     }
 }
 
-void CAN::handle_ReceiveNodeInfo(CanardRxTransfer *transfer) {
-	// TODO implement this function
-
-	
-	
-	// Assume the node is a dynamic node
-	if (transfer->source_node_id == 0) {
-		// TODO handle anonymous node
-		handle_NodeAllocation(transfer)
-		return;
-	}
-	
-
-}
-
-void CAN::handle_NodeAllocation(CanardRxTransfer *transfer){
-	// TODO implement this function
-	// This function should be called when a node is allocated
-	// It should allocate a new node and add it to the canNodes map
-	// The node ID should be the next available ID
-	// The node should be added to the canNodes map with the ID as the key and the node as the value
-	// The next available ID should be incremented by 1
-	// The function should return the ID of the allocated node
-
-	// Assume all nodes are dymaic at first
-
-
-
-
-}
 
 /*
 Function to convert all canard CAN frames and send them through HAL
@@ -99,7 +69,7 @@ void CAN::sendCANTx() {
 			txHeader.Identifier = frame->id;
 			txHeader.IdType = FDCAN_EXTENDED_ID;
 			txHeader.TxFrameType = FDCAN_DATA_FRAME;
-			txHeader.DataLength = frame->data_len; // Must be betweeon 0-8
+			txHeader.DataLength = FDCAN_DLC_BYTES_8;
 			txHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
 			txHeader.BitRateSwitch = FDCAN_BRS_OFF;
 			txHeader.FDFormat = FDCAN_CLASSIC_CAN;
@@ -123,17 +93,17 @@ bool CAN::routineTasks() {
 /*
 Wrapper function with mutex
 */
-int16_t CAN::canardBroadcastObj(
+int16_t CAN::broadcastObj(
 	CanardTxTransfer* transfer
 ) {
 
-	int16_t res = canardBroadcastObj(&canInst, transfer);
+	int16_t res = broadcastObj(&canInst, transfer);
 
 
 	return res;
 }
 
-int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instance
+int16_t CAN::broadcast(CanardInstance* ins,            ///< Library instance
 	uint64_t data_type_signature,   ///< See above
 	uint16_t data_type_id,          ///< Refer to the specification
 	uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID
@@ -160,5 +130,5 @@ int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instan
 			#endif
 		};
 
-		return canardBroadcastObj(&transfer_object);
+		return broadcastObj(&transfer_object);
 	}
