@@ -19,7 +19,8 @@ private:
 	static FDCAN_HandleTypeDef *fdcan;
 
 	// Returns the id of the allocated node
-	void handle_ReceiveNodeInfo(CanardRxTransfer *transfer);
+	void handle_ReceiveNodeInfo(CanardInstance *ins, CanardRxTransfer *transfer);
+	void handle_allocation_response(CanardInstance *ins, CanardRxTransfer *transfer){
 	bool removeNode();
 
 	CanardInstance canInst;

@@ -47,26 +47,30 @@ void CAN::CanardOnTransferReception(
         // check if we want to handle a specific service request
         switch (transfer->data_type_id) {
             case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
-                handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
+                handle_ReceiveNodeInfo(ins, transfer); // TODO need to implement this function
                 break;
+			}
+			case UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID: {
+				handle_allocation_response(ins, transfer); 
+				break; 
 			}
         }
     }
 }
 
-void CAN::handle_ReceiveNodeInfo(CanardRxTransfer *transfer) {
-	// TODO implement this function
-
-	
+void CAN::handle_ReceiveNodeInfo(CanardInstance *ins, CanardRxTransfer *transfer) {
+	// TODO implement this function	
 	
 	// Assume the node is a dynamic node
 	if (transfer->source_node_id == 0) {
 		// TODO handle anonymous node
-		handle_NodeAllocation(transfer)
-		return;
 	}
 	
 
+}
+
+void CAN::handle_allocation_response(CanardInstance *ins, CanardRxTransfer *transfer){
+	// TODO, implement the allocation response handling for new nodes based on the ardupilot
 }
 
 void CAN::handle_NodeAllocation(CanardRxTransfer *transfer){
