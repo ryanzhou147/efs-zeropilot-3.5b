@@ -99,7 +99,7 @@ void CAN::sendCANTx() {
 			txHeader.Identifier = frame->id;
 			txHeader.IdType = FDCAN_EXTENDED_ID;
 			txHeader.TxFrameType = FDCAN_DATA_FRAME;
-			txHeader.DataLength = frame->data_len; // Must be betweeon 0-8
+			txHeader.DataLength = FDCAN_DLC_BYTES_8;
 			txHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
 			txHeader.BitRateSwitch = FDCAN_BRS_OFF;
 			txHeader.FDFormat = FDCAN_CLASSIC_CAN;
