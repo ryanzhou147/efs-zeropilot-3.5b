@@ -97,13 +97,13 @@ int16_t CAN::broadcastObj(
 	CanardTxTransfer* transfer
 ) {
 
-	int16_t res = broadcastObj(&canInst, transfer);
+	int16_t res = canardBroadcastObj(&canInst, transfer);
 
 
 	return res;
 }
 
-int16_t CAN::broadcast(CanardInstance* ins,            ///< Library instance
+int16_t CAN::broadcast(       ///< Library instance
 	uint64_t data_type_signature,   ///< See above
 	uint16_t data_type_id,          ///< Refer to the specification
 	uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID

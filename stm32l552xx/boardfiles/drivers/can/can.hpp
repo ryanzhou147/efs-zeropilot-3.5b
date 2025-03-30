@@ -69,7 +69,7 @@ public:
 		CanardTxTransfer* transfer      ///< Transfer object
 	);
 
-	int16_t broadcast(CanardInstance* ins,            ///< Library instance
+	int16_t broadcast(            ///< Library instance
 		uint64_t data_type_signature,   ///< See above
 		uint16_t data_type_id,          ///< Refer to the specification
 		uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID
