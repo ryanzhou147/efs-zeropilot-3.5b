@@ -93,17 +93,17 @@ bool CAN::routineTasks() {
 /*
 Wrapper function with mutex
 */
-int16_t CAN::canardBroadcastObj(
+int16_t CAN::broadcastObj(
 	CanardTxTransfer* transfer
 ) {
 
-	int16_t res = canardBroadcastObj(&canInst, transfer);
+	int16_t res = broadcastObj(&canInst, transfer);
 
 
 	return res;
 }
 
-int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instance
+int16_t CAN::broadcast(CanardInstance* ins,            ///< Library instance
 	uint64_t data_type_signature,   ///< See above
 	uint16_t data_type_id,          ///< Refer to the specification
 	uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID
@@ -130,5 +130,5 @@ int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instan
 			#endif
 		};
 
-		return canardBroadcastObj(&transfer_object);
+		return broadcastObj(&transfer_object);
 	}
