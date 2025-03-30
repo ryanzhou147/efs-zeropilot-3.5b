@@ -16,7 +16,7 @@ private:
 	uint8_t nextAvailableID = 1;
 
 
-	static FDCAN_HandleTypeDef *fdcan;
+	FDCAN_HandleTypeDef *hfdcan;
 
 	// Returns the id of the allocated node
 	
