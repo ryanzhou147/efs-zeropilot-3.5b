@@ -1,4 +1,6 @@
 #include "can.hpp"
+#include "cmsis_os2.h"
+#include "museq.hpp"
 
 CAN::CAN(FDCAN_HandleTypeDef hfdcan) : hfdcan(hfdcan) {
 //	this->canInst.on_reception = &this->CanardOnTransferReception;
@@ -126,11 +128,17 @@ Wrapper function with mutex
 int16_t CAN::canardBroadcastObj(
 	CanardTxTransfer* transfer
 ) {
+	osStatus_t status = osMutexAcquire(canBroadcastMutex, CAN_BROADCAST_MUTEX_TIMEOUT);
 
-	int16_t res = canardBroadcastObj(&canInst, transfer);
+	if (status == osOK){
+		int16_t res = canardBroadcastObj(&canInst, transfer);
+		osMutexRelease(canBroadcastMutex);
 
+		return res;
+	} else {
+		return -1; // handle failure
+	}
 
-	return res;
 }
 
 int16_t CAN::CanardBroadcast(CanardInstance* ins,            ///< Library instance

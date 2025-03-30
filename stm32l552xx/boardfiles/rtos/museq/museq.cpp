@@ -3,6 +3,8 @@
 /* --- mutexes --- */
 /* define mutexes begin */
 osMutexId_t itmMutex;
+osMutexId_t canBroadcastMutex;
+
 
 static const osMutexAttr_t itmMutexAttr = {
   "itmMutex",
@@ -15,6 +17,11 @@ static const osMutexAttr_t itmMutexAttr = {
 void initMutexes()
 {
   itmMutex = osMutexNew(&itmMutexAttr);
+  canBroadcastMutex = osMutexNew(&itmMutexAttr);
+
+  if (itmMutex == NULL || canBroadcastMutex == NULL){
+    // need to handle failure
+  }
 }
 
 /* --- sempahores --- */

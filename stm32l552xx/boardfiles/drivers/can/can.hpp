@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <unistd.h>
 #include <can_iface.hpp>
 #include "can_datatypes.hpp"
 #include <canard.h>
@@ -8,6 +9,9 @@
 #include <dronecan_msgs.h>
 
 #include <map>
+
+// need to handle
+#define CAN_BROADCAST_MUTEX_TIMEOUT UINT32_MAX
 
 class CAN : ICAN {
 
