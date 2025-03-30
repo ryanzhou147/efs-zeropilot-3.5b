@@ -62,7 +62,7 @@ void CAN::handle_ReceiveNodeInfo(CanardRxTransfer *transfer) {
 	// Assume the node is a dynamic node
 	if (transfer->source_node_id == 0) {
 		// TODO handle anonymous node
-		handle_NodeAllocation(transfer)
+		handle_NodeAllocation(transfer);
 		return;
 	}
 	
