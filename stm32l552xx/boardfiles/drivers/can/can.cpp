@@ -10,7 +10,7 @@ CAN::CAN(FDCAN_HandleTypeDef hfdcan) : hfdcan(hfdcan) {
 			sizeof(canardMemoryPool),
 			&CAN::CanardOnTransferReception,
 			&CAN::CanardShouldAcceptTransfer,
-			this
+			NULL
 	);
 }
 
