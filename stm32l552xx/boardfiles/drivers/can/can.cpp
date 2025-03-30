@@ -47,13 +47,43 @@ void CAN::CanardOnTransferReception(
         // check if we want to handle a specific service request
         switch (transfer->data_type_id) {
             case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
-                handle_GetNodeInfo(transfer); // TODO need to implement this function
+                handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
                 break;
 			}
         }
     }
 }
 
+void CAN::handle_ReceiveNodeInfo(CanardRxTransfer *transfer) {
+	// TODO implement this function
+
+	
+	
+	// Assume the node is a dynamic node
+	if (transfer->source_node_id == 0) {
+		// TODO handle anonymous node
+		handle_NodeAllocation(transfer)
+		return;
+	}
+	
+
+}
+
+void CAN::handle_NodeAllocation(CanardRxTransfer *transfer){
+	// TODO implement this function
+	// This function should be called when a node is allocated
+	// It should allocate a new node and add it to the canNodes map
+	// The node ID should be the next available ID
+	// The node should be added to the canNodes map with the ID as the key and the node as the value
+	// The next available ID should be incremented by 1
+	// The function should return the ID of the allocated node
+
+	// Assume all nodes are dymaic at first
+
+
+
+
+}
 
 /*
 Function to convert all canard CAN frames and send them through HAL
