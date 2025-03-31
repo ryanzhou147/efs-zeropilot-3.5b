@@ -6,6 +6,9 @@
 #include <canard.h>
 #include "stm32l5xx_hal.h"
 #include <dronecan_msgs.h>
+#include "can_defines.hpp"
+#include "cmsis_os2.h"
+#include "museq.hpp"
 
 #include <map>
 
@@ -30,7 +33,7 @@ private:
 	void sendCANTx();
 
 public:
-	CAN(FDCAN_HandleTypeDef* hfdcan);
+	CAN(FDCAN_HandleTypeDef *hfdcan);
 	CAN();
 	virtual ~CAN();
 

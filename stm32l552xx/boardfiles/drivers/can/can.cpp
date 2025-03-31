@@ -1,8 +1,6 @@
 #include "can.hpp"
-#include "cmsis_os2.h"
-#include "museq.hpp"
 
-CAN::CAN(FDCAN_HandleTypeDef hfdcan) : hfdcan(hfdcan) {
+CAN::CAN(FDCAN_HandleTypeDef *hfdcan) : hfdcan(hfdcan) {
 //	this->canard.on_reception = &this->CanardOnTransferReception;
 //	this->canard.should_accept = &this->shouldAcceptTransfer;
 	static uint8_t canardMemoryPool[1024];
@@ -43,15 +41,13 @@ bool CAN::CanardShouldAcceptTransfer(
 	return false;
 }
 
-void CAN::CanardOnTransferReception(
-	CanardInstance *ins,
-	CanardRxTransfer *transfer) 
+void CAN::CanardOnTransferReception(CanardInstance *ins, CanardRxTransfer *transfer) 
 {
     if (transfer->transfer_type == CanardTransferTypeRequest) {
         // check if we want to handle a specific service request
         switch (transfer->data_type_id) {
             case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
-                handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
+                // handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
                 break;
 			}
         }
@@ -80,7 +76,7 @@ void CAN::sendCANTx() {
 			
 			const uint8_t *txData = frame->data;
 
-			bool success = HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan, &txHeader, txData) == HAL_OK;
+			bool success = HAL_FDCAN_AddMessageToTxFifoQ(hfdcan, &txHeader, txData) == HAL_OK;
 
 			if (success) {
 				canardPopTxQueue(&canard);
@@ -97,28 +93,25 @@ bool CAN::routineTasks() {
 /*
 Wrapper function with mutex
 */
-int16_t CAN::broadcastObj(
-	CanardTxTransfer* transfer
-) {
+int16_t CAN::broadcastObj(CanardTxTransfer* transfer) {
 	osStatus_t status = osMutexAcquire(canBroadcastMutex, CAN_BROADCAST_MUTEX_TIMEOUT);
 
-	if (status == osOK){
-		int16_t res = canardBroadcastObj(&canard, transfer);
-		osMutexRelease(canBroadcastMutex);
-
-		return res;
-	} else {
+	if (status != osOK){
 		return -1; // handle failure
-	}
+	} 
 
+	int16_t res = canardBroadcastObj(&canard, transfer);
+	osMutexRelease(canBroadcastMutex);
+
+	return res;
 }
 
-int16_t CAN::broadcast(       ///< Library instance
-	uint64_t data_type_signature,   ///< See above
-	uint16_t data_type_id,          ///< Refer to the specification
-	uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID
-	uint8_t priority,               ///< Refer to definitions CANARD_TRANSFER_PRIORITY_*
-	const void* payload,            ///< Transfer payload
+int16_t CAN::broadcast(
+	uint64_t data_type_signature,
+	uint16_t data_type_id,
+	uint8_t* inout_transfer_id,
+	uint8_t priority,
+	const void* payload,
 	uint16_t payload_len
 )
 	{
