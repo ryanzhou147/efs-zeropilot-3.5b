@@ -6,12 +6,10 @@
 
 class ICAN {
 
-private:
-	virtual uint8_t initNode();
-
+protected:
+	ICAN() = default;
+	
 public:
-	ICAN();
-	virtual ~ICAN();
-
-	virtual bool heartBeat();
+	virtual ~ICAN() = default;
+	
 };
