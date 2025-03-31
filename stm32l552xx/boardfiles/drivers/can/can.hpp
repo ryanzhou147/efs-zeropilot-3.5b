@@ -16,7 +16,7 @@ private:
 	uint8_t nextAvailableID = 2;
 	FDCAN_HandleTypeDef *hfdcan;
 	
-	CanardInstance canInst;
+	CanardInstance canard;
 
 	static bool CanardShouldAcceptTransfer(const CanardInstance* ins,          ///< Library instance
 	                                            uint64_t* out_data_type_signature,  ///< Must be set by the application!

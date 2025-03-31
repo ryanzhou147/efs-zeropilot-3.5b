@@ -3,17 +3,19 @@
 #include "museq.hpp"
 
 CAN::CAN(FDCAN_HandleTypeDef hfdcan) : hfdcan(hfdcan) {
-//	this->canInst.on_reception = &this->CanardOnTransferReception;
-//	this->canInst.should_accept = &this->shouldAcceptTransfer;
+//	this->canard.on_reception = &this->CanardOnTransferReception;
+//	this->canard.should_accept = &this->shouldAcceptTransfer;
 	static uint8_t canardMemoryPool[1024];
 
-	canardInit(&canInst,
+	canardInit(&canard,
 			canardMemoryPool,
 			sizeof(canardMemoryPool),
 			&CAN::CanardOnTransferReception,
 			&CAN::CanardShouldAcceptTransfer,
 			NULL
 	);
+
+	canard.node_id = NODE_ID;
 }
 
 CAN::CAN() {}
@@ -64,7 +66,7 @@ Consider removing for loop
 */
 void CAN::sendCANTx() {
 	bool success = true;
-	for (const CanardCANFrame *frame; frame != nullptr; frame = canardPeekTxQueue(&canInst)) {
+	for (const CanardCANFrame *frame; frame != nullptr; frame = canardPeekTxQueue(&canard)) {
 		if (HAL_FDCAN_GetTxFifoFreeLevel(hfdcan) > 0) {
 			FDCAN_TxHeaderTypeDef txHeader;
 
@@ -81,7 +83,7 @@ void CAN::sendCANTx() {
 			bool success = HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan, &txHeader, txData) == HAL_OK;
 
 			if (success) {
-				canardPopTxQueue(&canInst);
+				canardPopTxQueue(&canard);
 			}
 		}
 	}
@@ -101,7 +103,7 @@ int16_t CAN::broadcastObj(
 	osStatus_t status = osMutexAcquire(canBroadcastMutex, CAN_BROADCAST_MUTEX_TIMEOUT);
 
 	if (status == osOK){
-		int16_t res = canardBroadcastObj(&canInst, transfer);
+		int16_t res = canardBroadcastObj(&canard, transfer);
 		osMutexRelease(canBroadcastMutex);
 
 		return res;
