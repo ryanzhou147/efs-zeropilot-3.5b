@@ -9,9 +9,6 @@
 
 #include <map>
 
-// need to handle
-#define CAN_BROADCAST_MUTEX_TIMEOUT HAL_MAX_DELAY
-
 class CAN : ICAN {
 
 private:
