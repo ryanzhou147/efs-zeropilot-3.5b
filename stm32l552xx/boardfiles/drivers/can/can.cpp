@@ -32,9 +32,19 @@ bool CAN::CanardShouldAcceptTransfer(
 	if (transfer_type == CanardTransferTypeRequest) {
 		// check if we want to handle a specific service request
 		switch (data_type_id) {
+			case UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID:
 			case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
-				*out_data_type_signature = UAVCAN_PROTOCOL_GETNODEINFO_REQUEST_SIGNATURE;
-				return true;
+				if (transfer_type == CanardTransferTypeResponse || transfer_type == CanardTransferTypeRequest) {
+					*out_data_type_signature = UAVCAN_PROTOCOL_GETNODEINFO_REQUEST_SIGNATURE;
+					return true;
+				}
+				else if (transfer_type == CanardTransferTypeBroadcast) {
+					*out_data_type_signature = UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_SIGNATURE;
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 		}
 	}
@@ -46,9 +56,15 @@ void CAN::CanardOnTransferReception(CanardInstance *ins, CanardRxTransfer *trans
     if (transfer->transfer_type == CanardTransferTypeRequest) {
         // check if we want to handle a specific service request
         switch (transfer->data_type_id) {
-            case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
-                // handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
-                break;
+			case UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID:
+			case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
+				if (transfer->transfer_type == CanardTransferTypeResponse) {
+					// handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
+				}
+				else if (transfer->transfer_type == CanardTransferTypeBroadcast) {
+					
+				}
+				break;
 			}
         }
     }
