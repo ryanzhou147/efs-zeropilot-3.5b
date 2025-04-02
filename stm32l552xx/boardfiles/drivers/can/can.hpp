@@ -10,13 +10,11 @@
 #include "cmsis_os2.h"
 #include "museq.hpp"
 
-#include <map>
-
 class CAN : ICAN {
 
 private:
-	std::map<uint8_t, Node_t> canNodes;
-	uint8_t nextAvailableID = 2;
+	Node_t canNodes[CANARD_MAX_NODE_ID + 1];
+	uint8_t nextAvailableID = CANARD_MIN_NODE_ID + 1;
 	FDCAN_HandleTypeDef *hfdcan;
 	
 	CanardInstance canard;
