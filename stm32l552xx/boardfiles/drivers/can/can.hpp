@@ -30,6 +30,9 @@ private:
 
 	void sendCANTx();
 
+	void handle_ReceiveNodeInfo(CanardRxTransfer *transfer);
+	void handle_NodeAllocation(CanardRxTransfer *transfer)
+
 public:
 	CAN(FDCAN_HandleTypeDef *hfdcan);
 	CAN();

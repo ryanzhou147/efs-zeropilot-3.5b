@@ -85,7 +85,7 @@ void CAN::handle_ReceiveNodeInfo(CanardRxTransfer *transfer) {
 
 }
 
-void CAN::handle_NodeAllocation(CanardRxTransfer *transfer){
+void CAN::handle_NodeAllocation(CanardRxTransfer *transfer) {
 	// TODO implement this function
 	// This function should be called when a node is allocated
 	// It should allocate a new node and add it to the canNodes map
