@@ -32,7 +32,7 @@ private:
 
 public:
 	CAN(FDCAN_HandleTypeDef *hfdcan);
-	CAN();
+
 	virtual ~CAN();
 
 	bool routineTasks();
