@@ -1,5 +1,8 @@
+#include "cmsis_os2.h"
 #include "main.h"
 #include "museq.hpp"
+#include "drivers.hpp"
+#include "utils.h"
 
 extern "C"
 {
@@ -17,5 +20,35 @@ int _write(int file, char *ptr, int len)
   return len;
 }
 
+void HAL_Delay(uint32_t Delay) {
+  if (osKernelGetState() == osKernelRunning) {
+    osDelayUntil(osKernelGetTickCount() + timeToTicks(Delay));
+  } else {
+    uint32_t tickstart = HAL_GetTick();
+    uint32_t wait = Delay;
+
+    if (wait < HAL_MAX_DELAY) {
+      wait += (uint32_t)uwTickFreq;
+    }
+
+    while ((HAL_GetTick() - tickstart) < wait) {}
+  }
+}
+
 /* interrupt callback functions */
+
+void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance == UART4){
+		rcHandle->parse(BEGINNING);
+	}
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance == UART4){
+		rcHandle->parse(MIDDLE);
+	}
+}
+
 }
