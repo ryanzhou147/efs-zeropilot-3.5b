@@ -13,7 +13,7 @@
 class SystemManager {
     public:
         SystemManager(
-            IIndependentWatchdog *iwdgDriver,
+            // IIndependentWatchdog *iwdgDriver,
             ILogger *loggerDriver,
             IRCReceiver *rcDriver,
             IMessageQueue<RCMotorControlMessage_t> *amRCQueue,
