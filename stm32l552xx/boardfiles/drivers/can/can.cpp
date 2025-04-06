@@ -96,7 +96,7 @@ void CAN::handleNodeAllocation(CanardInstance *ins, CanardRxTransfer *transfer){
 		return; 
 	}
 	
-	msg = {}; 
+	msg = {};
 
 	// Send message back 
 	uint8_t decode_buffer[UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_MAX_SIZE];
