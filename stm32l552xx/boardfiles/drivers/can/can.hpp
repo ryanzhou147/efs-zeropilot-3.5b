@@ -25,10 +25,11 @@ private:
 	                                            CanardTransferType transfer_type,   ///< Refer to CanardTransferType
 	                                            uint8_t source_node_id);
 
-	static void CanardOnTransferReception(CanardInstance* ins,                 ///< Library instance
+	void CanardOnTransferReception(CanardInstance* ins,                 ///< Library instance
 	                                           CanardRxTransfer* transfer);
 
 	void sendCANTx();
+
 
 public:
 	CAN(FDCAN_HandleTypeDef *hfdcan);
@@ -38,6 +39,10 @@ public:
 	bool routineTasks();
 
 	int16_t canardSTM32Receive(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame);
+	
+	void handleNodeAllocation(CanardInstance* ins, CanardRxTransfer* transfer);
+	
+	int8_t allocateNode();  
 
 	int16_t broadcastObj(
 		CanardTxTransfer* transfer

@@ -56,8 +56,6 @@ struct uavcan_protocol_dynamic_node_id_Allocation {
 
     struct { uint8_t len; uint8_t data[16]; }unique_id;
 
-
-
 };
 
 #ifdef __cplusplus

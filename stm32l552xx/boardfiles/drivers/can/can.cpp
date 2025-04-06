@@ -1,3 +1,5 @@
+#include <uavcan.protocol.dynamic_node_id.Allocation.h>
+#include <string.h>
 #include "can.hpp"
 
 CAN::CAN(FDCAN_HandleTypeDef *hfdcan) : hfdcan(hfdcan) {
@@ -60,7 +62,7 @@ void CAN::CanardOnTransferReception(CanardInstance *ins, CanardRxTransfer *trans
 					// handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
 				}
 				else if (transfer->transfer_type == CanardTransferTypeBroadcast) {
-					
+					handleNodeAllocation(ins, transfer); 	
 				}
 				break;
 			}
@@ -68,6 +70,68 @@ void CAN::CanardOnTransferReception(CanardInstance *ins, CanardRxTransfer *trans
     }
 }
 
+void CAN::handleNodeAllocation(CanardInstance *ins, CanardRxTransfer *transfer){
+
+	uint8_t first_half_unique_id[8];
+
+ 	if (transfer->source_node_id != 0) // the source node is not 0, it is not anonymous
+	{
+		return;
+	}
+
+    struct uavcan_protocol_dynamic_node_id_Allocation msg = {};
+	uavcan_protocol_dynamic_node_id_Allocation_decode(transfer, &msg); 
+	
+	if (msg.node_id != 0) // the node id is not 0, it is not anonymous
+	{
+		return;
+	}
+
+	memcpy(first_half_unique_id, msg.unique_id.data, 8);
+
+	// Generate the node id and allocate it 
+	msg.node_id = allocateNode(); 
+
+	if (msg.node_id == -1){
+		return; 
+	}
+	
+	msg = {}; 
+
+	// Send message back 
+	uint8_t decode_buffer[UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_MAX_SIZE];
+	uavcan_protocol_dynamic_node_id_Allocation_encode(&msg, decode_buffer);
+
+	broadcast(
+		UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_SIGNATURE,
+		UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID,
+		0, 
+		CANARD_TRANSFER_PRIORITY_LOW,
+		&decode_buffer,
+		sizeof(decode_buffer)
+	); 
+
+}
+
+int8_t CAN::allocateNode() {
+	// check if the node id is already allocated
+	int currId = nextAvailableID;
+	
+	if (currId > CANARD_MAX_NODE_ID) {
+		return -1; // no more node ids available
+	}
+
+	nextAvailableID++;
+
+	canNodes[currId].nodeId = currId;
+	canNodes[currId].health = 1;
+	canNodes[currId].lastHeartbeatTime = HAL_GetTick();
+	canNodes[currId].uptime = 0;
+	canNodes[currId].softwareVersion = 0;
+	canNodes[currId].hardwareVersion = 0;
+	
+	return currId;	
+}
 
 /*
 Function to convert all canard CAN frames and send them through HAL
@@ -128,24 +192,24 @@ int16_t CAN::broadcast(
 	const void* payload,
 	uint16_t payload_len
 )
-	{
-		CanardTxTransfer transfer_object = {
-			.data_type_signature = data_type_signature,
-			.data_type_id = data_type_id,
-			.inout_transfer_id = inout_transfer_id,
-			.priority = priority,
-			.payload = (uint8_t*)payload,
-			.payload_len = payload_len,
-			#if CANARD_ENABLE_DEADLINE
-					.deadline_usec = tx_deadline,
-			#endif
-			#if CANARD_MULTI_IFACE
-					.iface_mask = iface_mask,
-			#endif
-			#if CANARD_ENABLE_CANFD
-					.canfd = canfd,
-			#endif
-		};
+{
+	CanardTxTransfer transfer_object = {
+		.data_type_signature = data_type_signature,
+		.data_type_id = data_type_id,
+		.inout_transfer_id = inout_transfer_id,
+		.priority = priority,
+		.payload = (uint8_t*)payload,
+		.payload_len = payload_len,
+		#if CANARD_ENABLE_DEADLINE
+				.deadline_usec = tx_deadline,
+		#endif
+		#if CANARD_MULTI_IFACE
+				.iface_mask = iface_mask,
+		#endif
+		#if CANARD_ENABLE_CANFD
+				.canfd = canfd,
+		#endif
+	};
 
-		return broadcastObj(&transfer_object);
-	}
+	return broadcastObj(&transfer_object);
+}
