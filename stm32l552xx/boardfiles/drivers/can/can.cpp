@@ -28,8 +28,26 @@ bool CAN::CanardShouldAcceptTransfer(
 	CanardTransferType transfer_type,
 	uint8_t source_node_id)
 {
+
+	if (canardGetLocalNodeID(ins) == CANARD_BROADCAST_NODE_ID)
+    {
+        /*
+         * If we're in the process of allocation of dynamic node ID, accept only relevant transfers.
+         */
+        if ((transfer_type == CanardTransferTypeBroadcast) &&
+            (data_type_id == UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID))
+        {
+            *out_data_type_signature = UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_SIGNATURE;
+            return true;
+        }
+        return false;
+    }
+
+
 	if (transfer_type == CanardTransferTypeRequest) {
 		// check if we want to handle a specific service request
+
+		
 		switch (data_type_id) {
 			case UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID:
 			case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
