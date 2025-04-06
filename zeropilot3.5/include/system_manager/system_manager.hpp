@@ -9,11 +9,12 @@
 #include "iwdg_iface.hpp"
 
 #define SM_MAIN_DELAY 50
+#define MAX_MSG_COUNT 16
 
 class SystemManager {
     public:
         SystemManager(
-            // IIndependentWatchdog *iwdgDriver,
+            IIndependentWatchdog *iwdgDriver,
             ILogger *loggerDriver,
             IRCReceiver *rcDriver,
             IMessageQueue<RCMotorControlMessage_t> *amRCQueue,
