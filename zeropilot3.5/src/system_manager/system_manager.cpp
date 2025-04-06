@@ -1,7 +1,7 @@
 #include "system_manager.hpp"
 
 SystemManager::SystemManager(
-    // IIndependentWatchdog *iwdgDriver,
+    IIndependentWatchdog *iwdgDriver,
     ILogger *loggerDriver,
     IRCReceiver *rcDriver,
     IMessageQueue<RCMotorControlMessage_t> *amRCQueue,
@@ -58,13 +58,13 @@ void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
 }
 
 void SystemManager::sendMessagesToLogger() {
-    static char messages[16][100];
-    int msgCount = 0;
+    static char messages[MAX_MSG_COUNT][100];
+    int msgIdx = 0;
 
-    while (smLoggerQueue->count() > 0) {
-        smLoggerQueue->get(&messages[msgCount]);
-        msgCount++;
+    while (smLoggerQueue_->count() > 0 && msgIdx < 16) {
+        smLoggerQueue_->get(&messages[msgIdx]);
+        msgIdx++;
     }
 
-    loggerDriver->log(messages, msgCount);
+    loggerDriver_->log(messages, msgIdx);
 }
