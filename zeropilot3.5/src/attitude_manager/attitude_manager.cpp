@@ -19,9 +19,26 @@ void AttitudeManager::runControlLoopIteration() {
     // Get data from Queue and motor outputs
     bool res = getControlInputs(&controlMsg);
 
-    if (res != true){
-        // no data in the queue
+    // Failsafe
+    if (res != true) {
+        ++noDataCount;
+
+        if (noDataCount * AM_MAIN_DELAY > 500) {
+            outputToMotor(YAW, 50);
+            outputToMotor(PITCH, 50);
+            outputToMotor(ROLL, 50);
+            outputToMotor(THROTTLE, 0);
+        }
+
         return;
+    }
+    else {
+        noDataCount = 0;
+    }
+
+    // Disarm
+    if (controlMsg.arm == 0) {
+        controlMsg.throttle = 0;
     }
 
     RCMotorControlMessage_t motorOutputs = controlAlgorithm->runControl(controlMsg);
