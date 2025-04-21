@@ -5,6 +5,7 @@
 /* --- mutexes --- */
 /* declare mutexes begin*/
 extern osMutexId_t itmMutex;
+extern osMutexId_t canBroadcastMutex;
 /* declare mutexes end*/
 
 void initMutexes();
