@@ -6,24 +6,18 @@
 #include <canard.h>
 #include "stm32l5xx_hal.h"
 #include <dronecan_msgs.h>
-
-#include <map>
+#include "can_defines.hpp"
+#include "cmsis_os2.h"
+#include "museq.hpp"
 
 class CAN : ICAN {
 
 private:
-	std::map<uint8_t, Node_t> canNodes;
-	uint8_t nextAvailableID = 1;
-
-
-	static FDCAN_HandleTypeDef *fdcan;
-
-	// Returns the id of the allocated node
-	void handle_ReceiveNodeInfo(CanardInstance *ins, CanardRxTransfer *transfer);
-	void handle_allocation_response(CanardInstance *ins, CanardRxTransfer *transfer){
-	bool removeNode();
-
-	CanardInstance canInst;
+	Node_t canNodes[CANARD_MAX_NODE_ID + 1];
+	uint8_t nextAvailableID = CANARD_MIN_NODE_ID + 1;
+	FDCAN_HandleTypeDef *hfdcan;
+	
+	CanardInstance canard;
 
 	static bool CanardShouldAcceptTransfer(const CanardInstance* ins,          ///< Library instance
 	                                            uint64_t* out_data_type_signature,  ///< Must be set by the application!
@@ -36,16 +30,19 @@ private:
 
 	void sendCANTx();
 
-public:
-	CAN(FDCAN_HandleTypeDef* hfdcan);
-	CAN();
+	void handle_ReceiveNodeInfo(CanardRxTransfer *transfer);
+	void handle_NodeAllocation(CanardRxTransfer *transfer)
 
+public:
+	CAN(FDCAN_HandleTypeDef *hfdcan);
+	
 	virtual ~CAN();
+
+	bool routineTasks();
 
 	int16_t canardSTM32Receive(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame);
 	
 	bool routineTasks();
-
 
 	/**
 	 * Wrapper function with mutex
@@ -72,13 +69,13 @@ public:
 		CanardTxTransfer* transfer      ///< Transfer object
 	);
 
-	int16_t canardBroadcast(CanardInstance* ins,            ///< Library instance
-		uint64_t data_type_signature,   ///< See above
-		uint16_t data_type_id,          ///< Refer to the specification
-		uint8_t* inout_transfer_id,     ///< Pointer to a persistent variable containing the transfer ID
-		uint8_t priority,               ///< Refer to definitions CANARD_TRANSFER_PRIORITY_*
-		const void* payload,            ///< Transfer payload
+	int16_t broadcast(
+		uint64_t data_type_signature,
+		uint16_t data_type_id,
+		uint8_t* inout_transfer_id,
+		uint8_t priority,
+		const void* payload,
 		uint16_t payload_len
-	)
+	); 
 
 };
