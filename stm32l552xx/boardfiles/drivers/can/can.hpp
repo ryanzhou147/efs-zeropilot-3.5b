@@ -30,7 +30,8 @@ private:
 
 	void sendCANTx();
 
-	void handleNodeAllocation(CanardInstance* ins, CanardRxTransfer* transfer);
+	void handleNodeAllocation(CanardRxTransfer* transfer);
+	void receiveNodeInfo(CanardRxTransfer* transfer);
 
 	int8_t allocateNode();  
 

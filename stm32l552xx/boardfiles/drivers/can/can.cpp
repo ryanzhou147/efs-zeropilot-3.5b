@@ -59,10 +59,10 @@ void CAN::CanardOnTransferReception(CanardInstance *ins, CanardRxTransfer *trans
 			case UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID:
 			case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
 				if (transfer->transfer_type == CanardTransferTypeResponse) {
-					// handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
+					handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
 				}
 				else if (transfer->transfer_type == CanardTransferTypeBroadcast) {
-					handleNodeAllocation(ins, transfer); 	
+					handleNodeAllocation(transfer); 	
 				}
 				break;
 			}
@@ -70,7 +70,11 @@ void CAN::CanardOnTransferReception(CanardInstance *ins, CanardRxTransfer *trans
     }
 }
 
-void CAN::handleNodeAllocation(CanardInstance *ins, CanardRxTransfer *transfer){
+void CAN::receiveNodeInfo(CanardRxTransfer *transfer) {
+	
+}
+
+void CAN::handleNodeAllocation(CanardRxTransfer *transfer){
 
 	uint8_t first_half_unique_id[8];
 
