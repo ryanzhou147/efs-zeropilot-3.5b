@@ -1,9 +1,6 @@
 
 #pragma once
 
-#include "can_datatypes.hpp"
-#include <cstdint>
-
 class ICAN {
 
 protected:
