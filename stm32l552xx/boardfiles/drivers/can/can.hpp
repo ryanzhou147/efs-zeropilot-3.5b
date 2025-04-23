@@ -41,14 +41,18 @@ private:
 
 	uavcan_protocol_NodeStatus nodeStatus;
 
+	uint32_t last1HzTick = 0;
+
 
 public:
 	CAN(FDCAN_HandleTypeDef *hfdcan);
 
 	virtual ~CAN();
 
+	// Called as much as possible
 	bool routineTasks();
 
+	// Called once every second
 	void process1HzTasks();
 
 	int16_t canardSTM32Receive(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame);

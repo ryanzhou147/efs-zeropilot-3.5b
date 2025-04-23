@@ -181,6 +181,13 @@ void CAN::sendCANTx() {
 
 bool CAN::routineTasks() {
 	sendCANTx();
+
+	uint32_t tick = HAL_GetTick();
+
+	if (tick > last1HzTick + UAVCAN_PROTOCOL_NODESTATUS_MAX_BROADCASTING_PERIOD_MS/2) {
+		last1HzTick = tick;
+		process1HzTasks();
+	}
 }
 
 void CAN::sendNodeStatus() {
