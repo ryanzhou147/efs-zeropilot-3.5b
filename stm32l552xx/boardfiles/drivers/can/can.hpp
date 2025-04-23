@@ -49,7 +49,7 @@ public:
 
 	bool routineTasks();
 
-	void process1HzTasks(uint64_t timestamp_usec);
+	void process1HzTasks();
 
 	int16_t canardSTM32Receive(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame);
 	
