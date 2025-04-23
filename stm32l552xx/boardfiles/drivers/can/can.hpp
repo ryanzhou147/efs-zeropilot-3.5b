@@ -9,12 +9,13 @@
 #include "cmsis_os2.h"
 #include "museq.hpp"
 #include <cstdint>
+#include "can_datatypes.hpp"
 
 
 class CAN : ICAN {
 
 private:
-	uavcan_protocol_NodeStatus canNodes[CANARD_MAX_NODE_ID + 1];
+	canNode canNodes[CANARD_MAX_NODE_ID + 1];
 	uint8_t nextAvailableID = CANARD_MIN_NODE_ID + 1;
 	FDCAN_HandleTypeDef *hfdcan;
 	
@@ -29,12 +30,16 @@ private:
 	void CanardOnTransferReception(CanardInstance* ins,                 ///< Library instance
 	                                           CanardRxTransfer* transfer);
 
+	void sendNodeStatus();
+
 	void sendCANTx();
 
 	void handleNodeAllocation(CanardRxTransfer* transfer);
 	void handleNodeStatus(CanardRxTransfer* transfer);
 
 	int8_t allocateNode();  
+
+	uavcan_protocol_NodeStatus nodeStatus;
 
 
 public:
@@ -43,6 +48,8 @@ public:
 	virtual ~CAN();
 
 	bool routineTasks();
+
+	void process1HzTasks(uint64_t timestamp_usec);
 
 	int16_t canardSTM32Receive(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame);
 	

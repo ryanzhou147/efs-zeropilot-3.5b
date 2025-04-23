@@ -76,9 +76,13 @@ void CAN::CanardOnTransferReception(CanardInstance *ins, CanardRxTransfer *trans
 }
 
 void CAN::handleNodeStatus(CanardRxTransfer *transfer) {
-	uavcan_protocol_NodeStatus status {};
+	uint32_t tick = HAL_GetTick();
+	
+	canNode node {};
 
-	bool success = uavcan_protocol_NodeStatus_decode(transfer, &status);
+	node.lastSeenTick = tick;
+
+	bool success = uavcan_protocol_NodeStatus_decode(transfer, &node.status);
 
 	if (!success) return;
 
@@ -86,7 +90,7 @@ void CAN::handleNodeStatus(CanardRxTransfer *transfer) {
 	if (transfer->source_node_id > CANARD_MAX_NODE_ID) return; 
 	if (transfer->source_node_id == 0) return; 
 
-	canNodes[transfer->source_node_id] = status;
+	canNodes[transfer->source_node_id] = node;
 }
 
 void CAN::handleNodeAllocation(CanardRxTransfer *transfer){
@@ -177,6 +181,50 @@ void CAN::sendCANTx() {
 
 bool CAN::routineTasks() {
 	sendCANTx();
+}
+
+void CAN::sendNodeStatus() {
+	uint8_t buffer[UAVCAN_PROTOCOL_GETNODEINFO_RESPONSE_MAX_SIZE];
+
+    nodeStatus.uptime_sec = HAL_GetTick()/1000LL;
+    nodeStatus.health = UAVCAN_PROTOCOL_NODESTATUS_HEALTH_OK;
+    nodeStatus.mode = UAVCAN_PROTOCOL_NODESTATUS_MODE_OPERATIONAL;
+    nodeStatus.sub_mode = 0;
+    // put whatever you like in here for display in GUI
+    nodeStatus.vendor_specific_status_code = 1234;
+
+    uint32_t len = uavcan_protocol_NodeStatus_encode(&node_status, buffer);
+
+    // we need a static variable for the transfer ID. This is
+    // incremeneted on each transfer, allowing for detection of packet
+    // loss
+    static uint8_t transfer_id;
+
+    canardBroadcast(&canard,
+                    UAVCAN_PROTOCOL_NODESTATUS_SIGNATURE,
+                    UAVCAN_PROTOCOL_NODESTATUS_ID,
+                    &transfer_id,
+                    CANARD_TRANSFER_PRIORITY_LOW,
+                    buffer,
+                    len);
+}
+
+void CAN::process1HzTasks() {
+	
+	uint32_t timestamp_msec = HAL_GetTick();
+
+	// Check if nodes invalid
+	for (int i = CANARD_MIN_NODE_ID; i <= CANARD_MAX_NODE_ID; i++) {
+		// Make copy of status in case it changes
+		canNode node = canNodes[i];
+		
+		if (timestamp_msec-node.lastSeenTick > UAVCAN_PROTOCOL_NODESTATUS_OFFLINE_TIMEOUT_MS) {
+			canNodes[i].status.mode = UAVCAN_PROTOCOL_NODESTATUS_MODE_OFFLINE;
+		}
+	}
+
+	// Transmit NodeStatus
+	sendNodeStatus();
 }
 
 
