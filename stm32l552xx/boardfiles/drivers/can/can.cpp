@@ -18,9 +18,7 @@ CAN::CAN(FDCAN_HandleTypeDef *hfdcan) : hfdcan(hfdcan) {
 	canard.node_id = NODE_ID;
 }
 
-CAN::~CAN() {
-
-}
+CAN::~CAN() {}
 
 bool CAN::CanardShouldAcceptTransfer(
 	const CanardInstance *ins,
@@ -33,7 +31,7 @@ bool CAN::CanardShouldAcceptTransfer(
 		// check if we want to handle a specific service request
 		switch (data_type_id) {
 			case UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID:
-			case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
+			/* case UAVCAN_PROTOCOL_GETNODEINFO_ID: */ {
 				if (transfer_type == CanardTransferTypeResponse || transfer_type == CanardTransferTypeRequest) {
 					*out_data_type_signature = UAVCAN_PROTOCOL_GETNODEINFO_REQUEST_SIGNATURE;
 					return true;
@@ -46,6 +44,9 @@ bool CAN::CanardShouldAcceptTransfer(
 					return false;
 				}
 			}
+			case UAVCAN_PROTOCOL_NODESTATUS_ID: {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -57,21 +58,35 @@ void CAN::CanardOnTransferReception(CanardInstance *ins, CanardRxTransfer *trans
         // check if we want to handle a specific service request
         switch (transfer->data_type_id) {
 			case UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID:
-			case UAVCAN_PROTOCOL_GETNODEINFO_ID: {
+			/* case UAVCAN_PROTOCOL_GETNODEINFO_ID: */ {
 				if (transfer->transfer_type == CanardTransferTypeResponse) {
-					handle_ReceiveNodeInfo(transfer); // TODO need to implement this function
+					// handleGetNodeInfo here 
 				}
 				else if (transfer->transfer_type == CanardTransferTypeBroadcast) {
 					handleNodeAllocation(transfer); 	
 				}
 				break;
 			}
+			case UAVCAN_PROTOCOL_NODESTATUS_ID: {
+				handleNodeStatus(transfer);
+				break;
+			}
         }
     }
 }
 
-void CAN::receiveNodeInfo(CanardRxTransfer *transfer) {
-	
+void CAN::handleNodeStatus(CanardRxTransfer *transfer) {
+	uavcan_protocol_NodeStatus status {};
+
+	bool success = uavcan_protocol_NodeStatus_decode(transfer, &status);
+
+	if (!success) return;
+
+	// Node ID out of bounds or is anonymous
+	if (transfer->source_node_id > CANARD_MAX_NODE_ID) return; 
+	if (transfer->source_node_id == 0) return; 
+
+	canNodes[transfer->source_node_id] = status;
 }
 
 void CAN::handleNodeAllocation(CanardRxTransfer *transfer){
@@ -126,13 +141,6 @@ int8_t CAN::allocateNode() {
 	}
 
 	nextAvailableID++;
-
-	canNodes[currId].nodeId = currId;
-	canNodes[currId].health = 1;
-	canNodes[currId].lastHeartbeatTime = HAL_GetTick();
-	canNodes[currId].uptime = 0;
-	canNodes[currId].softwareVersion = 0;
-	canNodes[currId].hardwareVersion = 0;
 	
 	return currId;	
 }

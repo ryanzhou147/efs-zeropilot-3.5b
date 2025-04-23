@@ -2,18 +2,19 @@
 #pragma once
 
 #include <can_iface.hpp>
-#include "can_datatypes.hpp"
 #include <canard.h>
 #include "stm32l5xx_hal.h"
 #include <dronecan_msgs.h>
 #include "can_defines.hpp"
 #include "cmsis_os2.h"
 #include "museq.hpp"
+#include <cstdint>
+
 
 class CAN : ICAN {
 
 private:
-	Node_t canNodes[CANARD_MAX_NODE_ID + 1];
+	uavcan_protocol_NodeStatus canNodes[CANARD_MAX_NODE_ID + 1];
 	uint8_t nextAvailableID = CANARD_MIN_NODE_ID + 1;
 	FDCAN_HandleTypeDef *hfdcan;
 	
@@ -31,7 +32,7 @@ private:
 	void sendCANTx();
 
 	void handleNodeAllocation(CanardRxTransfer* transfer);
-	void receiveNodeInfo(CanardRxTransfer* transfer);
+	void handleNodeStatus(CanardRxTransfer* transfer);
 
 	int8_t allocateNode();  
 
