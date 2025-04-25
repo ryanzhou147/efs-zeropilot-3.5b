@@ -260,29 +260,46 @@ int16_t CAN::broadcastObj(CanardTxTransfer* transfer) {
 }
 
 int16_t CAN::broadcast(
+	CanardTransferType transfer_type,
 	uint64_t data_type_signature,
 	uint16_t data_type_id,
 	uint8_t* inout_transfer_id,
 	uint8_t priority,
-	const void* payload,
+	const uint8_t* payload,
 	uint16_t payload_len
+	#if CANARD_ENABLE_CANFD
+		, bool canfd; ///< True if CAN FD is enabled
+	#endif
+	#if CANARD_ENABLE_DEADLINE
+		, uint64_t deadline_usec; ///< Deadline in microseconds
+	#endif
+	#if CANARD_MULTI_IFACE
+		, uint8_t iface_mask; ///< Bitmask of interfaces to send the transfer on
+	#endif
+	#if CANARD_ENABLE_TAO_OPTION
+		, bool tao; ///< True if tail array optimization is enabled
+	#endif
 )
 {
 	CanardTxTransfer transfer_object = {
-		.data_type_signature = data_type_signature,
-		.data_type_id = data_type_id,
-		.inout_transfer_id = inout_transfer_id,
-		.priority = priority,
-		.payload = (uint8_t*)payload,
-		.payload_len = payload_len,
+		transfer_type = transfer_type,
+		data_type_signature = data_type_signature,
+		data_type_id = data_type_id,
+		inout_transfer_id = inout_transfer_id,
+		priority = priority,
+		payload = payload,
+		payload_len = payload_len,
+		#if CANARD_ENABLE_CANFD
+			canfd = canfd, ///< True if CAN FD is enabled
+		#endif
 		#if CANARD_ENABLE_DEADLINE
-				.deadline_usec = tx_deadline,
+			deadline_usec = deadline_usec, ///< Deadline in microseconds
 		#endif
 		#if CANARD_MULTI_IFACE
-				.iface_mask = iface_mask,
+			iface_mask = iface_mask, ///< Bitmask of interfaces to send the transfer on
 		#endif
-		#if CANARD_ENABLE_CANFD
-				.canfd = canfd,
+		#if CANARD_ENABLE_TAO_OPTION
+			tao = tao, ///< True if tail array optimization is enabled
 		#endif
 	};
 
