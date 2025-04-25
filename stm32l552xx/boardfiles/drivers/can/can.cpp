@@ -3,22 +3,30 @@
 #include "can.hpp"
 
 CAN::CAN(FDCAN_HandleTypeDef *hfdcan) : hfdcan(hfdcan) {
-//	this->canard.on_reception = &this->CanardOnTransferReception;
-//	this->canard.should_accept = &this->shouldAcceptTransfer;
 	static uint8_t canardMemoryPool[1024];
 
 	canardInit(&canard,
 			canardMemoryPool,
 			sizeof(canardMemoryPool),
-			&CAN::CanardOnTransferReception,
-			&CAN::CanardShouldAcceptTransfer,
-			NULL
+			&StaticOnTransferReception,
+			&StaticShouldAcceptTransfer,
+			this
 	);
 
 	canard.node_id = NODE_ID;
 }
 
 CAN::~CAN() {}
+
+static void StaticOnTransferReception(CanardInstance* ins, CanardRxTransfer* transfer) {
+    CAN* self = static_cast<CAN*>(ins->user_reference);
+    self->CanardOnTransferReception(ins, transfer);
+}
+
+static bool StaticShouldAcceptTransfer(const CanardInstance* ins, uint64_t* out_sig, uint16_t id, CanardTransferType type, uint8_t src) {
+	
+	return static_cast<CAN*>(ins->user_reference)->CanardShouldAcceptTransfer(ins, out_sig, id, type, src);
+}
 
 bool CAN::CanardShouldAcceptTransfer(
 	const CanardInstance *ins,
