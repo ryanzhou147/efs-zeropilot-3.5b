@@ -1,7 +1,7 @@
 #include "system_manager.hpp"
 
 SystemManager::SystemManager(
-//    IIndependentWatchdog *iwdgDriver,
+    IIndependentWatchdog *iwdgDriver,
     ILogger *loggerDriver,
     IRCReceiver *rcDriver,
     IMessageQueue<RCMotorControlMessage_t> *amRCQueue,

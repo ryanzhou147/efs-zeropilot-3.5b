@@ -1,19 +1,17 @@
 #pragma once
 
-#include <cstdint>
-#include "logger_iface.hpp"
-#include "queue_iface.hpp"
-#include "rc_iface.hpp"
-#include "rc_datatypes.hpp"
-#include "rc_motor_control.hpp"
 #include "iwdg_iface.hpp"
+#include "logger_iface.hpp"
+#include "rc_iface.hpp"
+#include "rc_motor_control.hpp"
+#include "queue_iface.hpp"
 
 #define SM_MAIN_DELAY 50
 
 class SystemManager {
     public:
         SystemManager(
-//            IIndependentWatchdog *iwdgDriver,
+            IIndependentWatchdog *iwdgDriver,
             ILogger *loggerDriver,
             IRCReceiver *rcDriver,
             IMessageQueue<RCMotorControlMessage_t> *amRCQueue,
