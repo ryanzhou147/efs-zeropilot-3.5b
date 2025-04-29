@@ -1,5 +1,5 @@
 #include <cstdint>
-#include <uavcan.protocol.NodeStatus.h>
+#include <dronecan_msgs.h>
 
 struct canNode {
     uint64_t lastSeenTick;
