@@ -59,7 +59,7 @@ void RFD::receiveCallback(uint16_t size){
         overlapped = false;
     }
 
-    HAL_UARTEx_ReceiveToIdle_DMA(huart, rxBuffer, BUFFER_SIZE);
+    // HAL_UARTEx_ReceiveToIdle_DMA(huart, rxBuffer, BUFFER_SIZE);
 }
 
 UART_HandleTypeDef* RFD::getHuart() const {
