@@ -18,13 +18,16 @@ public:
     RFD(UART_HandleTypeDef* huart);
     ~RFD();
 
-    void startReceive(uint8_t* buffer, uint16_t bufferSize) override;
+    void startReceive() override;
     void transmit(const uint8_t* data, uint16_t size) override;
     uint16_t receive(uint8_t* buffer, uint16_t bufferSize) override;
 
     // Getters
     UART_HandleTypeDef* getHuart() const;
-    bool getErrorFlag() override;
+    bool getErrorFlag() const override;
+
+    // Setters
+    void resetErrorFlag() override;
 
     // DMA callback
     void receiveCallback(uint16_t size);

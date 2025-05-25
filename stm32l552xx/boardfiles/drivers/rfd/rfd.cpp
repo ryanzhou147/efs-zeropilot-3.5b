@@ -3,7 +3,7 @@
 
 RFD* RFD::instance = nullptr; // global instance
 
-RFD::RFD(UART_HandleTypeDef* huart) : huart(huart), readIndex(0), writeIndex(0), overlapped(false), errorFlag(true){
+RFD::RFD(UART_HandleTypeDef* huart) : huart(huart), readIndex(0), writeIndex(0), overlapped(false), errorFlag(false){
     instance = this;
 }
 
@@ -17,7 +17,7 @@ void RFD::transmit(const uint8_t* data, uint16_t size) {
     }
 }
 
-void RFD::startReceive(uint8_t* buffer, uint16_t bufferSize) {
+void RFD::startReceive() {
     if (huart) {
         HAL_UARTEx_ReceiveToIdle_DMA(huart, rxBuffer, BUFFER_SIZE);
     }
@@ -66,6 +66,10 @@ UART_HandleTypeDef* RFD::getHuart() const {
     return huart;
 }
 
-bool RFD::getErrorFlag() {
+bool RFD::getErrorFlag() const {
     return errorFlag;
+}
+
+void RFD::resetErrorFlag() {
+    errorFlag = false;
 }
