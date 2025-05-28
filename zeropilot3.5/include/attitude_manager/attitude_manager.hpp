@@ -7,6 +7,7 @@
 #include "motor_datatype.hpp"
 
 #define AM_MAIN_DELAY 50
+#define ADVERSE_YAW_COEFFICIENT 1.5f
 
 typedef enum {
     YAW = 0,
@@ -47,6 +48,10 @@ class AttitudeManager {
         MotorGroupInstance_t *throttleMotors;
         MotorGroupInstance_t *flapMotors;
         MotorGroupInstance_t *steeringMotors;
+
+        
+        float adverseYaw = 0.0f;
+        float signedYaw = 0.0f;
 
         bool getControlInputs(RCMotorControlMessage_t *pControlMsg);
 

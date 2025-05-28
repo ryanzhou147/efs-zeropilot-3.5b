@@ -1,6 +1,7 @@
 #include "attitude_manager.hpp"
 #include "rc_motor_control.hpp"
 
+
 AttitudeManager::AttitudeManager(
     IMessageQueue<RCMotorControlMessage_t> *amQueue,
     IMessageQueue<char[100]> *smLoggerQueue,
@@ -65,6 +66,17 @@ void AttitudeManager::runControlLoopIteration() {
 
     RCMotorControlMessage_t motorOutputs = controlAlgorithm->runControl(controlMsg);
 
+    signedYaw = motorOutputs.roll-50;
+    adverseYaw = signedYaw * ADVERSE_YAW_COEFFICIENT;
+    motorOutputs.yaw +=adverseYaw; 
+    // limit yaw to 100
+    if (motorOutputs.yaw>100){
+        motorOutputs.yaw = 100;
+    //limit yaw to 0
+    } else if (motorOutputs.yaw < 0) {
+        motorOutputs.yaw = 0;
+    }
+    
     outputToMotor(YAW, motorOutputs.yaw);
     outputToMotor(PITCH, motorOutputs.pitch);
     outputToMotor(ROLL, motorOutputs.roll);
