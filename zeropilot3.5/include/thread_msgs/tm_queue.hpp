@@ -22,7 +22,7 @@ typedef union{
   } AMData_t;
   struct{
       int16_t temperature = 0;
-      uint16_t voltages[3] = {};
+      uint16_t* voltages;
       int16_t current_battery = 0;
       int32_t current_consumed = 0;
       int32_t energy_consumed = 0;
@@ -52,10 +52,16 @@ inline TMMessage_t AMData_Pack(uint32_t time_boot_ms, float roll, float pitch, f
     return TMMessage_t{TMMessage_t::AM_DATA, data, time_boot_ms};
 }
 
-inline TMMessage_t BMData_Pack(uint32_t time_boot_ms, int16_t temperature, uint16_t *voltages, int16_t current_battery, int32_t current_consumed,
+inline TMMessage_t BMData_Pack(uint32_t time_boot_ms, int16_t temperature, float *voltages, uint8_t voltage_len, int16_t current_battery, int32_t current_consumed,
     int32_t energy_consumed, int8_t battery_remaining, int32_t time_remaining, uint8_t charge_state) {
-
-    const TMMessageData_t data = {.BMData_t ={temperature, voltages[0], voltages[1], voltages[2], current_battery,
+    uint16_t mavlink_voltage_array[16] = {UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
+    for (int i = 0; i < voltage_len; i++) {
+        mavlink_voltage_array[i] = static_cast<uint16_t>(voltages[i]);
+    }
+    if (temperature == -1) {
+        temperature = INT16_MAX;
+    }
+    const TMMessageData_t data = {.BMData_t ={temperature, mavlink_voltage_array, current_battery,
     current_consumed, energy_consumed, battery_remaining, time_remaining, charge_state}};
     return TMMessage_t{TMMessage_t::BM_DATA, data, time_boot_ms};
 }
