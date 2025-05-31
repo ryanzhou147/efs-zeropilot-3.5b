@@ -2,6 +2,8 @@
 #include <cstring>
 #include "logger.hpp"
 
+#define MAX_LINE_LENGTH 128
+
 int Logger::init() {
 #if defined(SD_CARD_LOGGING)
     HAL_Delay(1000);
@@ -81,4 +83,28 @@ int Logger::log(const char message[][100], int count) {
     }
     return 0;
 #endif
+}
+
+int Logger::read(char *valueBuf, size_t bufSize, const char *key) {
+  char line[MAX_LINE_LENGTH];
+  FRESULT res;
+  res = f_open(&fil, file, FA_READ);
+  if (!res) {
+    printf("Could not open file: ", file);
+    return 1;
+  }
+  while (f_gets(line, sizeof(line), &fil)) {
+    char *readKey = strtok(line, ",\r\n");
+    char *readValue = strtok(NULL, ",\r\n");
+
+    if (strcmp(readKey, key) == 0) {
+      strncpy(valueBuf, readValue, bufSize - 1);
+      valueBuf[bufSize - 1] = '\0';
+      f_close(&fil);
+      return 0; // Key found and value put in buffer
+    }
+  }
+  
+  f_close(&fil);
+  return 1; // Key not found
 }

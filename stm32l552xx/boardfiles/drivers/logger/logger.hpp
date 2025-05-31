@@ -27,6 +27,8 @@ class Logger : public ILogger {
          */
         int log(const char messages[][100], int count);
 
+        int read(char *valueBuf, size_t bufSize, const char *key);
+
         /**
          * @brief mounts SD card and selects file to write to, call before starting kernel
          */
