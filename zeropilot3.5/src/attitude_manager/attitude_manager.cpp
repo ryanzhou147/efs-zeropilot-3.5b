@@ -77,12 +77,12 @@ void AttitudeManager::runControlLoopIteration() {
         motorOutputs.yaw = 0;
     }
     
-    outputToMotor(YAW, motorOutputs.yaw);
-    outputToMotor(PITCH, motorOutputs.pitch);
-    outputToMotor(ROLL, motorOutputs.roll);
-    outputToMotor(THROTTLE, motorOutputs.throttle);
-    outputToMotor(FLAP_ANGLE, motorOutputs.flapAngle);
-    outputToMotor(STEERING, motorOutputs.yaw);
+    outputToMotor(YAW, motorOutputs.yaw+YAWMOTORS_TRIM);
+    outputToMotor(PITCH, motorOutputs.pitch+PITCHMOTORS_TRIM);
+    outputToMotor(ROLL, motorOutputs.roll+ROLLMOTORS_TRIM);
+    outputToMotor(THROTTLE, motorOutputs.throttle+THROTTLEMOTORS_TRIM);
+    outputToMotor(FLAP_ANGLE, motorOutputs.flapAngle+FLAPMOTORS_TRIM);
+    outputToMotor(STEERING, motorOutputs.yaw+STEERINGMOTORS_TRIM);
 }
 
 bool AttitudeManager::getControlInputs(RCMotorControlMessage_t *pControlMsg) {
