@@ -1,8 +1,6 @@
-#include <cstdio>
-#include <cstring>
 #include "logger.hpp"
-
-#define MAX_LINE_LENGTH 128
+#include <cstring>
+#include <cstdio>
 
 int Logger::init() {
 #if defined(SD_CARD_LOGGING)
@@ -29,9 +27,10 @@ int Logger::init() {
 #elif defined(SWO_LOGGING)
     return 0;
 #endif
+
 }
 
-int Logger::log(const char message[100]) {
+int Logger::log(char message[100]) {
     char msgToSend[112]; //10 for timestamp, 100 for message, 2 for new line
 
     uint32_t ts = (uint32_t)(osKernelGetTickCount() * 1.0 / osKernelGetTickFreq());
@@ -56,7 +55,7 @@ int Logger::log(const char message[100]) {
 #endif
 }
 
-int Logger::log(const char message[][100], int count) {
+int Logger::log(char message[][100], int count) {
     char msgToSend[112]; //10 for timestamp, 100 for message, 2 for new line
 
     uint32_t ts = (uint32_t)(osKernelGetTickCount() * 1.0 / osKernelGetTickFreq());
@@ -85,26 +84,38 @@ int Logger::log(const char message[][100], int count) {
 #endif
 }
 
-int Logger::read(char *valueBuf, size_t bufSize, const char *key) {
-  char line[MAX_LINE_LENGTH];
-  FRESULT res;
-  res = f_open(&fil, file, FA_READ);
-  if (!res) {
-    printf("Could not open file: ", file);
-    return 1;
+#if defined(SWO_LOGGING)
+extern "C" {
+  int __io_putchar(int ch) {
+    return ITM_SendChar(ch);
   }
-  while (f_gets(line, sizeof(line), &fil)) {
-    char *readKey = strtok(line, ",\r\n");
-    char *readValue = strtok(NULL, ",\r\n");
+}
+#endif
 
-    if (strcmp(readKey, key) == 0) {
-      strncpy(valueBuf, readValue, bufSize - 1);
-      valueBuf[bufSize - 1] = '\0';
-      f_close(&fil);
-      return 0; // Key found and value put in buffer
-    }
-  }
-  
-  f_close(&fil);
-  return 1; // Key not found
+int Logger::read(char *valueBuf, size_t bufSize, const char *key) {
+#if defined(MAX_LINE_LENGTH)
+	char line[MAX_LINE_LENGTH];
+	  FRESULT res;
+	  res = f_open(&fil, "csvfile.txt", FA_READ); //name subject to change
+	  if (res) {
+	    printf("Could not open file: %s", file);
+	    return 1;
+	  }
+	  while (f_gets(line, sizeof(line), &fil)) {
+	    char *readKey = strtok(line, ",\r\n");
+	    char *readValue = strtok(NULL, ",\r\n");
+
+	    if (strcmp(readKey, key) == 0) {
+	      strncpy(valueBuf, readValue, bufSize - 1);
+	      valueBuf[bufSize - 1] = '\0';
+	      f_close(&fil);
+	      return 0; // Key found and value put in buffer
+	    }
+	  }
+
+	  f_close(&fil);
+	  return 1; // Key not found
+#elif
+	  return 1;
+#endif
 }
