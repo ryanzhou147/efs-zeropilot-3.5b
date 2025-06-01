@@ -3,7 +3,7 @@
 #define COMPONENT_ID 1          // Suggested Component ID by MAVLINK
 
 
-TelemetryManager::TelemetryManager(IRFD *rfdDriver, IMessageQueue<TMMessage_t> *tmQueueDriver, IMessageQueue<mavlink_message_t> *messageBuffer):
+TelemetryManager::TelemetryManager(IRFD *rfdDriver, IMessageQueue<TMMessage_t> *tmQueueDriver, IMessageQueue<TMMessage_t> *amQueueDriver, IMessageQueue<mavlink_message_t> *messageBuffer):
     tmQueueDriver_(tmQueueDriver), rfdDriver_(rfdDriver), messageBuffer_(messageBuffer) {
 
 }
@@ -14,7 +14,8 @@ TelemetryManager::~TelemetryManager() = default;
 void TelemetryManager::processMsgQueue() {
     while (tmQueueDriver_->count() > 0) {
         mavlink_message_t mavlink_message = {};
-        TMMessage_t tmq_message = tmQueueDriver_->pop();
+        TMMessage_t tmq_message = {};
+        tmQueueDriver_->get(&tmq_message);
 
         switch (tmq_message.DataType) {
             case TMMessage_t::GPOS_DATA:
@@ -35,7 +36,7 @@ void TelemetryManager::processMsgQueue() {
             case default:
                 //WHOOPS
         }
-        messageBuffer_->push(mavlink_message);
+        messageBuffer_->push(&mavlink_message);
     }
 }
 
@@ -47,14 +48,14 @@ void TelemetryManager::heartBeatMsg() {
 
     mavlink_msg_heartbeat_pack(SYSTEM_ID, COMPONENT_ID, &heartbeat_message, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_INVALID,
                                base_mode, 0, system_status);
-    messageBuffer_->push(heartbeat_message);
+    messageBuffer_->push(&heartbeat_message);
 }
 
 void TelemetryManager::transmit() {
     uint8_t transmit_buffer[MAVLINK_MSG_MAX_SIZE];
     mavlink_message_t msg_to_tx{};
         while (messageBuffer_->count() > 0) {
-            msg_to_tx = messageBuffer_->pop();
+            messageBuffer_->get(&msg_to_tx);
             const uint8_t msg_len = mavlink_msg_to_send_buffer(transmit_buffer, &msg_to_tx);
             rfdDriver_->transmit(transmit_buffer, msg_len);
         }
@@ -82,9 +83,23 @@ void TelemetryManager::reconstructMessage() {
 
 void TelemetryManager::sendCmdFromMessage(const mavlink_message_t &msg) {
     switch (msg.msgid) {
-        case MAVLINK_MSG_ID_COMMAND_LONG:
-            break;
         case MAVLINK_MSG_ID_PARAM_SET:
+            float value_to_set;
+            char param_to_set[17] = {};
+            uint8_t value_type;
+            uint16_t param_id_len = mavlink_msg_param_set_get_param_id(&msg, param_to_set);
+            value_to_set = mavlink_msg_param_set_get_param_value(&msg);
+            value_type = mavlink_msg_param_set_get_param_type(&msg);
+
+            if(param_to_set[0] == 'A'){ //TODO: establish a LUT in the case that we need to set multiple params
+                //assuming this is an arm/disarm message
+                RCMotorControlMessage_t arm_disarm_msg{};
+                arm_disarm_msg.arm = value_to_set;
+                amQueueDriver_->push(&arm_disarm_msg); //Failsafe for if queue is full?
+            }
+            mavlink_message_t response = {};
+            mavlink_msg_param_value_pack(SYSTEM_ID, COMPONENT_ID, &response, param_to_set, value_to_set, value_type, 1, 0);
+            messageBuffer_->push(&response);
             break;
         default:
             break;
