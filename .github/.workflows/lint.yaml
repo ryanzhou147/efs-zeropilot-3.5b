@@ -1,0 +1,66 @@
+name: C/C++ CI
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi libgtest-dev libgmock-dev clang-tidy g++ build-essential
+
+      - name: Build Main
+        working-directory: ./zeropilot3.5
+        run: |
+          chmod +x hwbuild.bash
+          ./hwbuild.bash -c l552
+          # Assuming hwbuild.bash configures CMake with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Build tests
+        working-directory: ./zeropilot3.5/tests
+        run: |
+          chmod +x testbuild.bash
+          ./testbuild.bash -c l552
+          # Same assumption for testbuild.bash
+
+      - name: Copy compile_commands.json for clang-tidy
+        run: |
+          cp ../build/l552/compile_commands.json ./compile_commands_l552.json
+          cp build/l552/compile_commands.json ./tests_compile_commands_l552.json
+        working-directory: ./zeropilot3.5
+
+      - name: Show GCC system include paths
+        id: gcc_includes
+        run: |
+          paths=$(echo | g++ -v -x c++ -E - 2>&1 | grep '^ /' | sed 's/^ //g' | paste -sd ' --extra-arg=-isystem ' -)
+          echo "paths=--extra-arg=-isystem $paths" >> $GITHUB_OUTPUT
+
+      - name: Run Clang-Tidy on src with l552 build config
+        run: |
+          find ./zeropilot3.5/src -name '*.cpp' -o -name '*.h' | \
+          xargs clang-tidy -p ./zeropilot3.5/build/l552 \
+            --config-file=.clang-tidy \
+            --checks='readability-identifier-naming*' \
+            --warnings-as-errors=all \
+            --extra-arg=-std=c++17 \
+            --extra-arg=--gcc-toolchain=/usr \
+            --header-filter=.* \
+            ${{ steps.gcc_includes.outputs.paths }}
+
+      - name: Run Clang-Tidy on tests with l552 test build config
+        run: |
+          find ./zeropilot3.5/tests -name '*.cpp' -o -name '*.h' | \
+          xargs clang-tidy -p ./zeropilot3.5/tests/build \
+            --config-file=.clang-tidy \
+            --checks='readability-identifier-naming*' \
+            --warnings-as-errors=all \
+            --extra-arg=-std=c++17 \
+            --extra-arg=--gcc-toolchain=/usr \
+            ${{ steps.gcc_includes.outputs.paths }}

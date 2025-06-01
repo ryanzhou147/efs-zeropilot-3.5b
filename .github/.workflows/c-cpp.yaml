@@ -1,0 +1,26 @@
+name: Cmake C compilation and testing
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-arm-none-eabi libgtest-dev libgmock-dev
+    - name: Build Main 
+      working-directory: ./zeropilot3.5
+      run: chmod +x hwbuild.bash && ./hwbuild.bash -c l552
+    - name: Build tests
+      working-directory: ./zeropilot3.5/tests
+      run: pwd && ls -la && ls system_manager && chmod +x testbuild.bash && ./testbuild.bash -c l552
+    - name: Run tests
+      working-directory: ./zeropilot3.5/tests
+      run: chmod +x build/gtestzeropilot3.5 && ./build/gtestzeropilot3.5
