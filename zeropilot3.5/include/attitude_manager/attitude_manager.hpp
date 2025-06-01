@@ -9,6 +9,13 @@
 #define AM_MAIN_DELAY 50
 #define ADVERSE_YAW_COEFFICIENT 1.5f
 
+#define ROLLMOTORS_TRIM 0
+#define PITCHMOTORS_TRIM 0
+#define YAWMOTORS_TRIM 0
+#define THROTTLEMOTORS_TRIM 0
+#define FLAPMOTORS_TRIM 0
+#define STEERINGMOTORS_TRIM 0
+
 typedef enum {
     YAW = 0,
     PITCH,
