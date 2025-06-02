@@ -1,20 +1,36 @@
 #!/usr/bin/env bash
 set -e
 
-# Set project root as current directory
-project_root=$(pwd)
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-# Create and enter host build directory
-build_dir="$project_root/build-host"
+build_dir="${script_dir}/build-host"
+
+echo "==> Setting up host build directory: $build_dir"
+
+# Create/clean host build dir
+if [[ -d "$build_dir" ]]; then
+  rm -rf "$build_dir"
+fi
 mkdir -p "$build_dir"
+
+# Run native cmake config with compile_commands export
 cd "$build_dir"
+echo "==> Running native CMake configure..."
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$script_dir"
 
-# Run CMake for host compiler, export compile commands
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$project_root"
+echo "==> Building native host build..."
+cmake --build .
 
-# Run clang-tidy on all source and header files under src and include
-# Adjust this find if you want to lint other folders/files
-find "$project_root/src" "$project_root/include" -type f \( -name "*.cpp" -o -name "*.hpp" \) | \
-  xargs clang-tidy -p "$build_dir" --quiet
+# Now run clang-tidy on host build directory
+echo "==> Running clang-tidy..."
 
-echo "clang-tidy analysis complete."
+# Find source files (adjust if needed)
+src_files=$(find "$script_dir/src" "$script_dir/include" -name '*.cpp' -o -name '*.hpp')
+
+# Run clang-tidy with compile_commands from host build
+clang-tidy $src_files -p "$build_dir" \
+  --checks='readability-identifier-naming*' \
+  --warnings-as-errors='readability-identifier-naming*' \
+  --system-headers=false
+
+echo "==> Done linting."

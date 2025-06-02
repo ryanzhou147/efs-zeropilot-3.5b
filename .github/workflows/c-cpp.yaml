@@ -1,6 +1,8 @@
-name: Cmake C compilation and testing
+name: Cmake C compilation and Running google test
 
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
