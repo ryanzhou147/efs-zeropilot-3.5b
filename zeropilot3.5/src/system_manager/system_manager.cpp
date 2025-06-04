@@ -4,12 +4,14 @@ SystemManager::SystemManager(
     IIndependentWatchdog *iwdgDriver,
     ILogger *loggerDriver,
     IRCReceiver *rcDriver, 
-    IMessageQueue<RCMotorControlMessage_t> *amRCQueue, 
+    IMessageQueue<RCMotorControlMessage_t> *amRCQueue,
+    IMessageQueue<TMMessage_t> *tmQueue,
     IMessageQueue<char[100]> *smLoggerQueue) : 
         iwdgDriver_(iwdgDriver),
         loggerDriver_(loggerDriver),
         rcDriver_(rcDriver), 
         amRCQueue_(amRCQueue),
+        tmQueue_(tmQueue),
         smLoggerQueue_(smLoggerQueue) {}
 
 void SystemManager::SMUpdate() {
@@ -37,11 +39,19 @@ void SystemManager::SMUpdate() {
             rcConnected = false;
         }
     }
+    //Send to TM?
+    sendRCDataToTelemetryManager(rcData);
 
     // Log if new messages
     if (smLoggerQueue_->count() > 0) {
         sendMessagesToLogger();
     }
+}
+
+void SystemManager::sendRCDataToTelemetryManager(const RCControl &rcData) {
+    TMMessage_t rc_data_msg =  RCData_Pack(0, rcData.roll, rcData.pitch, rcData.yaw, rcData.throttle, rcData.aux2, rcData.arm);
+    tmQueue_->push(&rc_data_msg);
+
 }
 
 void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {

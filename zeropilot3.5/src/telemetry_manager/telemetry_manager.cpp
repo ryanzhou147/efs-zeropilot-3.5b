@@ -23,10 +23,11 @@ void TelemetryManager::processMsgQueue() {
                 mavlink_msg_global_position_int_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message,tmq_message.time_boot_ms,
                     GPOSData.lat, GPOSData.lon, GPOSData.alt, GPOSData.relative_alt, GPOSData.vx, GPOSData.vy, GPOSData.vz, GPOSData.hdg);
                 break;
-            case TMMessage_t::AM_DATA:
-                auto AMData = tmq_message.tm_message_data.AMData_t;
-                mavlink_msg_attitude_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message, tmq_message.time_boot_ms,
-                    AMData.roll, AMData.pitch, AMData.yaw, AMData.rollspeed, AMData.pitchspeed, AMData.yawspeed);
+            case TMMessage_t::RC_DATA:
+                auto RCData = tmq_message.tm_message_data.RCData_t;
+                mavlink_msg_rc_channels_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message, tmq_message.time_boot_ms, 6,
+                    RCData.roll, RCData.pitch, RCData.yaw, RCData.throttle, RCData.arm, RCData.flap_angle,  // Channel arrangement from system manager
+                    UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  UINT16_MAX,  UINT16_MAX, UINT16_MAX, UINT8_MAX);
                 break;
             case TMMessage_t::BM_DATA:
                 auto BMData = tmq_message.tm_message_data.BMData_t;
@@ -67,15 +68,12 @@ void TelemetryManager::reconstructMessage() {
 
     uint8_t rx_buffer[BUFSIZ];
 
-    //I Couldn't find the IRFD class in this branch so im assuming it's implemented the same way as the rfd class in the rfd branch
     uint16_t received_bytes = rfdDriver_.receive(rx_buffer, sizeof(rx_buffer));
 
     //Use mavlink_parse_char to process one byte at a time
     for (uint16_t i = 0; i < received_bytes; ++i) {
         //Seems like this returns 1 once the message is complete so we can handle processing within the loop
         if (mavlink_parse_char(0, rx_buffer[i], &message, &status)) {
-            printf("Received MAVLink message: msgid=%d, sysid=%d, compid=%d\n", 
-                message.msgid, message.sysid, message.compid);
             sendCmdFromMessage(message);
         }
     }
@@ -85,17 +83,16 @@ void TelemetryManager::sendCmdFromMessage(const mavlink_message_t &msg) {
     switch (msg.msgid) {
         case MAVLINK_MSG_ID_PARAM_SET:
             float value_to_set;
-            char param_to_set[17] = {};
+            char param_to_set[MALINK_MAX_IDENTIFIER_LEN] = {};
             uint8_t value_type;
             uint16_t param_id_len = mavlink_msg_param_set_get_param_id(&msg, param_to_set);
             value_to_set = mavlink_msg_param_set_get_param_value(&msg);
             value_type = mavlink_msg_param_set_get_param_type(&msg);
 
-            if(param_to_set[0] == 'A'){ //TODO: establish a LUT in the case that we need to set multiple params
-                //assuming this is an arm/disarm message
+            if(param_to_set[0] == 'A'){ //Would prefer to do this using an ENUM LUT but if this is the only param being set its whatever
                 RCMotorControlMessage_t arm_disarm_msg{};
                 arm_disarm_msg.arm = value_to_set;
-                amQueueDriver_->push(&arm_disarm_msg); //Failsafe for if queue is full?
+                amQueueDriver_->push(&arm_disarm_msg);
             }
             mavlink_message_t response = {};
             mavlink_msg_param_value_pack(SYSTEM_ID, COMPONENT_ID, &response, param_to_set, value_to_set, value_type, 1, 0);

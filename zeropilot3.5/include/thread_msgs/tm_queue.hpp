@@ -13,13 +13,13 @@ typedef union{
       uint16_t hdg = 0;
   } GPOSData_t;
   struct{
-      float roll = 0;
-      float pitch = 0;
-      float yaw = 0;
-      float rollspeed = 0;
-      float pitchspeed = 0;
-      float yawspeed = 0;
-  } AMData_t;
+      uint16_t roll = 0;
+      uint16_t pitch = 0;
+      uint16_t yaw = 0;
+      uint16_t throttle = 0;
+      uint16_t flap_angle = 0;
+      uint16_t arm = 0;
+  } RCData_t;
   struct{
       int16_t temperature = 0;
       uint16_t* voltages;
@@ -35,7 +35,7 @@ typedef union{
 typedef struct{
     enum{
         GPOS_DATA,
-        AM_DATA,
+        RC_DATA,
         BM_DATA
     } DataType;
     TMMessageData_t tm_message_data;
@@ -47,9 +47,15 @@ inline TMMessage_t GPOSData_Pack(uint32_t time_boot_ms, int32_t alt, int32_t lat
     return TMMessage_t{TMMessage_t::GPOS_DATA, data, time_boot_ms};
 }
 
-inline TMMessage_t AMData_Pack(uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed) {
-    const TMMessageData_t data = {.AMData_t ={roll, pitch, yaw, rollspeed, pitchspeed, yawspeed }};
-    return TMMessage_t{TMMessage_t::AM_DATA, data, time_boot_ms};
+inline TMMessage_t RCData_Pack(uint32_t time_boot_ms, float roll, float pitch, float yaw, float throttle, float flap_angle, float arm) {
+    auto roll_PPM = static_cast<uint16_t>(1000 + roll * 10);
+    auto pitch_PPM = static_cast<uint16_t>(1000 + pitch * 10);
+    auto yaw_PPM = static_cast<uint16_t>(1000 + yaw * 10);
+    auto throttle_PPM = static_cast<uint16_t>(1000 + throttle * 10);
+    auto flap_angle_PPM = static_cast<uint16_t>(1000 + flap_angle * 10);
+    auto arm_PPM = static_cast<uint16_t>(1000 + arm * 10);
+    const TMMessageData_t data = {.RCData_t ={roll_PPM, pitch_PPM, yaw_PPM, throttle_PPM, flap_angle_PPM, arm_PPM }};
+    return TMMessage_t{TMMessage_t::RC_DATA, data, time_boot_ms};
 }
 
 inline TMMessage_t BMData_Pack(uint32_t time_boot_ms, int16_t temperature, float *voltages, uint8_t voltage_len, int16_t current_battery, int32_t current_consumed,

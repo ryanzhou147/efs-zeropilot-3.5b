@@ -1,5 +1,6 @@
 #pragma once
 #define MAVLINK_MSG_MAX_SIZE 280
+#define MALINK_MAX_IDENTIFIER_LEN 17
 #include <mavlink2/common/mavlink.h>
 #include "queue_iface.hpp"
 #include "tm_queue.hpp"
