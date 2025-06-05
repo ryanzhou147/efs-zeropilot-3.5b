@@ -9,12 +9,6 @@
 #define AM_MAIN_DELAY 50
 #define ADVERSE_YAW_COEFFICIENT 1.5f
 
-#define ROLLMOTORS_TRIM 0
-#define PITCHMOTORS_TRIM 0
-#define YAWMOTORS_TRIM 0
-#define THROTTLEMOTORS_TRIM 0
-#define FLAPMOTORS_TRIM 0
-#define STEERINGMOTORS_TRIM 0
 
 typedef enum {
     YAW = 0,
@@ -56,6 +50,19 @@ class AttitudeManager {
         MotorGroupInstance_t *flapMotors;
         MotorGroupInstance_t *steeringMotors;
 
+        bool if_rollMotors_invert=0;
+        bool if_pitchMotors_invert=0;
+        bool if_yawMotors_invert=0;
+        bool if_throttleMotors_invert=0;
+        bool if_flapMotors_invert=0;
+        bool if_steeringMotor_invert=0;
+
+        float ROLLMOTORS_TRIM;
+        float PITCHMOTORS_TRIM;
+        float YAWMOTORS_TRIM;
+        float THROTTLEMOTORS_TRIM;
+        float FLAPMOTORS_TRIM;
+        float STEERINGMOTORS_TRIM;
         
         float adverseYaw = 0.0f;
         float signedYaw = 0.0f;
