@@ -19,7 +19,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "canard.h"
+#include "can.hpp"
 
+#include "dsdlc_generated/include/dronecan_msgs.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -80,7 +83,75 @@ void StartDefaultTask(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+FDCAN_TxHeaderTypeDef TxHeader;
+uint8_t TxData[6];
 
+FDCAN_RxHeaderTypeDef RxHeader;
+uint8_t RxData[8];
+CAN can(&hfdcan1);
+
+FDCAN_FilterTypeDef sFilterConfig;
+
+void FDCAN_Config(void) {
+  sFilterConfig.IdType = FDCAN_EXTENDED_ID;
+  sFilterConfig.FilterIndex = 0;
+  sFilterConfig.FilterType = FDCAN_FILTER_MASK;
+  sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+  sFilterConfig.FilterID1 = 0x0;
+  sFilterConfig.FilterID2 = 0x0; // receive messages from all ids
+
+  if (HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilterConfig) != HAL_OK) {
+      Error_Handler();
+  }
+}
+
+void FDCAN_Activate(void) {
+  if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK) {
+    Error_Handler();
+  }
+}
+
+void FDCAN_Transmit(void) {
+  if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK) {
+    Error_Handler();
+  }
+}
+
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs) {
+  if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET) {
+    if (HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
+      Error_Handler();
+    }
+    can.handleRxFrame(&RxHeader, RxData);
+  }
+}
+
+void request_node_id(CAN *can) {
+  uint8_t unique_id[6] = {
+      0xBA, 0xAD, 0xF0, 0x0D,
+      0x12, 0x34
+  };
+
+  struct uavcan_protocol_dynamic_node_id_Allocation req;
+  req.node_id = 0;
+  req.first_part_of_unique_id = true;
+  req.unique_id.len = 6;
+  memcpy(req.unique_id.data, unique_id, 6);
+
+
+  uint8_t buffer[UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_MAX_SIZE];
+  const int size = uavcan_protocol_dynamic_node_id_Allocation_encode(&req, buffer);
+  uint8_t transfer_id = 0;
+  can->broadcast(
+      CanardTransferTypeRequest,
+    UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_SIGNATURE,
+    UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID,
+    &transfer_id,
+    CANARD_TRANSFER_PRIORITY_HIGH,
+    buffer,
+    size
+  );
+}
 /* USER CODE END 0 */
 
 /**
@@ -120,7 +191,10 @@ int main(void)
   MX_USB_PCD_Init();
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
-
+  FDCAN_Activate();
+  if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK) {
+	  Error_Handler();
+  }
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -145,7 +219,6 @@ int main(void)
   /* Create the thread(s) */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -163,6 +236,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    can.routineTasks();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -328,7 +402,7 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.DataTimeSeg1 = 1;
   hfdcan1.Init.DataTimeSeg2 = 1;
   hfdcan1.Init.StdFiltersNbr = 0;
-  hfdcan1.Init.ExtFiltersNbr = 0;
+  hfdcan1.Init.ExtFiltersNbr = 1;
   hfdcan1.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
   if (HAL_FDCAN_Init(&hfdcan1) != HAL_OK)
   {
