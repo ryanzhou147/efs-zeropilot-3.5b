@@ -92,30 +92,32 @@ extern "C" {
 }
 #endif
 
-int Logger::read(char *valueBuf, size_t bufSize, const char *key) {
+int Logger::readParam(const char *key, float* value) {
 #if defined(MAX_LINE_LENGTH)
 	char line[MAX_LINE_LENGTH];
 	  FRESULT res;
 	  res = f_open(&fil, "csvfile.txt", FA_READ); //name subject to change
 	  if (res) {
 	    printf("Could not open file: %s", file);
-	    return 1;
+	    return 1; // Error opening file
 	  }
 	  while (f_gets(line, sizeof(line), &fil)) {
 	    char *readKey = strtok(line, ",\r\n");
 	    char *readValue = strtok(NULL, ",\r\n");
 
 	    if (strcmp(readKey, key) == 0) {
-	      strncpy(valueBuf, readValue, bufSize - 1);
-	      valueBuf[bufSize - 1] = '\0';
+	      float val = atof(readValue);
+        if (value) {
+          *value = val;
+        }
 	      f_close(&fil);
-	      return 0; // Key found and value put in buffer
+	      return 0; // Key found and value put in pointer
 	    }
 	  }
 
 	  f_close(&fil);
-	  return 1; // Key not found
+	  return 2; // Key not found
 #elif
-	  return 1;
+	  return 3; // MAX_LINE_LENGTH not defined, cannot read parameter
 #endif
 }

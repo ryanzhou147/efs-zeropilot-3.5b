@@ -34,7 +34,7 @@ class Logger : public ILogger {
          * @param key: the key for the csv key value pair
          * @retval int: 0 for success 1 for not success
          */
-        int read(char *valueBuf, size_t bufSize, const char *key);
+        int readParam(const char *key, float* value);
 
         /**
          * @brief mounts SD card and selects file to write to, call before starting kernel
