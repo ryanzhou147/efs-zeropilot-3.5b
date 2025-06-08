@@ -4,12 +4,13 @@
 #include <can_iface.hpp>
 #include <canard.h>
 #include "stm32l5xx_hal.h"
-#include <dronecan_msgs.h>
 #include "can_defines.hpp"
-#include "cmsis_os2.h"
-#include "museq.hpp"
 #include <cstdint>
 #include "can_datatypes.hpp"
+#include "dsdlc_generated/include/dronecan_msgs.h"
+#include "dsdlc_generated/include/uavcan.protocol.NodeStatus.h"
+#include <string.h>
+
 
 
 class CAN : ICAN {
@@ -18,7 +19,7 @@ private:
 	canNode canNodes[CANARD_MAX_NODE_ID + 1];
 	uint8_t nextAvailableID = CANARD_MIN_NODE_ID + 1;
 	FDCAN_HandleTypeDef *hfdcan;
-	
+
 	CanardInstance canard;
 
 	void sendNodeStatus();
@@ -27,14 +28,15 @@ private:
 
 	void handleNodeAllocation(CanardRxTransfer* transfer);
 	void handleNodeStatus(CanardRxTransfer* transfer);
+	
+	uint8_t CAN::dlcToLength(uint32_t dlc);
 
-	int8_t allocateNode();  
+	int8_t allocateNode();
 
 	uavcan_protocol_NodeStatus nodeStatus;
 
 	uint32_t last1HzTick = 0;
 	uint32_t node_id = 0;
-
 
 
 public:
@@ -57,11 +59,11 @@ public:
 	// Called once every second
 	void process1HzTasks();
 
-	void HandleRxFrame(FDCAN_RxHeaderTypeDef *rx_header, const uint8_t *rx_data;)
+	void handleRxFrame(FDCAN_RxHeaderTypeDef *rx_header, uint8_t *rx_data);
 
 	int16_t canardSTM32Receive(FDCAN_HandleTypeDef *hfdcan, uint32_t RxLocation, CanardCANFrame *const rx_frame);
-	
-	
+
+
 	int16_t broadcastObj(
 		CanardTxTransfer* transfer
 	);

@@ -24,10 +24,12 @@ CAN::CAN(FDCAN_HandleTypeDef *hfdcan) : hfdcan(hfdcan) {
 
 	nodeStatus = {0};
 
-	canard.node_id = 0;
+	canard.node_id = NODE_ID;
 }
 
 CAN::~CAN() {}
+
+
 
 bool CAN::CanardShouldAcceptTransfer(
     const CanardInstance* ins,
@@ -57,39 +59,13 @@ bool CAN::CanardShouldAcceptTransfer(
 void CAN::CanardOnTransferReception(CanardInstance* ins, CanardRxTransfer* transfer)
 {
 
-	uint8_t unique_id[6] = {
-			    0xBA, 0xAD, 0xF0, 0x0D,
-			    0x12, 0x34
-			};
     switch (transfer->data_type_id)
     {
         case UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_ID:
         {
             if (transfer->transfer_type == CanardTransferTypeBroadcast)
             {
-            	if (transfer->source_node_id == 0) {
-            		handleNodeAllocation(transfer);
-            	}
-            	else {
-            		struct uavcan_protocol_dynamic_node_id_Allocation msg = {};
-					uavcan_protocol_dynamic_node_id_Allocation_decode(transfer, &msg);
-
-					// Only accept if node is still anonymous (node_id == 0)
-					if (ins->node_id != 0) {
-						return;
-					}
-
-					// Check if the response is meant for us (match our unique ID)
-					if (msg.unique_id.len >= 6 && memcmp(msg.unique_id.data, unique_id, 6) == 0) {
-						if (msg.node_id != 0) {
-							ins->node_id = msg.node_id;
-							node_id = msg.node_id;
-
-							// Optionally, log it
-							// printf("Assigned node ID: %d\n", ins->node_id);
-						}
-					}
-            	}
+				handleNodeAllocation(transfer);
             }
 
             break;
@@ -101,13 +77,12 @@ void CAN::CanardOnTransferReception(CanardInstance* ins, CanardRxTransfer* trans
             break;
         }
 
-        // Add more types if needed (GetNodeInfo, etc.)
         default:
             break;
     }
 }
 
-uint8_t dlcToLength(uint32_t dlc) {
+uint8_t CAN::dlcToLength(uint32_t dlc) {
 	switch (dlc) {
 		case FDCAN_DLC_BYTES_0: return 0;
 		case FDCAN_DLC_BYTES_1: return 1;
@@ -186,7 +161,6 @@ void CAN::handleNodeAllocation(CanardRxTransfer *transfer){
 	uint32_t encoded_size = uavcan_protocol_dynamic_node_id_Allocation_encode(&msg, decode_buffer);
 
 	uint8_t transfer_id = 0;
-	canard.node_id = 1;
 	broadcast(
 		CanardTransferTypeBroadcast,
 		UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_SIGNATURE,
@@ -196,7 +170,6 @@ void CAN::handleNodeAllocation(CanardRxTransfer *transfer){
 		decode_buffer,
 		encoded_size
 	);
-	canard.node_id = 0;
 
 }
 
@@ -204,11 +177,15 @@ int8_t CAN::allocateNode() {
 	// check if the node id is already allocated
 	int currId = nextAvailableID;
 
-	if (currId > CANARD_MAX_NODE_ID) {
-		return -1; // no more node ids available
+	while (canNodes[currId].status.mode == UAVCAN_PROTOCOL_NODESTATUS_MODE_OPERATIONAL) {
+		currId++;
+		if (currId > CANARD_MAX_NODE_ID) {
+			return -1; // no more node ids available
+		}
 	}
+	
 
-	nextAvailableID++;
+	nextAvailableID = currId + 1;
 
 	return currId;
 }
@@ -323,14 +300,14 @@ void CAN::process1HzTasks() {
 Wrapper function with mutex
 */
 int16_t CAN::broadcastObj(CanardTxTransfer* transfer) {
-//	osStatus_t status = osMutexAcquire(canBroadcastMutex, CAN_BROADCAST_MUTEX_TIMEOUT);
+	osStatus_t status = osMutexAcquire(canBroadcastMutex, CAN_BROADCAST_MUTEX_TIMEOUT);
 
-//	if (status != osOK){
-//		return -1; // handle failure
-//	}
+	if (status != osOK){
+		return -1; // handle failure
+	}
 
 	int16_t res = canardBroadcastObj(&canard, transfer);
-//	osMutexRelease(canBroadcastMutex);
+	osMutexRelease(canBroadcastMutex);
 
 	return res;
 }
