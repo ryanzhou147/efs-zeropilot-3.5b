@@ -62,24 +62,23 @@ void TelemetryManager::transmit() {
         }
 }
 
-void TelemetryManager::reconstructMessage() {
-    mavlink_status_t status;
-    mavlink_message_t message;
+void TelemetryManager::reconstructMsg() {
 
-    uint8_t rx_buffer[BUFSIZ];
+
+    uint8_t rx_buffer[Rx_Buffer_Len];
 
     uint16_t received_bytes = rfdDriver_.receive(rx_buffer, sizeof(rx_buffer));
 
     //Use mavlink_parse_char to process one byte at a time
     for (uint16_t i = 0; i < received_bytes; ++i) {
-        //Seems like this returns 1 once the message is complete so we can handle processing within the loop
-        if (mavlink_parse_char(0, rx_buffer[i], &message, &status)) {
-            sendCmdFromMessage(message);
+        if (mavlink_parse_char(0, rx_buffer[i], &message_, &status_)) {
+            handleRxMsg(message_);
+            message_ = {};
         }
     }
 }
 
-void TelemetryManager::sendCmdFromMessage(const mavlink_message_t &msg) {
+void TelemetryManager::handleRxMsg(const mavlink_message_t &msg) {
     switch (msg.msgid) {
         case MAVLINK_MSG_ID_PARAM_SET:
             float value_to_set;
