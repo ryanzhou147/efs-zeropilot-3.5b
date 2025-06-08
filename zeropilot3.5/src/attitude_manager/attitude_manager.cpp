@@ -77,11 +77,11 @@ void AttitudeManager::runControlLoopIteration() {
         motorOutputs.yaw = 0;
     }
     
-    outputToMotor(YAW, motorOutputs.yaw+YAWMOTORS_TRIM);
-    outputToMotor(PITCH, motorOutputs.pitch+PITCHMOTORS_TRIM);
-    outputToMotor(ROLL, motorOutputs.roll+ROLLMOTORS_TRIM);
-    outputToMotor(THROTTLE, motorOutputs.throttle+THROTTLEMOTORS_TRIM);
-    outputToMotor(FLAP_ANGLE, motorOutputs.flapAngle+FLAPMOTORS_TRIM);
+    outputToMotor(YAW, (100-motorOutputs.yaw)*if_yawMotors_invert+motorOutputs.yaw*(if_yawMotors_invert-1)+YAWMOTORS_TRIM);
+    outputToMotor(PITCH, (100-motorOutputs.pitch)*if_pitchMotors_invert+motorOutputs.pitch*(if_pitchMotors_invert-1)+PITCHMOTORS_TRIM);
+    outputToMotor(ROLL, (100-motorOutputs.roll)*if_rollMotors_invert+motorOutputs.roll*(if_rollMotors_invert-1)+ROLLMOTORS_TRIM);
+    outputToMotor(THROTTLE, (100-motorOutputs.throttle)*if_throttleMotors_invert+motorOutputs.throttle*(if_throttleMotors_invert-1)+THROTTLEMOTORS_TRIM);
+    outputToMotor(FLAP_ANGLE, (100-motorOutputs.flapAngle)*if_flapMotors_invert+motorOutputs.flapAngle*(if_flapMotors_invert-1)+FLAPMOTORS_TRIM);
     outputToMotor(STEERING, motorOutputs.yaw+STEERINGMOTORS_TRIM);
 }
 
@@ -131,3 +131,4 @@ void AttitudeManager::outputToMotor(ControlAxis_e axis, uint8_t percent) {
         }
     }
 }
+
