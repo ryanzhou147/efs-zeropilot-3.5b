@@ -7,7 +7,6 @@
 #include "motor_datatype.hpp"
 
 #define AM_MAIN_DELAY 50
-#define ADVERSE_YAW_COEFFICIENT 1.5f
 
 
 typedef enum {
@@ -56,7 +55,7 @@ class AttitudeManager {
         bool if_throttleMotors_invert=0;
         bool if_flapMotors_invert=0;
         bool if_steeringMotor_invert=0;
-
+        
         float ROLLMOTORS_TRIM;
         float PITCHMOTORS_TRIM;
         float YAWMOTORS_TRIM;
@@ -64,6 +63,7 @@ class AttitudeManager {
         float FLAPMOTORS_TRIM;
         float STEERINGMOTORS_TRIM;
         
+        float const ADVERSE_YAW_COEFFICIENT=1.5f;
         float adverseYaw = 0.0f;
         float signedYaw = 0.0f;
 
