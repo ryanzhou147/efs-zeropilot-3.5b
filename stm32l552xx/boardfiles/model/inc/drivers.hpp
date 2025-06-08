@@ -4,5 +4,6 @@
 #include "gps.hpp"
 
 extern RCReceiver *rcHandle;
+extern GPS *gpsHandle;
 
 void initDrivers();
