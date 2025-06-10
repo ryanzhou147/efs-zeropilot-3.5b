@@ -3,12 +3,13 @@
 
 /**
  * Important consideraton when using this driver:
- * We expect recieve is called fast enough to never let the buffer overflow
+ * Recieve should be called fast enough to never let the buffer overflow,
+ * since there is currently no way to recover from an overflow
  */
 
 RFD* RFD::instance = nullptr; // global instance
 
-RFD::RFD(UART_HandleTypeDef* huart) : huart(huart), readIndex(0), writeIndex(0), overlapped(false), errorFlag(false){
+RFD::RFD(UART_HandleTypeDef* huart) : huart(huart), readIndex(0), writeIndex(0){
     instance = this;
 }
 
@@ -16,7 +17,7 @@ RFD::~RFD() {
     instance = nullptr;
 }
 
-void RFD::transmit(const uint8_t* data, uint16_t size) {
+void RFD::transmit(uint8_t* data, uint16_t size) {
     if (huart) {
         HAL_UART_Transmit_DMA(huart, data, size);
     }
@@ -35,37 +36,17 @@ uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
         }
         buffer[i] = rxBuffer[readIndex];
         readIndex++;
-        if (overlapped && readIndex >= BUFFER_SIZE) {
+        if (readIndex >= BUFFER_SIZE) {
             readIndex = 0;
-            overlapped = false;
         }
     }
     return bufferSize;
 }
 
 void RFD::receiveCallback(uint16_t size){
-
-    uint16_t prevWriteIndex = writeIndex;
     writeIndex = size;
-
-    // assumes that size < BUFFER_LENGTH always
-    if (writeIndex < prevWriteIndex) overlapped = true;
-
-    // Overflow: writeIndex wrapped around and surpassed readIndex. (reads not fast enough)
-    if (overlapped && (writeIndex > readIndex)) {
-        errorFlag = true;
-        overlapped = false;
-    }
 }
 
 UART_HandleTypeDef* RFD::getHuart() const {
     return huart;
-}
-
-bool RFD::getErrorFlag() const {
-    return errorFlag;
-}
-
-void RFD::resetErrorFlag() {
-    errorFlag = false;
 }
