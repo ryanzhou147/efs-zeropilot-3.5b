@@ -1,5 +1,6 @@
 #include "main.h"
 #include "museq.hpp"
+#include "drivers.hpp"
 
 extern "C"
 {
