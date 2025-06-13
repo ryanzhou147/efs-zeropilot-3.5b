@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.indication.SingleLightCommand.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,27 +56,10 @@ bool uavcan_equipment_indication_SingleLightCommand_decode(const CanardRxTransfe
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_indication_SingleLightCommand sample_uavcan_equipment_indication_SingleLightCommand_msg(void) {
-
     struct uavcan_equipment_indication_SingleLightCommand msg;
 
-
-
-
-
-
     msg.light_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
     msg.color = sample_uavcan_equipment_indication_RGB565_msg();
-
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.hardpoint.Command.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,29 +56,10 @@ bool uavcan_equipment_hardpoint_Command_decode(const CanardRxTransfer* transfer,
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_hardpoint_Command sample_uavcan_equipment_hardpoint_Command_msg(void) {
-
     struct uavcan_equipment_hardpoint_Command msg;
 
-
-
-
-
-
     msg.hardpoint_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.command = (uint16_t)random_bitlen_unsigned_val(16);
-
-
-
-
-
     return msg;
-
 }
 #endif

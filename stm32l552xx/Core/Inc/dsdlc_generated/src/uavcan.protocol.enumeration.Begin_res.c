@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.enumeration.Begin_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_protocol_enumeration_BeginResponse_decode(const CanardRxTransfer* tr
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_enumeration_BeginResponse sample_uavcan_protocol_enumeration_BeginResponse_msg(void) {
-
     struct uavcan_protocol_enumeration_BeginResponse msg;
 
-
-
-
-
-
     msg.error = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
     return msg;
-
 }
 #endif

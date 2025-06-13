@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.enumeration.Indication.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,40 +56,13 @@ bool uavcan_protocol_enumeration_Indication_decode(const CanardRxTransfer* trans
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_enumeration_Indication sample_uavcan_protocol_enumeration_Indication_msg(void) {
-
     struct uavcan_protocol_enumeration_Indication msg;
 
-
-
-
-
-
-
-
-
     msg.value = sample_uavcan_protocol_param_NumericValue_msg();
-
-
-
-
-
-
     msg.parameter_name.len = (uint8_t)random_range_unsigned_val(0, 92);
     for (size_t i=0; i < msg.parameter_name.len; i++) {
-
-
-
-
         msg.parameter_name.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

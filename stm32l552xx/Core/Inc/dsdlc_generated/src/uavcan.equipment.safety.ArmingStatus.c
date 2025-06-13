@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.safety.ArmingStatus.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_equipment_safety_ArmingStatus_decode(const CanardRxTransfer* transfe
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_safety_ArmingStatus sample_uavcan_equipment_safety_ArmingStatus_msg(void) {
-
     struct uavcan_equipment_safety_ArmingStatus msg;
 
-
-
-
-
-
     msg.status = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.ice.FuelTankStatus.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,57 +56,13 @@ bool uavcan_equipment_ice_FuelTankStatus_decode(const CanardRxTransfer* transfer
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_ice_FuelTankStatus sample_uavcan_equipment_ice_FuelTankStatus_msg(void) {
-
     struct uavcan_equipment_ice_FuelTankStatus msg;
 
-
-
-
-
-
-
-
-
-
     msg.available_fuel_volume_percent = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.available_fuel_volume_cm3 = random_float_val();
-
-
-
-
-
-
-
     msg.fuel_consumption_rate_cm3pm = random_float_val();
-
-
-
-
-
-
-
     msg.fuel_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.fuel_tank_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
     return msg;
-
 }
 #endif

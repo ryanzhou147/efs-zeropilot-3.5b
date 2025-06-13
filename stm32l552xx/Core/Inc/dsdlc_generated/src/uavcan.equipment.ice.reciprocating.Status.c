@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.ice.reciprocating.Status.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,168 +56,29 @@ bool uavcan_equipment_ice_reciprocating_Status_decode(const CanardRxTransfer* tr
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_ice_reciprocating_Status sample_uavcan_equipment_ice_reciprocating_Status_msg(void) {
-
     struct uavcan_equipment_ice_reciprocating_Status msg;
 
-
-
-
-
-
     msg.state = (uint8_t)random_bitlen_unsigned_val(2);
-
-
-
-
-
-
-
     msg.flags = (uint32_t)random_bitlen_unsigned_val(30);
-
-
-
-
-
-
-
-
-
-
-
     msg.engine_load_percent = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.engine_speed_rpm = (uint32_t)random_bitlen_unsigned_val(17);
-
-
-
-
-
-
-
     msg.spark_dwell_time_ms = random_float16_val();
-
-
-
-
-
-
-
     msg.atmospheric_pressure_kpa = random_float16_val();
-
-
-
-
-
-
-
     msg.intake_manifold_pressure_kpa = random_float16_val();
-
-
-
-
-
-
-
     msg.intake_manifold_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.coolant_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.oil_pressure = random_float16_val();
-
-
-
-
-
-
-
     msg.oil_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.fuel_pressure = random_float16_val();
-
-
-
-
-
-
-
     msg.fuel_consumption_rate_cm3pm = random_float_val();
-
-
-
-
-
-
-
     msg.estimated_consumed_fuel_volume_cm3 = random_float_val();
-
-
-
-
-
-
-
     msg.throttle_position_percent = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.ecu_index = (uint8_t)random_bitlen_unsigned_val(6);
-
-
-
-
-
-
-
     msg.spark_plug_usage = (uint8_t)random_bitlen_unsigned_val(3);
-
-
-
-
-
-
-
     msg.cylinder_status.len = (uint8_t)random_range_unsigned_val(0, 16);
     for (size_t i=0; i < msg.cylinder_status.len; i++) {
-
-
-
         msg.cylinder_status.data[i] = sample_uavcan_equipment_ice_reciprocating_CylinderStatus_msg();
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

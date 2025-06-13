@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.camera_gimbal.Mode.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_equipment_camera_gimbal_Mode_decode(const CanardRxTransfer* transfer
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_camera_gimbal_Mode sample_uavcan_equipment_camera_gimbal_Mode_msg(void) {
-
     struct uavcan_equipment_camera_gimbal_Mode msg;
 
-
-
-
-
-
     msg.command_mode = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.file.Error.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_protocol_file_Error_decode(const CanardRxTransfer* transfer, struct 
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_file_Error sample_uavcan_protocol_file_Error_msg(void) {
-
     struct uavcan_protocol_file_Error msg;
 
-
-
-
-
-
     msg.value = (int16_t)random_bitlen_signed_val(16);
-
-
-
-
-
     return msg;
-
 }
 #endif

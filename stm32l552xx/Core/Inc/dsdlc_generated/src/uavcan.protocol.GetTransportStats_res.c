@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.GetTransportStats_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,52 +56,15 @@ bool uavcan_protocol_GetTransportStatsResponse_decode(const CanardRxTransfer* tr
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_GetTransportStatsResponse sample_uavcan_protocol_GetTransportStatsResponse_msg(void) {
-
     struct uavcan_protocol_GetTransportStatsResponse msg;
 
-
-
-
-
-
     msg.transfers_tx = (uint64_t)random_bitlen_unsigned_val(48);
-
-
-
-
-
-
-
     msg.transfers_rx = (uint64_t)random_bitlen_unsigned_val(48);
-
-
-
-
-
-
-
     msg.transfer_errors = (uint64_t)random_bitlen_unsigned_val(48);
-
-
-
-
-
-
-
     msg.can_iface_stats.len = (uint8_t)random_range_unsigned_val(0, 3);
     for (size_t i=0; i < msg.can_iface_stats.len; i++) {
-
-
-
         msg.can_iface_stats.data[i] = sample_uavcan_protocol_CANIfaceStats_msg();
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.CANIfaceStats.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,37 +56,11 @@ bool uavcan_protocol_CANIfaceStats_decode(const CanardRxTransfer* transfer, stru
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_CANIfaceStats sample_uavcan_protocol_CANIfaceStats_msg(void) {
-
     struct uavcan_protocol_CANIfaceStats msg;
 
-
-
-
-
-
     msg.frames_tx = (uint64_t)random_bitlen_unsigned_val(48);
-
-
-
-
-
-
-
     msg.frames_rx = (uint64_t)random_bitlen_unsigned_val(48);
-
-
-
-
-
-
-
     msg.errors = (uint64_t)random_bitlen_unsigned_val(48);
-
-
-
-
-
     return msg;
-
 }
 #endif

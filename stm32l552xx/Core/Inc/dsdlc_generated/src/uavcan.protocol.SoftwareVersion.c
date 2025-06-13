@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.SoftwareVersion.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,53 +56,13 @@ bool uavcan_protocol_SoftwareVersion_decode(const CanardRxTransfer* transfer, st
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_SoftwareVersion sample_uavcan_protocol_SoftwareVersion_msg(void) {
-
     struct uavcan_protocol_SoftwareVersion msg;
 
-
-
-
-
-
     msg.major = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.minor = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.optional_field_flags = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.vcs_commit = (uint32_t)random_bitlen_unsigned_val(32);
-
-
-
-
-
-
-
     msg.image_crc = (uint64_t)random_bitlen_unsigned_val(64);
-
-
-
-
-
     return msg;
-
 }
 #endif

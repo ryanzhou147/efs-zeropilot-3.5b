@@ -1,10 +1,6 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.file.Read_req.h>
-
 #include <uavcan.protocol.file.Read_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -61,27 +57,10 @@ bool uavcan_protocol_file_ReadRequest_decode(const CanardRxTransfer* transfer, s
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_file_ReadRequest sample_uavcan_protocol_file_ReadRequest_msg(void) {
-
     struct uavcan_protocol_file_ReadRequest msg;
 
-
-
-
-
-
     msg.offset = (uint64_t)random_bitlen_unsigned_val(40);
-
-
-
-
-
-
     msg.path = sample_uavcan_protocol_file_Path_msg();
-
-
-
-
     return msg;
-
 }
 #endif

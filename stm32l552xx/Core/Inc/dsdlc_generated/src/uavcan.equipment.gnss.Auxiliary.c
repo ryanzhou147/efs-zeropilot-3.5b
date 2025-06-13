@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.gnss.Auxiliary.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,85 +56,17 @@ bool uavcan_equipment_gnss_Auxiliary_decode(const CanardRxTransfer* transfer, st
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_gnss_Auxiliary sample_uavcan_equipment_gnss_Auxiliary_msg(void) {
-
     struct uavcan_equipment_gnss_Auxiliary msg;
 
-
-
-
-
-
     msg.gdop = random_float16_val();
-
-
-
-
-
-
-
     msg.pdop = random_float16_val();
-
-
-
-
-
-
-
     msg.hdop = random_float16_val();
-
-
-
-
-
-
-
     msg.vdop = random_float16_val();
-
-
-
-
-
-
-
     msg.tdop = random_float16_val();
-
-
-
-
-
-
-
     msg.ndop = random_float16_val();
-
-
-
-
-
-
-
     msg.edop = random_float16_val();
-
-
-
-
-
-
-
     msg.sats_visible = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.sats_used = (uint8_t)random_bitlen_unsigned_val(6);
-
-
-
-
-
     return msg;
-
 }
 #endif

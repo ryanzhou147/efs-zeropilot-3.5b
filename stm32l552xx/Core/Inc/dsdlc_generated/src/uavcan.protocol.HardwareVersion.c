@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.HardwareVersion.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,62 +56,17 @@ bool uavcan_protocol_HardwareVersion_decode(const CanardRxTransfer* transfer, st
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_HardwareVersion sample_uavcan_protocol_HardwareVersion_msg(void) {
-
     struct uavcan_protocol_HardwareVersion msg;
 
-
-
-
-
-
     msg.major = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.minor = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     for (size_t i=0; i < 16; i++) {
-
-
-
-
         msg.unique_id[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
-
-
     msg.certificate_of_authenticity.len = (uint8_t)random_range_unsigned_val(0, 255);
     for (size_t i=0; i < msg.certificate_of_authenticity.len; i++) {
-
-
-
-
         msg.certificate_of_authenticity.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

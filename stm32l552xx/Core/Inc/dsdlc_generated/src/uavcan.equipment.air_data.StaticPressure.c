@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.air_data.StaticPressure.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,29 +56,10 @@ bool uavcan_equipment_air_data_StaticPressure_decode(const CanardRxTransfer* tra
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_air_data_StaticPressure sample_uavcan_equipment_air_data_StaticPressure_msg(void) {
-
     struct uavcan_equipment_air_data_StaticPressure msg;
 
-
-
-
-
-
     msg.static_pressure = random_float_val();
-
-
-
-
-
-
-
     msg.static_pressure_variance = random_float16_val();
-
-
-
-
-
     return msg;
-
 }
 #endif

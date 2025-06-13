@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.esc.Status.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,69 +56,15 @@ bool uavcan_equipment_esc_Status_decode(const CanardRxTransfer* transfer, struct
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_esc_Status sample_uavcan_equipment_esc_Status_msg(void) {
-
     struct uavcan_equipment_esc_Status msg;
 
-
-
-
-
-
     msg.error_count = (uint32_t)random_bitlen_unsigned_val(32);
-
-
-
-
-
-
-
     msg.voltage = random_float16_val();
-
-
-
-
-
-
-
     msg.current = random_float16_val();
-
-
-
-
-
-
-
     msg.temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.rpm = (int32_t)random_bitlen_signed_val(18);
-
-
-
-
-
-
-
     msg.power_rating_pct = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.esc_index = (uint8_t)random_bitlen_unsigned_val(5);
-
-
-
-
-
     return msg;
-
 }
 #endif

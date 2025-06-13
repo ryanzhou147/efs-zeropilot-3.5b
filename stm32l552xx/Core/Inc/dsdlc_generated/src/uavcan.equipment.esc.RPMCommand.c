@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.esc.RPMCommand.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,30 +56,12 @@ bool uavcan_equipment_esc_RPMCommand_decode(const CanardRxTransfer* transfer, st
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_esc_RPMCommand sample_uavcan_equipment_esc_RPMCommand_msg(void) {
-
     struct uavcan_equipment_esc_RPMCommand msg;
-
-
-
-
-
 
     msg.rpm.len = (uint8_t)random_range_unsigned_val(0, 20);
     for (size_t i=0; i < msg.rpm.len; i++) {
-
-
-
-
         msg.rpm.data[i] = (int32_t)random_bitlen_signed_val(18);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

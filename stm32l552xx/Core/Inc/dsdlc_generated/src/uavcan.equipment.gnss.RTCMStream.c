@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.gnss.RTCMStream.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,38 +56,13 @@ bool uavcan_equipment_gnss_RTCMStream_decode(const CanardRxTransfer* transfer, s
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_gnss_RTCMStream sample_uavcan_equipment_gnss_RTCMStream_msg(void) {
-
     struct uavcan_equipment_gnss_RTCMStream msg;
 
-
-
-
-
-
     msg.protocol_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.data.len = (uint8_t)random_range_unsigned_val(0, 128);
     for (size_t i=0; i < msg.data.len; i++) {
-
-
-
-
         msg.data.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

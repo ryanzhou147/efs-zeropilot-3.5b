@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.air_data.TrueAirspeed.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,29 +56,10 @@ bool uavcan_equipment_air_data_TrueAirspeed_decode(const CanardRxTransfer* trans
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_air_data_TrueAirspeed sample_uavcan_equipment_air_data_TrueAirspeed_msg(void) {
-
     struct uavcan_equipment_air_data_TrueAirspeed msg;
 
-
-
-
-
-
     msg.true_airspeed = random_float16_val();
-
-
-
-
-
-
-
     msg.true_airspeed_variance = random_float16_val();
-
-
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.param.Empty.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,13 +56,8 @@ bool uavcan_protocol_param_Empty_decode(const CanardRxTransfer* transfer, struct
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_param_Empty sample_uavcan_protocol_param_Empty_msg(void) {
-
     struct uavcan_protocol_param_Empty msg;
 
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.ice.reciprocating.CylinderStatus.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,53 +56,13 @@ bool uavcan_equipment_ice_reciprocating_CylinderStatus_decode(const CanardRxTran
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_ice_reciprocating_CylinderStatus sample_uavcan_equipment_ice_reciprocating_CylinderStatus_msg(void) {
-
     struct uavcan_equipment_ice_reciprocating_CylinderStatus msg;
 
-
-
-
-
-
     msg.ignition_timing_deg = random_float16_val();
-
-
-
-
-
-
-
     msg.injection_time_ms = random_float16_val();
-
-
-
-
-
-
-
     msg.cylinder_head_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.exhaust_gas_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.lambda_coefficient = random_float16_val();
-
-
-
-
-
     return msg;
-
 }
 #endif

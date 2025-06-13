@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.CoarseOrientation.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,37 +56,12 @@ bool uavcan_CoarseOrientation_decode(const CanardRxTransfer* transfer, struct ua
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_CoarseOrientation sample_uavcan_CoarseOrientation_msg(void) {
-
     struct uavcan_CoarseOrientation msg;
 
-
-
-
-
-
     for (size_t i=0; i < 3; i++) {
-
-
-
-
         msg.fixed_axis_roll_pitch_yaw[i] = (int8_t)random_bitlen_signed_val(5);
-
-
-
     }
-
-
-
-
-
-
     msg.orientation_defined = (bool)random_bitlen_unsigned_val(1);
-
-
-
-
-
     return msg;
-
 }
 #endif

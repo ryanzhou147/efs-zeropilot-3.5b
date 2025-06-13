@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.air_data.AngleOfAttack.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,37 +56,11 @@ bool uavcan_equipment_air_data_AngleOfAttack_decode(const CanardRxTransfer* tran
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_air_data_AngleOfAttack sample_uavcan_equipment_air_data_AngleOfAttack_msg(void) {
-
     struct uavcan_equipment_air_data_AngleOfAttack msg;
 
-
-
-
-
-
     msg.sensor_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.aoa = random_float16_val();
-
-
-
-
-
-
-
     msg.aoa_variance = random_float16_val();
-
-
-
-
-
     return msg;
-
 }
 #endif

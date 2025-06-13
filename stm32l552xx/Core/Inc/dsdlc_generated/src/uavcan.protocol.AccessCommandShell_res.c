@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.AccessCommandShell_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,46 +56,14 @@ bool uavcan_protocol_AccessCommandShellResponse_decode(const CanardRxTransfer* t
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_AccessCommandShellResponse sample_uavcan_protocol_AccessCommandShellResponse_msg(void) {
-
     struct uavcan_protocol_AccessCommandShellResponse msg;
 
-
-
-
-
-
     msg.last_exit_status = (int32_t)random_bitlen_signed_val(32);
-
-
-
-
-
-
-
     msg.flags = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.output.len = (uint16_t)random_range_unsigned_val(0, 256);
     for (size_t i=0; i < msg.output.len; i++) {
-
-
-
-
         msg.output.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

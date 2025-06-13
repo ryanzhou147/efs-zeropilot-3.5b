@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.air_data.RawAirData.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,86 +56,19 @@ bool uavcan_equipment_air_data_RawAirData_decode(const CanardRxTransfer* transfe
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_air_data_RawAirData sample_uavcan_equipment_air_data_RawAirData_msg(void) {
-
     struct uavcan_equipment_air_data_RawAirData msg;
 
-
-
-
-
-
     msg.flags = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.static_pressure = random_float_val();
-
-
-
-
-
-
-
     msg.differential_pressure = random_float_val();
-
-
-
-
-
-
-
     msg.static_pressure_sensor_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.differential_pressure_sensor_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.static_air_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.pitot_temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.covariance.len = (uint8_t)random_range_unsigned_val(0, 16);
     for (size_t i=0; i < msg.covariance.len; i++) {
-
-
-
-
         msg.covariance.data[i] = random_float16_val();
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

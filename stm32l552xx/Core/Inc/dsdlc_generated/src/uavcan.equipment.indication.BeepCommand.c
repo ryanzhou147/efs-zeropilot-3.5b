@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.indication.BeepCommand.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,29 +56,10 @@ bool uavcan_equipment_indication_BeepCommand_decode(const CanardRxTransfer* tran
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_indication_BeepCommand sample_uavcan_equipment_indication_BeepCommand_msg(void) {
-
     struct uavcan_equipment_indication_BeepCommand msg;
 
-
-
-
-
-
     msg.frequency = random_float16_val();
-
-
-
-
-
-
-
     msg.duration = random_float16_val();
-
-
-
-
-
     return msg;
-
 }
 #endif

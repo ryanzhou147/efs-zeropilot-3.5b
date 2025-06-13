@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.device.Temperature.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,37 +56,11 @@ bool uavcan_equipment_device_Temperature_decode(const CanardRxTransfer* transfer
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_device_Temperature sample_uavcan_equipment_device_Temperature_msg(void) {
-
     struct uavcan_equipment_device_Temperature msg;
 
-
-
-
-
-
     msg.device_id = (uint16_t)random_bitlen_unsigned_val(16);
-
-
-
-
-
-
-
     msg.temperature = random_float16_val();
-
-
-
-
-
-
-
     msg.error_flags = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
     return msg;
-
 }
 #endif

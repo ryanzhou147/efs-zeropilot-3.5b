@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.tunnel.Broadcast.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,44 +56,14 @@ bool uavcan_tunnel_Broadcast_decode(const CanardRxTransfer* transfer, struct uav
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_tunnel_Broadcast sample_uavcan_tunnel_Broadcast_msg(void) {
-
     struct uavcan_tunnel_Broadcast msg;
 
-
-
-
-
     msg.protocol = sample_uavcan_tunnel_Protocol_msg();
-
-
-
-
-
-
     msg.channel_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.buffer.len = (uint8_t)random_range_unsigned_val(0, 60);
     for (size_t i=0; i < msg.buffer.len; i++) {
-
-
-
-
         msg.buffer.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

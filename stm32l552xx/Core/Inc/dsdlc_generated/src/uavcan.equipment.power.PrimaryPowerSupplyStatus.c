@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.power.PrimaryPowerSupplyStatus.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,53 +56,13 @@ bool uavcan_equipment_power_PrimaryPowerSupplyStatus_decode(const CanardRxTransf
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_power_PrimaryPowerSupplyStatus sample_uavcan_equipment_power_PrimaryPowerSupplyStatus_msg(void) {
-
     struct uavcan_equipment_power_PrimaryPowerSupplyStatus msg;
 
-
-
-
-
-
     msg.hours_to_empty_at_10sec_avg_power = random_float16_val();
-
-
-
-
-
-
-
     msg.hours_to_empty_at_10sec_avg_power_variance = random_float16_val();
-
-
-
-
-
-
-
     msg.external_power_available = (bool)random_bitlen_unsigned_val(1);
-
-
-
-
-
-
-
     msg.remaining_energy_pct = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.remaining_energy_pct_stdev = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
     return msg;
-
 }
 #endif

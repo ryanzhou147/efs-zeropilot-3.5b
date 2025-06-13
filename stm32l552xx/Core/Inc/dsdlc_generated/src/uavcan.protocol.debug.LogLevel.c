@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.debug.LogLevel.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_protocol_debug_LogLevel_decode(const CanardRxTransfer* transfer, str
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_debug_LogLevel sample_uavcan_protocol_debug_LogLevel_msg(void) {
-
     struct uavcan_protocol_debug_LogLevel msg;
 
-
-
-
-
-
     msg.value = (uint8_t)random_bitlen_unsigned_val(3);
-
-
-
-
-
     return msg;
-
 }
 #endif

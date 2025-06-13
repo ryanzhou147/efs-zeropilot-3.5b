@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.ahrs.MagneticFieldStrength.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,46 +56,15 @@ bool uavcan_equipment_ahrs_MagneticFieldStrength_decode(const CanardRxTransfer* 
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_ahrs_MagneticFieldStrength sample_uavcan_equipment_ahrs_MagneticFieldStrength_msg(void) {
-
     struct uavcan_equipment_ahrs_MagneticFieldStrength msg;
 
-
-
-
-
-
     for (size_t i=0; i < 3; i++) {
-
-
-
-
         msg.magnetic_field_ga[i] = random_float16_val();
-
-
-
     }
-
-
-
-
-
-
     msg.magnetic_field_covariance.len = (uint8_t)random_range_unsigned_val(0, 9);
     for (size_t i=0; i < msg.magnetic_field_covariance.len; i++) {
-
-
-
-
         msg.magnetic_field_covariance.data[i] = random_float16_val();
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

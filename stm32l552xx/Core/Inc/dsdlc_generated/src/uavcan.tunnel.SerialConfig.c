@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.tunnel.SerialConfig.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,37 +56,11 @@ bool uavcan_tunnel_SerialConfig_decode(const CanardRxTransfer* transfer, struct 
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_tunnel_SerialConfig sample_uavcan_tunnel_SerialConfig_msg(void) {
-
     struct uavcan_tunnel_SerialConfig msg;
 
-
-
-
-
-
     msg.channel_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.baud = (uint32_t)random_bitlen_unsigned_val(32);
-
-
-
-
-
-
-
     msg.options = (uint32_t)random_bitlen_unsigned_val(24);
-
-
-
-
-
     return msg;
-
 }
 #endif

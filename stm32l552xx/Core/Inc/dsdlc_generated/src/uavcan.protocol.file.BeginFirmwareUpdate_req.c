@@ -1,10 +1,6 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.file.BeginFirmwareUpdate_req.h>
-
 #include <uavcan.protocol.file.BeginFirmwareUpdate_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -61,27 +57,10 @@ bool uavcan_protocol_file_BeginFirmwareUpdateRequest_decode(const CanardRxTransf
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_file_BeginFirmwareUpdateRequest sample_uavcan_protocol_file_BeginFirmwareUpdateRequest_msg(void) {
-
     struct uavcan_protocol_file_BeginFirmwareUpdateRequest msg;
 
-
-
-
-
-
     msg.source_node_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
     msg.image_file_remote_path = sample_uavcan_protocol_file_Path_msg();
-
-
-
-
     return msg;
-
 }
 #endif

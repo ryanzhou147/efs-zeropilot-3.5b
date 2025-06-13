@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.Timestamp.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_Timestamp_decode(const CanardRxTransfer* transfer, struct uavcan_Tim
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_Timestamp sample_uavcan_Timestamp_msg(void) {
-
     struct uavcan_Timestamp msg;
 
-
-
-
-
-
     msg.usec = (uint64_t)random_bitlen_unsigned_val(56);
-
-
-
-
-
     return msg;
-
 }
 #endif

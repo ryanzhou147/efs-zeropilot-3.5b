@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.file.GetInfo_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,33 +56,11 @@ bool uavcan_protocol_file_GetInfoResponse_decode(const CanardRxTransfer* transfe
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_file_GetInfoResponse sample_uavcan_protocol_file_GetInfoResponse_msg(void) {
-
     struct uavcan_protocol_file_GetInfoResponse msg;
 
-
-
-
-
-
     msg.size = (uint64_t)random_bitlen_unsigned_val(40);
-
-
-
-
-
-
     msg.error = sample_uavcan_protocol_file_Error_msg();
-
-
-
-
-
     msg.entry_type = sample_uavcan_protocol_file_EntryType_msg();
-
-
-
-
     return msg;
-
 }
 #endif

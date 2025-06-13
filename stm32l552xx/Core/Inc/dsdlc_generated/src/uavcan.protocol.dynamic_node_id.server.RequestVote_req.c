@@ -1,10 +1,6 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.dynamic_node_id.server.RequestVote_req.h>
-
 #include <uavcan.protocol.dynamic_node_id.server.RequestVote_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -61,37 +57,11 @@ bool uavcan_protocol_dynamic_node_id_server_RequestVoteRequest_decode(const Cana
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_dynamic_node_id_server_RequestVoteRequest sample_uavcan_protocol_dynamic_node_id_server_RequestVoteRequest_msg(void) {
-
     struct uavcan_protocol_dynamic_node_id_server_RequestVoteRequest msg;
 
-
-
-
-
-
     msg.term = (uint32_t)random_bitlen_unsigned_val(32);
-
-
-
-
-
-
-
     msg.last_log_term = (uint32_t)random_bitlen_unsigned_val(32);
-
-
-
-
-
-
-
     msg.last_log_index = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
     return msg;
-
 }
 #endif

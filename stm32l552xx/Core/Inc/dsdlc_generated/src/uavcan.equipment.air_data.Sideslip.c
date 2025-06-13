@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.air_data.Sideslip.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,29 +56,10 @@ bool uavcan_equipment_air_data_Sideslip_decode(const CanardRxTransfer* transfer,
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_air_data_Sideslip sample_uavcan_equipment_air_data_Sideslip_msg(void) {
-
     struct uavcan_equipment_air_data_Sideslip msg;
 
-
-
-
-
-
     msg.sideslip_angle = random_float16_val();
-
-
-
-
-
-
-
     msg.sideslip_angle_variance = random_float16_val();
-
-
-
-
-
     return msg;
-
 }
 #endif

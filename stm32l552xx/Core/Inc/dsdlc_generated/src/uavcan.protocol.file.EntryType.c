@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.file.EntryType.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_protocol_file_EntryType_decode(const CanardRxTransfer* transfer, str
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_file_EntryType sample_uavcan_protocol_file_EntryType_msg(void) {
-
     struct uavcan_protocol_file_EntryType msg;
 
-
-
-
-
-
     msg.flags = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
     return msg;
-
 }
 #endif

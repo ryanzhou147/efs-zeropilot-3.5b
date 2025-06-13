@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.actuator.ArrayCommand.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,28 +56,12 @@ bool uavcan_equipment_actuator_ArrayCommand_decode(const CanardRxTransfer* trans
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_actuator_ArrayCommand sample_uavcan_equipment_actuator_ArrayCommand_msg(void) {
-
     struct uavcan_equipment_actuator_ArrayCommand msg;
-
-
-
-
-
 
     msg.commands.len = (uint8_t)random_range_unsigned_val(0, 15);
     for (size_t i=0; i < msg.commands.len; i++) {
-
-
-
         msg.commands.data[i] = sample_uavcan_equipment_actuator_Command_msg();
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

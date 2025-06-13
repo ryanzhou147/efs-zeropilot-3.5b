@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.range_sensor.Measurement.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,65 +56,15 @@ bool uavcan_equipment_range_sensor_Measurement_decode(const CanardRxTransfer* tr
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_range_sensor_Measurement sample_uavcan_equipment_range_sensor_Measurement_msg(void) {
-
     struct uavcan_equipment_range_sensor_Measurement msg;
 
-
-
-
-
     msg.timestamp = sample_uavcan_Timestamp_msg();
-
-
-
-
-
-
     msg.sensor_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
     msg.beam_orientation_in_body_frame = sample_uavcan_CoarseOrientation_msg();
-
-
-
-
-
-
     msg.field_of_view = random_float16_val();
-
-
-
-
-
-
-
     msg.sensor_type = (uint8_t)random_bitlen_unsigned_val(5);
-
-
-
-
-
-
-
     msg.reading_type = (uint8_t)random_bitlen_unsigned_val(3);
-
-
-
-
-
-
-
     msg.range = random_float16_val();
-
-
-
-
-
     return msg;
-
 }
 #endif

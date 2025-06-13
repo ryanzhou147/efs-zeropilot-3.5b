@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.tunnel.Protocol.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_tunnel_Protocol_decode(const CanardRxTransfer* transfer, struct uavc
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_tunnel_Protocol sample_uavcan_tunnel_Protocol_msg(void) {
-
     struct uavcan_tunnel_Protocol msg;
 
-
-
-
-
-
     msg.protocol = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.file.Write_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,19 +56,9 @@ bool uavcan_protocol_file_WriteResponse_decode(const CanardRxTransfer* transfer,
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_file_WriteResponse sample_uavcan_protocol_file_WriteResponse_msg(void) {
-
     struct uavcan_protocol_file_WriteResponse msg;
 
-
-
-
-
     msg.error = sample_uavcan_protocol_file_Error_msg();
-
-
-
-
     return msg;
-
 }
 #endif

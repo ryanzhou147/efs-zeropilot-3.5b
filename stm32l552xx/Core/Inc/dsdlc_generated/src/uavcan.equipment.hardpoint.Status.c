@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.hardpoint.Status.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,45 +56,12 @@ bool uavcan_equipment_hardpoint_Status_decode(const CanardRxTransfer* transfer, 
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_hardpoint_Status sample_uavcan_equipment_hardpoint_Status_msg(void) {
-
     struct uavcan_equipment_hardpoint_Status msg;
 
-
-
-
-
-
     msg.hardpoint_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.payload_weight = random_float16_val();
-
-
-
-
-
-
-
     msg.payload_weight_variance = random_float16_val();
-
-
-
-
-
-
-
     msg.status = (uint16_t)random_bitlen_unsigned_val(16);
-
-
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.debug.KeyValue.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,38 +56,13 @@ bool uavcan_protocol_debug_KeyValue_decode(const CanardRxTransfer* transfer, str
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_debug_KeyValue sample_uavcan_protocol_debug_KeyValue_msg(void) {
-
     struct uavcan_protocol_debug_KeyValue msg;
 
-
-
-
-
-
     msg.value = random_float_val();
-
-
-
-
-
-
-
     msg.key.len = (uint8_t)random_range_unsigned_val(0, 58);
     for (size_t i=0; i < msg.key.len; i++) {
-
-
-
-
         msg.key.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

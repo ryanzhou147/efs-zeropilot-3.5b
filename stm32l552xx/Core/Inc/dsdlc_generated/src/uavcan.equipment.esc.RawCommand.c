@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.esc.RawCommand.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,30 +56,12 @@ bool uavcan_equipment_esc_RawCommand_decode(const CanardRxTransfer* transfer, st
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_esc_RawCommand sample_uavcan_equipment_esc_RawCommand_msg(void) {
-
     struct uavcan_equipment_esc_RawCommand msg;
-
-
-
-
-
 
     msg.cmd.len = (uint8_t)random_range_unsigned_val(0, 20);
     for (size_t i=0; i < msg.cmd.len; i++) {
-
-
-
-
         msg.cmd.data[i] = (int16_t)random_bitlen_signed_val(14);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

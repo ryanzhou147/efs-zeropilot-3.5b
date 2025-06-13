@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.tunnel.Targetted.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,68 +56,17 @@ bool uavcan_tunnel_Targetted_decode(const CanardRxTransfer* transfer, struct uav
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_tunnel_Targetted sample_uavcan_tunnel_Targetted_msg(void) {
-
     struct uavcan_tunnel_Targetted msg;
 
-
-
-
-
     msg.protocol = sample_uavcan_tunnel_Protocol_msg();
-
-
-
-
-
-
     msg.target_node = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.serial_id = (int8_t)random_bitlen_signed_val(5);
-
-
-
-
-
-
-
     msg.options = (uint8_t)random_bitlen_unsigned_val(4);
-
-
-
-
-
-
-
     msg.baudrate = (uint32_t)random_bitlen_unsigned_val(24);
-
-
-
-
-
-
-
     msg.buffer.len = (uint8_t)random_range_unsigned_val(0, 120);
     for (size_t i=0; i < msg.buffer.len; i++) {
-
-
-
-
         msg.buffer.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

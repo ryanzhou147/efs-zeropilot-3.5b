@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.actuator.Status.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,57 +56,13 @@ bool uavcan_equipment_actuator_Status_decode(const CanardRxTransfer* transfer, s
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_actuator_Status sample_uavcan_equipment_actuator_Status_msg(void) {
-
     struct uavcan_equipment_actuator_Status msg;
 
-
-
-
-
-
     msg.actuator_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
-
     msg.position = random_float16_val();
-
-
-
-
-
-
-
     msg.force = random_float16_val();
-
-
-
-
-
-
-
     msg.speed = random_float16_val();
-
-
-
-
-
-
-
-
-
-
-
     msg.power_rating_pct = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
     return msg;
-
 }
 #endif

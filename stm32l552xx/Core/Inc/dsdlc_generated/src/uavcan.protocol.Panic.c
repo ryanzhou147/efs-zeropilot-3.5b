@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.Panic.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,30 +56,12 @@ bool uavcan_protocol_Panic_decode(const CanardRxTransfer* transfer, struct uavca
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_Panic sample_uavcan_protocol_Panic_msg(void) {
-
     struct uavcan_protocol_Panic msg;
-
-
-
-
-
 
     msg.reason_text.len = (uint8_t)random_range_unsigned_val(0, 7);
     for (size_t i=0; i < msg.reason_text.len; i++) {
-
-
-
-
         msg.reason_text.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

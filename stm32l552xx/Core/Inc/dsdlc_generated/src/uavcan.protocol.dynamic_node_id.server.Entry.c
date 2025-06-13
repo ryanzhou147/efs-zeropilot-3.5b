@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.dynamic_node_id.server.Entry.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,49 +56,13 @@ bool uavcan_protocol_dynamic_node_id_server_Entry_decode(const CanardRxTransfer*
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_dynamic_node_id_server_Entry sample_uavcan_protocol_dynamic_node_id_server_Entry_msg(void) {
-
     struct uavcan_protocol_dynamic_node_id_server_Entry msg;
 
-
-
-
-
-
     msg.term = (uint32_t)random_bitlen_unsigned_val(32);
-
-
-
-
-
-
-
     for (size_t i=0; i < 16; i++) {
-
-
-
-
         msg.unique_id[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
     msg.node_id = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
     return msg;
-
 }
 #endif

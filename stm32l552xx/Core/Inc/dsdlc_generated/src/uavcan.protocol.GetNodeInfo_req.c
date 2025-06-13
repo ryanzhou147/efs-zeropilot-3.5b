@@ -1,10 +1,6 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.GetNodeInfo_req.h>
-
 #include <uavcan.protocol.GetNodeInfo_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -61,13 +57,8 @@ bool uavcan_protocol_GetNodeInfoRequest_decode(const CanardRxTransfer* transfer,
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_GetNodeInfoRequest sample_uavcan_protocol_GetNodeInfoRequest_msg(void) {
-
     struct uavcan_protocol_GetNodeInfoRequest msg;
 
-
-
-
     return msg;
-
 }
 #endif

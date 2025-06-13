@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.esc.StatusExtended.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,61 +56,14 @@ bool uavcan_equipment_esc_StatusExtended_decode(const CanardRxTransfer* transfer
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_esc_StatusExtended sample_uavcan_equipment_esc_StatusExtended_msg(void) {
-
     struct uavcan_equipment_esc_StatusExtended msg;
 
-
-
-
-
-
     msg.input_pct = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.output_pct = (uint8_t)random_bitlen_unsigned_val(7);
-
-
-
-
-
-
-
     msg.motor_temperature_degC = (int16_t)random_bitlen_signed_val(9);
-
-
-
-
-
-
-
     msg.motor_angle = (uint16_t)random_bitlen_unsigned_val(9);
-
-
-
-
-
-
-
     msg.status_flags = (uint32_t)random_bitlen_unsigned_val(19);
-
-
-
-
-
-
-
     msg.esc_index = (uint8_t)random_bitlen_unsigned_val(5);
-
-
-
-
-
     return msg;
-
 }
 #endif

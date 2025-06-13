@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.GlobalTimeSync.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,21 +56,9 @@ bool uavcan_protocol_GlobalTimeSync_decode(const CanardRxTransfer* transfer, str
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_GlobalTimeSync sample_uavcan_protocol_GlobalTimeSync_msg(void) {
-
     struct uavcan_protocol_GlobalTimeSync msg;
 
-
-
-
-
-
     msg.previous_transmission_timestamp_usec = (uint64_t)random_bitlen_unsigned_val(56);
-
-
-
-
-
     return msg;
-
 }
 #endif

@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.param.ExecuteOpcode_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,29 +56,10 @@ bool uavcan_protocol_param_ExecuteOpcodeResponse_decode(const CanardRxTransfer* 
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_param_ExecuteOpcodeResponse sample_uavcan_protocol_param_ExecuteOpcodeResponse_msg(void) {
-
     struct uavcan_protocol_param_ExecuteOpcodeResponse msg;
 
-
-
-
-
-
     msg.argument = (int64_t)random_bitlen_signed_val(48);
-
-
-
-
-
-
-
     msg.ok = (bool)random_bitlen_unsigned_val(1);
-
-
-
-
-
     return msg;
-
 }
 #endif

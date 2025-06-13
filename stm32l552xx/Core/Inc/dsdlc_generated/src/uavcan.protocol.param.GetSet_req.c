@@ -1,10 +1,6 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.param.GetSet_req.h>
-
 #include <uavcan.protocol.param.GetSet_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -61,44 +57,14 @@ bool uavcan_protocol_param_GetSetRequest_decode(const CanardRxTransfer* transfer
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_param_GetSetRequest sample_uavcan_protocol_param_GetSetRequest_msg(void) {
-
     struct uavcan_protocol_param_GetSetRequest msg;
 
-
-
-
-
-
     msg.index = (uint16_t)random_bitlen_unsigned_val(13);
-
-
-
-
-
-
     msg.value = sample_uavcan_protocol_param_Value_msg();
-
-
-
-
-
-
     msg.name.len = (uint8_t)random_range_unsigned_val(0, 92);
     for (size_t i=0; i < msg.name.len; i++) {
-
-
-
-
         msg.name.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

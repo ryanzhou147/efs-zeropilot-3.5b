@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.NodeStatus.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,53 +56,13 @@ bool uavcan_protocol_NodeStatus_decode(const CanardRxTransfer* transfer, struct 
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_NodeStatus sample_uavcan_protocol_NodeStatus_msg(void) {
-
     struct uavcan_protocol_NodeStatus msg;
 
-
-
-
-
-
     msg.uptime_sec = (uint32_t)random_bitlen_unsigned_val(32);
-
-
-
-
-
-
-
     msg.health = (uint8_t)random_bitlen_unsigned_val(2);
-
-
-
-
-
-
-
     msg.mode = (uint8_t)random_bitlen_unsigned_val(3);
-
-
-
-
-
-
-
     msg.sub_mode = (uint8_t)random_bitlen_unsigned_val(3);
-
-
-
-
-
-
-
     msg.vendor_specific_status_code = (uint16_t)random_bitlen_unsigned_val(16);
-
-
-
-
-
     return msg;
-
 }
 #endif

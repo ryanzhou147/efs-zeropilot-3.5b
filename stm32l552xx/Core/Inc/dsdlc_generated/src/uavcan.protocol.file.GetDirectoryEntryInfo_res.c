@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.file.GetDirectoryEntryInfo_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,31 +56,11 @@ bool uavcan_protocol_file_GetDirectoryEntryInfoResponse_decode(const CanardRxTra
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_file_GetDirectoryEntryInfoResponse sample_uavcan_protocol_file_GetDirectoryEntryInfoResponse_msg(void) {
-
     struct uavcan_protocol_file_GetDirectoryEntryInfoResponse msg;
 
-
-
-
-
     msg.error = sample_uavcan_protocol_file_Error_msg();
-
-
-
-
-
     msg.entry_type = sample_uavcan_protocol_file_EntryType_msg();
-
-
-
-
-
     msg.entry_full_path = sample_uavcan_protocol_file_Path_msg();
-
-
-
-
     return msg;
-
 }
 #endif

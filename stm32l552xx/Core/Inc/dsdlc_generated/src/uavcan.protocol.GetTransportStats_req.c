@@ -1,10 +1,6 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.GetTransportStats_req.h>
-
 #include <uavcan.protocol.GetTransportStats_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -61,13 +57,8 @@ bool uavcan_protocol_GetTransportStatsRequest_decode(const CanardRxTransfer* tra
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_GetTransportStatsRequest sample_uavcan_protocol_GetTransportStatsRequest_msg(void) {
-
     struct uavcan_protocol_GetTransportStatsRequest msg;
 
-
-
-
     return msg;
-
 }
 #endif

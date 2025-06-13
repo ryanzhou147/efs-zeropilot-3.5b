@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.camera_gimbal.GEOPOICommand.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,59 +56,14 @@ bool uavcan_equipment_camera_gimbal_GEOPOICommand_decode(const CanardRxTransfer*
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_camera_gimbal_GEOPOICommand sample_uavcan_equipment_camera_gimbal_GEOPOICommand_msg(void) {
-
     struct uavcan_equipment_camera_gimbal_GEOPOICommand msg;
 
-
-
-
-
-
     msg.gimbal_id = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
-
-
-
     msg.mode = sample_uavcan_equipment_camera_gimbal_Mode_msg();
-
-
-
-
-
-
     msg.longitude_deg_1e7 = (int32_t)random_bitlen_signed_val(32);
-
-
-
-
-
-
-
     msg.latitude_deg_1e7 = (int32_t)random_bitlen_signed_val(32);
-
-
-
-
-
-
-
     msg.height_cm = (int32_t)random_bitlen_signed_val(22);
-
-
-
-
-
-
-
     msg.height_reference = (uint8_t)random_bitlen_unsigned_val(2);
-
-
-
-
-
     return msg;
-
 }
 #endif

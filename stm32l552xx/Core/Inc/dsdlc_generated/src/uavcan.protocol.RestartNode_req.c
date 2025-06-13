@@ -1,10 +1,6 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.RestartNode_req.h>
-
 #include <uavcan.protocol.RestartNode_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -61,21 +57,9 @@ bool uavcan_protocol_RestartNodeRequest_decode(const CanardRxTransfer* transfer,
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_RestartNodeRequest sample_uavcan_protocol_RestartNodeRequest_msg(void) {
-
     struct uavcan_protocol_RestartNodeRequest msg;
 
-
-
-
-
-
     msg.magic_number = (uint64_t)random_bitlen_unsigned_val(40);
-
-
-
-
-
     return msg;
-
 }
 #endif

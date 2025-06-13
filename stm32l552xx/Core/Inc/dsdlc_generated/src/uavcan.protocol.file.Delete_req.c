@@ -1,10 +1,6 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.protocol.file.Delete_req.h>
-
 #include <uavcan.protocol.file.Delete_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -61,19 +57,9 @@ bool uavcan_protocol_file_DeleteRequest_decode(const CanardRxTransfer* transfer,
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_protocol_file_DeleteRequest sample_uavcan_protocol_file_DeleteRequest_msg(void) {
-
     struct uavcan_protocol_file_DeleteRequest msg;
 
-
-
-
-
     msg.path = sample_uavcan_protocol_file_Path_msg();
-
-
-
-
     return msg;
-
 }
 #endif

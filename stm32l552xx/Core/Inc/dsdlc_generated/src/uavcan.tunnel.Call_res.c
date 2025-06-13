@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.tunnel.Call_res.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,30 +56,12 @@ bool uavcan_tunnel_CallResponse_decode(const CanardRxTransfer* transfer, struct 
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_tunnel_CallResponse sample_uavcan_tunnel_CallResponse_msg(void) {
-
     struct uavcan_tunnel_CallResponse msg;
-
-
-
-
-
 
     msg.buffer.len = (uint8_t)random_range_unsigned_val(0, 60);
     for (size_t i=0; i < msg.buffer.len; i++) {
-
-
-
-
         msg.buffer.data[i] = (uint8_t)random_bitlen_unsigned_val(8);
-
-
-
     }
-
-
-
-
     return msg;
-
 }
 #endif

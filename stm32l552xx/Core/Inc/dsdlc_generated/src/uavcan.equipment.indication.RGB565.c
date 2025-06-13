@@ -1,8 +1,5 @@
-
-
 #define CANARD_DSDLC_INTERNAL
 #include <uavcan.equipment.indication.RGB565.h>
-
 #include <string.h>
 
 #ifdef CANARD_DSDLC_TEST_BUILD
@@ -59,37 +56,11 @@ bool uavcan_equipment_indication_RGB565_decode(const CanardRxTransfer* transfer,
 
 #ifdef CANARD_DSDLC_TEST_BUILD
 struct uavcan_equipment_indication_RGB565 sample_uavcan_equipment_indication_RGB565_msg(void) {
-
     struct uavcan_equipment_indication_RGB565 msg;
 
-
-
-
-
-
     msg.red = (uint8_t)random_bitlen_unsigned_val(5);
-
-
-
-
-
-
-
     msg.green = (uint8_t)random_bitlen_unsigned_val(6);
-
-
-
-
-
-
-
     msg.blue = (uint8_t)random_bitlen_unsigned_val(5);
-
-
-
-
-
     return msg;
-
 }
 #endif
