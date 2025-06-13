@@ -10,6 +10,8 @@
 #include "dsdlc_generated/include/dronecan_msgs.h"
 #include "dsdlc_generated/include/uavcan.protocol.NodeStatus.h"
 #include <string.h>
+#include "cmsis_os2.h"
+#include "museq.hpp"
 
 
 
@@ -29,7 +31,7 @@ private:
 	void handleNodeAllocation(CanardRxTransfer* transfer);
 	void handleNodeStatus(CanardRxTransfer* transfer);
 	
-	uint8_t CAN::dlcToLength(uint32_t dlc);
+	uint8_t dlcToLength(uint32_t dlc);
 
 	int8_t allocateNode();
 

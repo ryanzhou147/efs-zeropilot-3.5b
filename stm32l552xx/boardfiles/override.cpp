@@ -32,7 +32,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
         Error_Handler();
       }
 
-      can.handleRxFrame(&RxHeader, RxData);
+      canHandle->handleRxFrame(&RxHeader, RxData);
     
     }
 }

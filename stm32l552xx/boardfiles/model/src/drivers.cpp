@@ -2,7 +2,9 @@
 
 extern FDCAN_HandleTypeDef hfdcan1;
 
+CAN *canHandle = nullptr;
+
 void initDrivers()
 {
-    CAN *canHandle = new CAN(&hfdcan1);
+    canHandle = new CAN(&hfdcan1);
 }
