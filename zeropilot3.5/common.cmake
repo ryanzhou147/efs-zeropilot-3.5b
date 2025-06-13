@@ -1,17 +1,9 @@
 # attitude manager files
 set(AM_SRC
-
+    "src/attitude_manager/attitude_manager.cpp"
 )
 set(AM_INC
-
-)
-
-# system manager files
-set(SM_SRC
-
-)
-set(SM_INC
-
+    "include/attitude_manager/"
 )
 
 # combined files
@@ -20,7 +12,8 @@ set(ZP_SRC
     ${SM_SRC}
 )
 set(ZP_INC
-    "include/driver_ifaces"
+    "include/driver_ifaces/"
+    "include/thread_msgs/"
     ${AM_INC}
     ${SM_INC}
 )
