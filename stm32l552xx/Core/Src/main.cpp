@@ -17,12 +17,9 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <app_fatfs.hpp>
 #include "main.h"
 #include "cmsis_os.h"
-#include "app_fatfs.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include "museq.hpp"
 #include "model.hpp"
 #include "unified_threads.hpp"
