@@ -1,5 +1,6 @@
 #include "attitude_manager.hpp"
 #include "rc_motor_control.hpp"
+#include <cstdio>
 
 
 AttitudeManager::AttitudeManager(
@@ -23,6 +24,18 @@ AttitudeManager::AttitudeManager(
     flapMotors(flapMotors),
     steeringMotors(steeringMotors) {}
 
+void AttitudeManager::setRudderMixing(float coeff) {
+    if (coeff < 0.0f) {
+        char errorMsg[100];
+        snprintf(errorMsg, sizeof(errorMsg), "Invalid rudder mixing value: %f", coeff);
+        smLoggerQueue->push(&errorMsg);
+        return;
+    }
+
+    adverseCoeff = coeff;
+    signedYaw = 0.0f; // Reset signedYaw to avoid incorrect values
+    
+}
 void AttitudeManager::runControlLoopIteration() {
     // Get data from Queue and motor outputs
     bool res = getControlInputs(&controlMsg);
@@ -67,7 +80,7 @@ void AttitudeManager::runControlLoopIteration() {
     RCMotorControlMessage_t motorOutputs = controlAlgorithm->runControl(controlMsg);
 
     signedYaw = motorOutputs.roll-50;
-    adverseYaw = signedYaw * ADVERSE_YAW_COEFFICIENT;
+    adverseYaw = signedYaw * adverseCoeff;
     motorOutputs.yaw +=adverseYaw; 
     // limit yaw to 100
     if (motorOutputs.yaw>100){

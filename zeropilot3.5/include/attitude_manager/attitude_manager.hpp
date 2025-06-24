@@ -31,6 +31,7 @@ class AttitudeManager {
             MotorGroupInstance_t *flapMotors,
             MotorGroupInstance_t *steeringMotors
         );
+        void setRudderMixing(float coeff);
 
         void runControlLoopIteration();
 
@@ -63,7 +64,7 @@ class AttitudeManager {
         float FLAPMOTORS_TRIM;
         float STEERINGMOTORS_TRIM;
         
-        float const ADVERSE_YAW_COEFFICIENT=1.5f;
+        float adverseCoeff=0.15f;
         float adverseYaw = 0.0f;
         float signedYaw = 0.0f;
 
