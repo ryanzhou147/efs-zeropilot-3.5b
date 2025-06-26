@@ -1,6 +1,11 @@
 #include "logger.hpp"
 #include <cstring>
 #include <cstdio>
+#include <string>
+
+#define MAX_LINE_LENGTH 128
+#define MAX_VALUE_LENGTH 32
+#define MAX_KEY_LENGTH (MAX_LINE_LENGTH-MAX_VALUE_LENGTH)
 
 int Logger::init() {
 #if defined(SD_CARD_LOGGING)
@@ -84,6 +89,73 @@ int Logger::log(char message[][100], int count) {
 #endif
 }
 
+int Logger::findParam(const char param[100], float &val) {
+  char *key, *value;
+  char msg[100];
+  int length;
+
+  while (f_gets(msg, sizeof(char[100]), &fil)) {
+    key = strtok(msg, ",\n");
+    value = strtok(NULL, ",\n");
+
+    if (!strcmp(param, key)) break;
+  }
+
+  if (strcmp(param, key)) return 2;
+
+  length = (f_eof(&fil) != 0) ? strlen(value) : strlen(value) + 2; //accounting for \n
+
+  f_lseek(&fil, f_tell(&fil) - length);
+
+  val = std::atof(value);
+
+  return 0;
+}
+
+int Logger::readParam(const char param[100], float &val) {
+  if (f_open(&fil, "csvedit.txt", FA_READ | FA_WRITE) != 0 ) {
+      return 1;
+  }
+
+  int res = findParam(param, val);
+
+  f_close(&fil);
+
+  if (res != 0) {
+    return 2;
+  }
+
+  return 0;
+}
+
+int Logger::writeParam(const char param[100], float newValue) {
+  char strvalue[MAX_LINE_LENGTH];
+  if (f_open(&fil, "csvedit.txt", FA_READ | FA_WRITE) != 0 ) {
+    return 1;
+  }
+
+  float val;
+  findParam(param, val);
+
+  snprintf(strvalue, MAX_LINE_LENGTH, "%g", newValue);
+
+  if (strlen(strvalue) > MAX_VALUE_LENGTH) {
+    strvalue[MAX_VALUE_LENGTH] = '\0';
+  }
+
+  f_puts(strvalue, &fil);
+
+  if (strlen(strvalue) < MAX_VALUE_LENGTH) {
+    for (int i = 0; i < 8 - static_cast<int>(strlen(strvalue)); i++) {
+      f_puts(" ", &fil);
+    }
+  }
+
+  f_close(&fil);
+
+  return 0;
+}
+
 #if defined(SWO_LOGGING)
 extern "C" {
   int __io_putchar(int ch) {
@@ -91,33 +163,3 @@ extern "C" {
   }
 }
 #endif
-
-int Logger::readParam(const char *key, float* value) {
-#if defined(MAX_LINE_LENGTH)
-	char line[MAX_LINE_LENGTH];
-	  FRESULT res;
-	  res = f_open(&fil, "csvfile.txt", FA_READ); //name subject to change
-	  if (res) {
-	    printf("Could not open file: %s", file);
-	    return 1; // Error opening file
-	  }
-	  while (f_gets(line, sizeof(line), &fil)) {
-	    char *readKey = strtok(line, ",\r\n");
-	    char *readValue = strtok(NULL, ",\r\n");
-
-	    if (strcmp(readKey, key) == 0) {
-	      float val = atof(readValue);
-        if (value) {
-          *value = val;
-        }
-	      f_close(&fil);
-	      return 0; // Key found and value put in pointer
-	    }
-	  }
-
-	  f_close(&fil);
-	  return 2; // Key not found
-#elif
-	  return 3; // MAX_LINE_LENGTH not defined, cannot read parameter
-#endif
-}
