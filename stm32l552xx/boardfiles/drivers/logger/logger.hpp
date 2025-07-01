@@ -1,10 +1,11 @@
 #pragma once
 
 #include "logger_iface.hpp"
+#include "config_iface.hpp"
 #include "app_fatfs.h"
 #include "logger_config.h"
 
-class Logger : public ILogger {
+class Logger : public ILogger, public IConfig {
     private:
         FATFS FatFs;
         FIL fil;
@@ -26,7 +27,7 @@ class Logger : public ILogger {
          * @param message data to be written
          * @retval DRESULT: Operation result
          */
-        int log(char message[100]);
+        int log(const char message[100]);
 
         /**
          * @brief logs multiple messages to the SD card
@@ -34,7 +35,7 @@ class Logger : public ILogger {
          * @param count number of messages to write
          * @retval DRESULT: Operation result
          */
-        int log(char messages[][100], int count);
+        int log(const char messages[][100], int count);
 
         /**
          * @brief reads parameter from config file
