@@ -9,8 +9,8 @@ SystemManager::SystemManager(
         iwdgDriver(iwdgDriver),
         loggerDriver_(loggerDriver),
         rcDriver_(rcDriver),
-        amRCQueue_(amRCQueue),
-        smLoggerQueue_(smLoggerQueue) {}
+        amRcQueue(amRCQueue),
+        smLoggerQueue(smLoggerQueue) {}
 
 void SystemManager::SMUpdate() {
     // Kick the watchdog
@@ -39,7 +39,7 @@ void SystemManager::SMUpdate() {
     }
 
     // Log if new messages
-    if (smLoggerQueue_->count() > 0) {
+    if (smLoggerQueue->count() > 0) {
         sendMessagesToLogger();
     }
 }
@@ -54,15 +54,15 @@ void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
     rcDataMessage.arm = rcData.arm;
     rcDataMessage.flapAngle = rcData.aux2;
 
-    amRCQueue_->push(&rcDataMessage);
+    amRcQueue->push(&rcDataMessage);
 }
 
 void SystemManager::sendMessagesToLogger() {
     static char messages[16][100];
     int msgCount = 0;
 
-    while (smLoggerQueue_->count() > 0) {
-        smLoggerQueue_->get(&messages[msgCount]);
+    while (smLoggerQueue->count() > 0) {
+        smLoggerQueue->get(&messages[msgCount]);
         msgCount++;
     }
 
