@@ -15,7 +15,7 @@ typedef enum {
     THROTTLE,
     FLAP_ANGLE,
     STEERING
-} ControlAxisE_t;
+} ControlAxis_t;
 
 class AttitudeManager {
     public:
@@ -50,5 +50,5 @@ class AttitudeManager {
 
         bool getControlInputs(RCMotorControlMessage_t *pControlMsg);
 
-        void outputToMotor(ControlAxisE_t axis, uint8_t percent);
+        void outputToMotor(ControlAxis_t axis, uint8_t percent);
 };
