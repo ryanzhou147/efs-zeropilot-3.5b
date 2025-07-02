@@ -4,14 +4,14 @@
 AttitudeManager::AttitudeManager(
     IMessageQueue<RCMotorControlMessage_t> *amQueue,
     IMessageQueue<char[100]> *smLoggerQueue,
-    Flightmode *controlAlgorithm,  
+    Flightmode *controlAlgorithm,
     MotorGroupInstance_t *rollMotors,
     MotorGroupInstance_t *pitchMotors,
     MotorGroupInstance_t *yawMotors,
     MotorGroupInstance_t *throttleMotors,
     MotorGroupInstance_t *flapMotors,
     MotorGroupInstance_t *steeringMotors
-) : 
+) :
     amQueue(amQueue),
     smLoggerQueue(smLoggerQueue),
     controlAlgorithm(controlAlgorithm),
@@ -82,7 +82,7 @@ bool AttitudeManager::getControlInputs(RCMotorControlMessage_t *pControlMsg) {
     return true;
 }
 
-void AttitudeManager::outputToMotor(ControlAxis_e axis, uint8_t percent) {
+void AttitudeManager::outputToMotor(ControlAxisE_t axis, uint8_t percent) {
     MotorGroupInstance_t *motorGroup = nullptr;
 
     switch (axis) {
@@ -110,10 +110,10 @@ void AttitudeManager::outputToMotor(ControlAxis_e axis, uint8_t percent) {
 
     for (uint8_t i = 0; i < motorGroup->motorCount; i++) {
         MotorInstance_t *motor = (motorGroup->motors + i);
-        
+
         if (motor->isInverted) {
             motor->motorInstance->set(100 - percent);
-        } 
+        }
         else {
             motor->motorInstance->set(percent);
         }
