@@ -1,0 +1,2 @@
+/usr/bin/ar qc libzeropilot3.5.a CMakeFiles/zeropilot3.5.dir/src/attitude_manager/attitude_manager.cpp.o CMakeFiles/zeropilot3.5.dir/src/attitude_manager/direct_mapping.cpp.o CMakeFiles/zeropilot3.5.dir/src/system_manager/system_manager.cpp.o
+/usr/bin/ranlib libzeropilot3.5.a

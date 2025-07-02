@@ -7,7 +7,7 @@ SystemManager::SystemManager(
     IMessageQueue<RCMotorControlMessage_t> *amRCQueue,
     IMessageQueue<char[100]> *smLoggerQueue) :
         iwdgDriver(iwdgDriver),
-        loggerDriver_(loggerDriver),
+        loggerDriver(loggerDriver),
         rcDriver(rcDriver),
         amRcQueue(amRCQueue),
         smLoggerQueue(smLoggerQueue) {}
@@ -26,14 +26,14 @@ void SystemManager::smUpdate() {
         sendRCDataToAttitudeManager(rcData);
 
         if (!rcConnected) {
-            loggerDriver_->log("RC Reconnected");
+            loggerDriver->log("RC Reconnected");
             rcConnected = true;
         }
     } else {
         oldDataCount += 1;
 
         if ((oldDataCount * SM_MAIN_DELAY > 500) && rcConnected) {
-            loggerDriver_->log("RC Disconnected");
+            loggerDriver->log("RC Disconnected");
             rcConnected = false;
         }
     }
@@ -66,5 +66,5 @@ void SystemManager::sendMessagesToLogger() {
         msgCount++;
     }
 
-    loggerDriver_->log(messages, msgCount);
+    loggerDriver->log(messages, msgCount);
 }

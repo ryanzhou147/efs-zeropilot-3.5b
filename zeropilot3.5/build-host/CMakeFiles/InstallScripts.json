@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/hiatus/Code/efs-zeropilot-3.5b/zeropilot3.5/build-host/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
