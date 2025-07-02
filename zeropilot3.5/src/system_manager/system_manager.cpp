@@ -8,11 +8,11 @@ SystemManager::SystemManager(
     IMessageQueue<char[100]> *smLoggerQueue) :
         iwdgDriver(iwdgDriver),
         loggerDriver_(loggerDriver),
-        rcDriver_(rcDriver),
+        rcDriver(rcDriver),
         amRcQueue(amRCQueue),
         smLoggerQueue(smLoggerQueue) {}
 
-void SystemManager::SMUpdate() {
+void SystemManager::smUpdate() {
     // Kick the watchdog
     iwdgDriver->refreshWatchdog();
 
@@ -20,7 +20,7 @@ void SystemManager::SMUpdate() {
     static int oldDataCount = 0;
     static bool rcConnected = true;
 
-    RCControl rcData = rcDriver_->getRCData();
+    RCControl rcData = rcDriver->getRCData();
     if (rcData.isDataNew) {
         oldDataCount = 0;
         sendRCDataToAttitudeManager(rcData);
