@@ -1,0 +1,32 @@
+#include "SDIO.hpp"
+
+int SDIO::open(const char *filename) {
+    if (f_open(&fil, filename, FA_READ | FA_WRITE) != 0) {
+        return 1; // Error opening file
+    }
+    strncpy(file, filename, sizeof(file) - 1);
+    file[sizeof(file) - 1] = '\0';
+    return 0; // Success
+}
+
+int SDIO::close() {
+    if (f_close(&fil) != 0) {
+        return 1; // Error closing file
+    }
+    return 0; // Success
+}
+
+char* SDIO::read(char *buffer, size_t bufferSize) {
+    return f_gets(buffer, bufferSize, &fil); // Reads a line from the file into the buffer
+}
+
+int SDIO::write(const char *buffer) {
+    return f_puts(buffer, &fil); // Writes a string to the file
+}
+
+int SDIO::seek(int offset) {
+    if (f_lseek(&fil, offset) != 0) {
+        return 1; // Error seeking in file
+    }
+    return 0; // Success
+}
