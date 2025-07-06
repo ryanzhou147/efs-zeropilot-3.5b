@@ -25,6 +25,7 @@ CAN::CAN(FDCAN_HandleTypeDef *hfdcan) : hfdcan(hfdcan) {
 	nodeStatus = {0};
 
 	canard.node_id = NODE_ID;
+
 }
 
 CAN::~CAN() {}
@@ -300,14 +301,14 @@ void CAN::process1HzTasks() {
 Wrapper function with mutex
 */
 int16_t CAN::broadcastObj(CanardTxTransfer* transfer) {
-	osStatus_t status = osMutexAcquire(canBroadcastMutex, CAN_BROADCAST_MUTEX_TIMEOUT);
+//	osStatus_t status = osMutexAcquire(canBroadcastMutex, CAN_BROADCAST_MUTEX_TIMEOUT);
 
-	if (status != osOK){
-		return -1; // handle failure
-	}
+//	if (status != osOK){
+//		return -1; // handle failure
+//	}
 
 	int16_t res = canardBroadcastObj(&canard, transfer);
-	osMutexRelease(canBroadcastMutex);
+//	osMutexRelease(canBroadcastMutex);
 
 	return res;
 }
