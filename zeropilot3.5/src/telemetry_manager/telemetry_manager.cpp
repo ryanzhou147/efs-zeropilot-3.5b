@@ -3,8 +3,8 @@
 #define COMPONENT_ID 1          // Suggested Component ID by MAVLINK
 
 
-TelemetryManager::TelemetryManager(IRFD *rfdDriver, IMessageQueue<TMMessage_t> *tmQueueDriver, IMessageQueue<TMMessage_t> *amQueueDriver, IMessageQueue<mavlink_message_t> *messageBuffer):
-    tmQueueDriver_(tmQueueDriver), rfdDriver_(rfdDriver), messageBuffer_(messageBuffer) {
+TelemetryManager::TelemetryManager(IRFD *rfdDriver, IMessageQueue<TMMessage_t> *tmQueueDriver, IMessageQueue<RCMotorControlMessage_t> *amQueueDriver, IMessageQueue<mavlink_message_t> *messageBuffer):
+    amQueueDriver_(amQueueDriver), tmQueueDriver_(tmQueueDriver), rfdDriver_(rfdDriver), messageBuffer_(messageBuffer) {
 
 }
 
@@ -65,9 +65,9 @@ void TelemetryManager::transmit() {
 void TelemetryManager::reconstructMsg() {
 
 
-    uint8_t rx_buffer[Rx_Buffer_Len];
+    uint8_t rx_buffer[RX_BUFFER_LEN];
 
-    uint16_t received_bytes = rfdDriver_.receive(rx_buffer, sizeof(rx_buffer));
+    const uint16_t received_bytes = rfdDriver_->receive(rx_buffer, sizeof(rx_buffer));
 
     //Use mavlink_parse_char to process one byte at a time
     for (uint16_t i = 0; i < received_bytes; ++i) {
@@ -82,7 +82,7 @@ void TelemetryManager::handleRxMsg(const mavlink_message_t &msg) {
     switch (msg.msgid) {
         case MAVLINK_MSG_ID_PARAM_SET:
             float value_to_set;
-            char param_to_set[MALINK_MAX_IDENTIFIER_LEN] = {};
+            char param_to_set[MAVLINK_MAX_IDENTIFIER_LEN] = {};
             uint8_t value_type;
             uint16_t param_id_len = mavlink_msg_param_set_get_param_id(&msg, param_to_set);
             value_to_set = mavlink_msg_param_set_get_param_value(&msg);

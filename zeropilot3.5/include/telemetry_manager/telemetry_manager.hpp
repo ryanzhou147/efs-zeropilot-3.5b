@@ -1,7 +1,7 @@
 #pragma once
 #define MAVLINK_MSG_MAX_SIZE 280
-#define MALINK_MAX_IDENTIFIER_LEN 17
-#define Rx_Buffer_Len 8192
+#define MAVLINK_MAX_IDENTIFIER_LEN 17
+#define RX_BUFFER_LEN 8192
 
 #include <mavlink2/common/mavlink.h>
 #include "queue_iface.hpp"
@@ -20,7 +20,7 @@ class TelemetryManager {
 
 
   public:
-    TelemetryManager(IRFD *rfdDriver, IMessageQueue<TMMessage_t>  *tmQueueDriver,  IMessageQueue<TMMessage_t> *amQueueDriver,IMessageQueue<mavlink_message_t> *messageBuffer);
+    TelemetryManager(IRFD *rfdDriver, IMessageQueue<TMMessage_t>  *tmQueueDriver,  IMessageQueue<RCMotorControlMessage_t> *amQueueDriver,IMessageQueue<mavlink_message_t> *messageBuffer);
     ~TelemetryManager();
     void processMsgQueue();
     void heartBeatMsg();
