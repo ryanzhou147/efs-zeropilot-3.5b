@@ -25,10 +25,7 @@ AttitudeManager::AttitudeManager(
     steeringMotors(steeringMotors) {}
 
 void AttitudeManager::setRudderMixing(float coeff) {
-    if (coeff < 0.0f) {
-        char errorMsg[100];
-        snprintf(errorMsg, sizeof(errorMsg), "Invalid rudder mixing value: %f", coeff);
-        smLoggerQueue->push(&errorMsg);
+    if (coeff < 0.0f || coeff > 1.0f) {
         return;
     }
 
