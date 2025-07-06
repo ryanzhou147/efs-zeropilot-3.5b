@@ -1,4 +1,4 @@
-#include "AM_PID_mapping.hpp"
+#include "AM_pid.hpp"
 #include "attitude_manager.hpp"
 
 // Constructor
@@ -45,8 +45,8 @@ float PID::PIDOutput(float setpoint, float measurement) {
     pid_output = measurement + pid_control_effort;
     
     // Clamp output
-    if (out > output_max_lim) { pid_output = output_max_lim; }
-    if (out < output_min_lim) { pid_output = output_min_lim; }
+    if (pid_output > output_max_lim) { pid_output = output_max_lim; }
+    if (pid_output < output_min_lim) { pid_output = output_min_lim; }
 
     // Update previous values
     prev_error = error;
