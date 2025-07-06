@@ -1,13 +1,10 @@
 #include "AM_pid.hpp"
-#include "attitude_manager.hpp"
 
 // Constructor
 PID::PID(float KP, float KI, float KD,
-         float tau, 
-         float output_min_lim, float output_max_lim,
-         float integral_min_lim, float integral_max_lim,
-         float T): 
-            KP(KP), KI(KI), KD(KD), tau(tau), T(AM_MAIN_DELAY),
+         float tau, float output_min_lim, float output_max_lim,
+         float integral_min_lim, float integral_max_lim, float T): 
+            KP(KP), KI(KI), KD(KD), tau(tau), T(T),
             output_min_lim(output_min_lim), output_max_lim(output_max_lim),
             integral_min_lim(integral_min_lim), integral_max_lim(integral_max_lim)
 {}
@@ -55,9 +52,7 @@ float PID::PIDOutput(float setpoint, float measurement) {
     return pid_output; // Must go directly into motor control
 }
 
-RCMotorControlMessage_t PIDMapping::runControl(RCMotorControlMessage_t controlInputs){
 
-}
 
 
 

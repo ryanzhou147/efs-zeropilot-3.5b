@@ -1,13 +1,13 @@
 #pragma once
 
-#include "flightmode.hpp"
 
-class PID: public Flightmode {
+class PID {
     public:
-        RCMotorControlMessage_t runControl(RCMotorControlMessage_t controlInput) override;
+        // RCMotorControlMessage_t runControl(RCMotorControlMessage_t controlInput) override;
          
         // PID object constructor
-        PID(float KP, float KI, float KD, float tau, float limMin, float limMax,
+        PID(float KP, float KI, float KD, 
+            float tau, float output_min_lim, float output_max_lim,
             float integral_min_lim, float integral_max_lim, float T);
         
         // PID object's state var initialized (or reset)
@@ -15,6 +15,8 @@ class PID: public Flightmode {
         
         // 
         float PIDOutput(float setpoint, float measurement);
+
+        ~ PID();
 
     private:
         // Gains
