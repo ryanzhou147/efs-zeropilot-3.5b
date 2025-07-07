@@ -1,11 +1,15 @@
 #include "SDIO.hpp"
 
-int SDIO::open(const char *filename) {
-    if (f_open(&fil, filename, FA_READ | FA_WRITE) != 0) {
+SDIO::SDIO(const char *filename) {
+    // Initialize the file name with the provided filename
+    strncpy(file, filename, sizeof(file) - 1);
+    file[sizeof(file) - 1] = '\0'; // Ensure null termination
+}
+
+int SDIO::open() {
+    if (f_open(&fil, file, FA_READ | FA_WRITE) != 0) {
         return 1; // Error opening file
     }
-    strncpy(file, filename, sizeof(file) - 1);
-    file[sizeof(file) - 1] = '\0';
     return 0; // Success
 }
 

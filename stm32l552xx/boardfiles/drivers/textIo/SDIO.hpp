@@ -5,8 +5,8 @@
 
 class SDIO : public ITextIO {
     public:
-        SDIO() = default;
-        int open(const char *filename) override;
+        SDIO(const *filename[100]) = default;
+        int open() override;
         int close() override;
         char* read(char *buffer, size_t bufferSize) override;
         int write(const char *buffer) override;
