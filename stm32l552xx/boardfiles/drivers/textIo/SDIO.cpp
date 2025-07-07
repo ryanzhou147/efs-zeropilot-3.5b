@@ -38,3 +38,7 @@ int SDIO::seek(int offset) {
 size_t SDIO::tell() {
     return f_tell(&fil); // Returns the current position in the file
 }
+
+int SDIO::eof() {
+    return f_eof(&fil); // Returns whether the end of file has been reached
+}

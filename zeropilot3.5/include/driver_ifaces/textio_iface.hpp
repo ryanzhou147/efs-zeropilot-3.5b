@@ -13,4 +13,5 @@ class ITextIO {
         virtual int write(const char *buffer) = 0;
         virtual int seek(int offset) = 0;
         virtual size_t tell() = 0;
+        virtual int eof() = 0;
 }
