@@ -10,6 +10,7 @@ class PIDMapping : public Flightmode {
 
         RCMotorControlMessage_t runControl(RCMotorControlMessage_t controlInput) override;
 
+        // Setter *roll* for PID consts + time constant tau for the derivative low-pass filter
         void setRollPIDConstants(float Kp, float Ki, float Kd, float tau) {
             roll_Kp = Kp;
             roll_Ki = Ki;
@@ -17,6 +18,8 @@ class PIDMapping : public Flightmode {
             roll_tau = tau;
 
         }
+
+        // Setter for *pitch* PID consts + time constant tau for the derivative low-pass filter
         void setPitchPIDConstants(float Kp, float Ki, float Kd, float tau) {
             pitch_Kp = Kp;
             pitch_Ki = Ki;
@@ -41,7 +44,7 @@ class PIDMapping : public Flightmode {
         float pitch_integral_min_lim;
         float pitch_integral_max_lim;
 
-        // Output limits
+        // Output limits (for control effort)
         const float output_min = 0.0f;
         const float output_max = 0.0f;
 
@@ -49,6 +52,7 @@ class PIDMapping : public Flightmode {
         float roll_tau = 0.0f;
         float pitch_tau = 0.0f;
 
+        // Roll and Pitch PID class objects
         PID rollPID;
         PID pitchPID;
 };

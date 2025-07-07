@@ -37,17 +37,19 @@ float PID::PIDOutput(float setpoint, float measurement) {
     // PID Derivative with low-pass filter
     pid_derivative = ((-1 * 2.0f * KD * (measurement - prev_measurement)) + ((2 * tau - T) * pid_derivative)) / ((2.0f * tau) + T);
     
-    // PID control effort + output calc.
+    // PID control effort
     pid_control_effort = pid_proportional + pid_integral + pid_derivative;
-    pid_output = measurement + pid_control_effort;
     
-    // Clamp output
-    if (pid_output > output_max_lim) { pid_output = output_max_lim; }
-    if (pid_output < output_min_lim) { pid_output = output_min_lim; }
+    // Clamp control effort output
+    if (pid_control_effort > output_max_lim) { pid_control_effort = output_max_lim; }
+    if (pid_control_effort < output_min_lim) { pid_control_effort = output_min_lim; }
 
     // Update previous values
     prev_error = error;
     prev_measurement = measurement;
+
+    // Absolute motor control position
+    pid_output = measurement + pid_control_effort;
 
     return pid_output; // Must go directly into motor control
 }

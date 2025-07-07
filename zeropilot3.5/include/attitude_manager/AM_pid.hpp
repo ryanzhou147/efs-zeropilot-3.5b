@@ -13,10 +13,9 @@ class PID {
         // PID object's state var initialized (or reset)
         void PIDInitState();
         
-        // 
+        // Computes PID for a measurement with its desired setpoint passed in
         float PIDOutput(float setpoint, float measurement);
 
-        ~ PID();
 
     private:
         // Gains
@@ -32,9 +31,9 @@ class PID {
         float pid_derivative, pid_integral;
         float prev_error, prev_measurement;
 
-        // Control effort var - redundancy added for clarity
+        // Control effort var
         float pid_control_effort;
         
-        // Output var
+        // Output var, absolute position currently
         float pid_output; // Directly into motor control
 };

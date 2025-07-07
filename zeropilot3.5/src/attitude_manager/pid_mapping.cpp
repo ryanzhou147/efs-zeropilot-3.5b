@@ -17,10 +17,11 @@ RCMotorControlMessage_t PIDMapping::runControl(RCMotorControlMessage_t controlIn
     float roll_setpoint = controlInputs.roll;
     float pitch_setpoint = controlInputs.pitch;
 
-    // Get from sensor fusion
+    // Get from sensor fusion -- make sure to update include files when we get this
     float roll_measured = 50.0;
     float pitch_measured = 50.0;
 
+    // Currently, roll & pitch outputs receive absolute roll & pitch angles, not relative to current position.
     float roll_output = rollPID.PIDOutput(roll_setpoint, roll_measured);
     float pitch_output = pitchPID.PIDOutput(pitch_setpoint, pitch_measured);
 
