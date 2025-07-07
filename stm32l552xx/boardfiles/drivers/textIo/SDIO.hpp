@@ -11,6 +11,7 @@ class SDIO : public ITextIO {
         char* read(char *buffer, size_t bufferSize) override;
         int write(const char *buffer) override;
         int seek(int offset) override;
+        size_t tell() override;
 
     private:
         FATFS FatFs;

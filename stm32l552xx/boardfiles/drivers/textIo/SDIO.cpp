@@ -34,3 +34,7 @@ int SDIO::seek(int offset) {
     }
     return 0; // Success
 }
+
+size_t SDIO::tell() {
+    return f_tell(&fil); // Returns the current position in the file
+}
