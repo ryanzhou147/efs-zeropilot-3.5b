@@ -49,19 +49,19 @@ class AttitudeManager {
         MotorGroupInstance_t *flapMotors;
         MotorGroupInstance_t *steeringMotors;
 
-        bool if_rollMotors_invert=0;
-        bool if_pitchMotors_invert=0;
-        bool if_yawMotors_invert=0;
-        bool if_throttleMotors_invert=0;
-        bool if_flapMotors_invert=0;
-        bool if_steeringMotor_invert=0;
+        bool ifRollMotorsInvert=0;
+        bool ifPitchMotorsInvert=0;
+        bool ifYawMotorsInvert=0;
+        bool ifThrottleMotorsInvert=0;
+        bool ifFlapMotorsInvert=0;
+        bool ifSteeringMotorInvert=0;
         
-        float ROLLMOTORS_TRIM;
-        float PITCHMOTORS_TRIM;
-        float YAWMOTORS_TRIM;
-        float THROTTLEMOTORS_TRIM;
-        float FLAPMOTORS_TRIM;
-        float STEERINGMOTORS_TRIM;
+        float rollmotorsTrim;
+        float pitchmotorsTrim;
+        float yawmotorsTrim;
+        float throttlemotorsTrim;
+        float flapmotorsTrim;
+        float steeringmotorsTrim;
         
         float const ADVERSE_YAW_COEFFICIENT=1.5f;
         float adverseYaw = 0.0f;

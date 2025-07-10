@@ -6,34 +6,34 @@ class PID {
         // RCMotorControlMessage_t runControl(RCMotorControlMessage_t controlInput) override;
          
         // PID object constructor
-        PID(float KP, float KI, float KD, 
-            float tau, float output_min_lim, float output_max_lim,
-            float integral_min_lim, float integral_max_lim, float T);
+        PID(float kp, float ki, float kd, 
+            float tau, float outputMinLim, float outputMaxLim,
+            float integralMinLim, float integralMaxLim, float t);
         
         // PID object's state var initialized (or reset)
-        void PIDInitState();
+        void pidInitState();
         
         // Computes PID for a measurement with its desired setpoint passed in
-        float PIDOutput(float setpoint, float measurement);
+        float pidOutput(float setpoint, float measurement);
 
 
     private:
         // Gains
-        float KP, KI, KD;      // PID constants - May choose these to be optimized real-time dep. on optimization alg. chosen
+        float kp, ki, kd;      // PID constants - May choose these to be optimized real-time dep. on optimization alg. chosen
         float tau;             // Derivative low-pass filter constant
-        float T;               // Sample time (set to AM_MAIN_DELAY)
+        float t;               // Sample time (set to AM_MAIN_DELAY)
 
         // Output and Integral Limits
-        float output_min_lim, output_max_lim;       // Output limits
-        float integral_min_lim, integral_max_lim;   // integral limits
+        float outputMinLim, outputMaxLim;       // Output limits
+        float integralMinLim, integralMaxLim;   // integral limits
 
         // State variables
-        float pid_derivative, pid_integral;
-        float prev_error, prev_measurement;
+        float pidDerivative, pidIntegral;
+        float prevError, prevMeasurement;
 
         // Control effort var
-        float pid_control_effort;
+        float pidControlEffort;
         
         // Output var, absolute position currently
-        float pid_output; // Directly into motor control
+        float pidOutput; // Directly into motor control
 };

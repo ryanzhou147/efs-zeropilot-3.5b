@@ -6,51 +6,51 @@
 
 class PIDMapping : public Flightmode {
     public:
-        PIDMapping() = default;
+        PIDMapping();
 
         RCMotorControlMessage_t runControl(RCMotorControlMessage_t controlInput) override;
 
         // Setter *roll* for PID consts + time constant tau for the derivative low-pass filter
-        void setRollPIDConstants(float Kp, float Ki, float Kd, float tau) {
-            roll_Kp = Kp;
-            roll_Ki = Ki;
-            roll_Kd = Kd;
-            roll_tau = tau;
+        void setRollPIDConstants(float kp, float ki, float kd, float tau) {
+            roll_kp = kp;
+            roll_ki = ki;
+            roll_kd = kd;
+            rollTau = tau;
 
         }
 
         // Setter for *pitch* PID consts + time constant tau for the derivative low-pass filter
-        void setPitchPIDConstants(float Kp, float Ki, float Kd, float tau) {
-            pitch_Kp = Kp;
-            pitch_Ki = Ki;
-            pitch_Kd = Kd;
-            pitch_tau = tau;
+        void setPitchPIDConstants(float kp, float ki, float kd, float tau) {
+            pitch_kp = kp;
+            pitch_ki = ki;
+            pitch_kd = kd;
+            pitchTau = tau;
         }
     
     private:
         // Roll controls' PID constants
-        float roll_Kp = 0.0f;
-        float roll_Ki = 0.0f;
-        float roll_Kd = 0.0f;
+        float roll_kp = 0.0f;
+        float roll_ki = 0.0f;
+        float roll_kd = 0.0f;
         // Roll integral limits
-        const float roll_integral_min_lim = 0.0f;
-        float roll_integral_max_lim = 0.0f;
+        const float ROLL_INTEGRAL_MIN_LIM = 0.0f;
+        const float ROLL_INTEGRAL_MAX_LIM = 0.0f;
         
         // Pitch controls' PID constants
-        float pitch_Kp = 0.0f;
-        float pitch_Ki = 0.0f;
-        float pitch_Kd = 0.0f;
+        float pitch_kp = 0.0f;
+        float pitch_ki = 0.0f;
+        float pitch_kd = 0.0f;
         // Pitch integral limits
-        float pitch_integral_min_lim;
-        float pitch_integral_max_lim;
+        const float PITCH_INTEGRAL_MIN_LIM;
+        const float PITCH_INTEGRAL_MAX_LIM;
 
         // Output limits (for control effort)
-        const float output_min = 0.0f;
-        const float output_max = 0.0f;
+        const float OUTPUT_MIN = 0.0f;
+        const float OUTPUT_MAX = 0.0f;
 
-        // Tau constants
-        float roll_tau = 0.0f;
-        float pitch_tau = 0.0f;
+        // tau constants
+        float rollTau = 0.0f;
+        float pitchTau = 0.0f;
 
         // Roll and Pitch PID class objects
         PID rollPID;

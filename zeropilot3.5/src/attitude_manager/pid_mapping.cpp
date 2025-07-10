@@ -1,32 +1,32 @@
 #include "pid_mapping.hpp"
 
 PIDMapping::PIDMapping():
-    rollPID(roll_Kp, roll_Ki, roll_Kd,
-        roll_tau, output_min, output_max,
-        roll_integral_min_lim, roll_integral_max_lim, AM_MAIN_DELAY),
+    rollPID(roll_kp, roll_ki, roll_kd,
+        rollTau, OUTPUT_MIN, OUTPUT_MAX,
+        ROLL_INTEGRAL_MIN_LIM, ROLL_INTEGRAL_MAX_LIM, AM_MAIN_DELAY),
       
-    pitchPID(pitch_Kp, pitch_Ki, pitch_Kd,
-        pitch_tau, output_min, output_max,
-        pitch_integral_min_lim, pitch_integral_max_lim, AM_MAIN_DELAY)
+    pitchPID(pitch_kp, pitch_ki, pitch_kd,
+        pitchTau, OUTPUT_MIN, OUTPUT_MAX,
+        PITCH_INTEGRAL_MIN_LIM, PITCH_INTEGRAL_MAX_LIM, AM_MAIN_DELAY)
 {
-    rollPID.PIDInitState();
-    pitchPID.PIDInitState();
+    rollPID.pidInitState();
+    pitchPID.pidInitState();
 }
 
 RCMotorControlMessage_t PIDMapping::runControl(RCMotorControlMessage_t controlInputs){
-    float roll_setpoint = controlInputs.roll;
-    float pitch_setpoint = controlInputs.pitch;
+    float rollSetpoint = controlInputs.roll;
+    float pitchSetpoint = controlInputs.pitch;
 
     // Get from sensor fusion -- make sure to update include files when we get this
-    float roll_measured = 50.0;
-    float pitch_measured = 50.0;
+    float rollMeasured = 50.0;
+    float pitchMeasured = 50.0;
 
     // Currently, roll & pitch outputs receive absolute roll & pitch angles, not relative to current position.
-    float roll_output = rollPID.PIDOutput(roll_setpoint, roll_measured);
-    float pitch_output = pitchPID.PIDOutput(pitch_setpoint, pitch_measured);
+    float rollOutput = rollPID.pidOutput(rollSetpoint, rollMeasured);
+    float pitchOutput = pitchPID.pidOutput(pitchSetpoint, pitchMeasured);
 
-    controlInputs.roll = roll_output; // setting desired roll angle
-    controlInputs.pitch = pitch_output; // setting desired pitch angle
+    controlInputs.roll = rollOutput; // setting desired roll angle
+    controlInputs.pitch = pitchOutput; // setting desired pitch angle
 
     return controlInputs;
 }
