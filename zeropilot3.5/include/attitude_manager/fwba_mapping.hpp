@@ -2,7 +2,7 @@
 
 #include "flightmode.hpp"
 #include "attitude_manager.hpp"
-#include "AM_pid.hpp"
+#include "pid.hpp"
 
 class PIDMapping : public Flightmode {
     public:
@@ -12,34 +12,35 @@ class PIDMapping : public Flightmode {
 
         // Setter *roll* for PID consts + time constant tau for the derivative low-pass filter
         void setRollPIDConstants(float kp, float ki, float kd, float tau) {
-            roll_kp = kp;
-            roll_ki = ki;
-            roll_kd = kd;
+            rollKp = kp;
+            rollKi = ki;
+            rollKd = kd;
             rollTau = tau;
 
         }
 
         // Setter for *pitch* PID consts + time constant tau for the derivative low-pass filter
         void setPitchPIDConstants(float kp, float ki, float kd, float tau) {
-            pitch_kp = kp;
-            pitch_ki = ki;
-            pitch_kd = kd;
+            pitchKp = kp;
+            pitchKi = ki;
+            pitchKd = kd;
             pitchTau = tau;
         }
     
     private:
+        // For the PID roll & pitch consts -> may choose these to be optimized real-time dep. on optimization alg. chosen
         // Roll controls' PID constants
-        float roll_kp = 0.0f;
-        float roll_ki = 0.0f;
-        float roll_kd = 0.0f;
+        float rollKp = 0.0f;
+        float rollKi = 0.0f;
+        float rollKd = 0.0f;
         // Roll integral limits
         const float ROLL_INTEGRAL_MIN_LIM = 0.0f;
         const float ROLL_INTEGRAL_MAX_LIM = 0.0f;
         
         // Pitch controls' PID constants
-        float pitch_kp = 0.0f;
-        float pitch_ki = 0.0f;
-        float pitch_kd = 0.0f;
+        float pitchKp = 0.0f;
+        float pitchKi = 0.0f;
+        float pitchKd = 0.0f;
         // Pitch integral limits
         const float PITCH_INTEGRAL_MIN_LIM;
         const float PITCH_INTEGRAL_MAX_LIM;
@@ -53,6 +54,6 @@ class PIDMapping : public Flightmode {
         float pitchTau = 0.0f;
 
         // Roll and Pitch PID class objects
-        PID rollPID;
-        PID pitchPID;
+        PID *rollPID;
+        PID *pitchPID;
 };

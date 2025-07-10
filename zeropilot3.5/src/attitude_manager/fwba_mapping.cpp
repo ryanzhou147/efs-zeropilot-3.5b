@@ -1,16 +1,16 @@
-#include "pid_mapping.hpp"
+#include "fwba_mapping.hpp"
 
 PIDMapping::PIDMapping():
-    rollPID(roll_kp, roll_ki, roll_kd,
+    rollPID = new PID(rollKp, rollKi, rollKd,
         rollTau, OUTPUT_MIN, OUTPUT_MAX,
         ROLL_INTEGRAL_MIN_LIM, ROLL_INTEGRAL_MAX_LIM, AM_MAIN_DELAY),
       
-    pitchPID(pitch_kp, pitch_ki, pitch_kd,
+    pitchPID = new PID(pitchKp, pitchKi, pitchKd,
         pitchTau, OUTPUT_MIN, OUTPUT_MAX,
         PITCH_INTEGRAL_MIN_LIM, PITCH_INTEGRAL_MAX_LIM, AM_MAIN_DELAY)
 {
-    rollPID.pidInitState();
-    pitchPID.pidInitState();
+    rollPID->pidInitState();
+    pitchPID->pidInitState();
 }
 
 RCMotorControlMessage_t PIDMapping::runControl(RCMotorControlMessage_t controlInputs){
@@ -22,8 +22,8 @@ RCMotorControlMessage_t PIDMapping::runControl(RCMotorControlMessage_t controlIn
     float pitchMeasured = 50.0;
 
     // Currently, roll & pitch outputs receive absolute roll & pitch angles, not relative to current position.
-    float rollOutput = rollPID.pidOutput(rollSetpoint, rollMeasured);
-    float pitchOutput = pitchPID.pidOutput(pitchSetpoint, pitchMeasured);
+    float rollOutput = rollPID->pidOutput(rollSetpoint, rollMeasured);
+    float pitchOutput = pitchPID->pidOutput(pitchSetpoint, pitchMeasured);
 
     controlInputs.roll = rollOutput; // setting desired roll angle
     controlInputs.pitch = pitchOutput; // setting desired pitch angle

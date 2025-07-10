@@ -1,4 +1,4 @@
-#include "AM_pid.hpp"
+#include "pid.hpp"
 
 // Constructor
 PID::PID(float kp, float ki, float kd,
@@ -16,7 +16,7 @@ void PID::pidInitState() {
     pidDerivative = 0.0f;
     prevMeasurement = 0.0f;
     pidControlEffort = 0.0f;
-    pidOutput = 0.0f;
+    pidOut = 0.0f;
 }
 
 // Update method
@@ -49,9 +49,9 @@ float PID::pidOutput(float setpoint, float measurement) {
     prevMeasurement = measurement;
 
     // Absolute motor control position
-    pidOutput = measurement + pidControlEffort;
+    pidOut = measurement + pidControlEffort;
 
-    return pidOutput; // Must go directly into motor control
+    return pidOut; // Must go directly into motor control
 }
 
 
