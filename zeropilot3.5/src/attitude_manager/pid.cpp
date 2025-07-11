@@ -19,6 +19,13 @@ void PID::pidInitState() {
     pidOut = 0.0f;
 }
 
+void PID::setConstants(float newKp, float newKi, float newKd, float newTau) {
+    kp = newKp;
+    ki = newKi;
+    kd = newKd;
+    tau = newTau;
+}
+
 // Update method
 float PID::pidOutput(float setpoint, float measurement) {
     // Calculate error
@@ -53,8 +60,3 @@ float PID::pidOutput(float setpoint, float measurement) {
 
     return pidOut; // Must go directly into motor control
 }
-
-
-
-
-

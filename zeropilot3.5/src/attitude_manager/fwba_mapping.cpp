@@ -1,16 +1,20 @@
 #include "fwba_mapping.hpp"
 
-PIDMapping::PIDMapping():
-    rollPID = new PID(rollKp, rollKi, rollKd,
-        rollTau, OUTPUT_MIN, OUTPUT_MAX,
-        ROLL_INTEGRAL_MIN_LIM, ROLL_INTEGRAL_MAX_LIM, AM_MAIN_DELAY),
+PIDMapping::PIDMapping() {
+    rollPID = new PID(0.0f, 0.0f, 0.0f,
+        0.0f, OUTPUT_MIN, OUTPUT_MAX,
+        ROLL_INTEGRAL_MIN_LIM, ROLL_INTEGRAL_MAX_LIM, AM_MAIN_DELAY);
       
-    pitchPID = new PID(pitchKp, pitchKi, pitchKd,
-        pitchTau, OUTPUT_MIN, OUTPUT_MAX,
-        PITCH_INTEGRAL_MIN_LIM, PITCH_INTEGRAL_MAX_LIM, AM_MAIN_DELAY)
-{
+    pitchPID = new PID(0.0f, 0.0f, 0.0f,
+        0.0f, OUTPUT_MIN, OUTPUT_MAX,
+        PITCH_INTEGRAL_MIN_LIM, PITCH_INTEGRAL_MAX_LIM, AM_MAIN_DELAY);
     rollPID->pidInitState();
     pitchPID->pidInitState();
+}
+
+PIDMapping::~PIDMapping() {
+    delete rollPID;
+    delete pitchPID;
 }
 
 RCMotorControlMessage_t PIDMapping::runControl(RCMotorControlMessage_t controlInputs){
