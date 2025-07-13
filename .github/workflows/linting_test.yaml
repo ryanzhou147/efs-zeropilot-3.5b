@@ -7,7 +7,7 @@ on:
     type: [opened, synchronize, reopened]
 
 jobs:
-  build_and_test:
+  linting_test:
     runs-on: ubuntu-latest
 
     steps:
