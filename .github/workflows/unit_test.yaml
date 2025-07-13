@@ -25,4 +25,6 @@ jobs:
     
     - name: Run tests
       working-directory: ./zeropilot3.5/tests
-      run: bash ./build/gtestzeropilot3.5
+      run: |
+        chmod +x build/gtestzeropilot3.5
+        ./build/gtestzeropilot3.5
