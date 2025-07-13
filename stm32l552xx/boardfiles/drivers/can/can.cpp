@@ -25,7 +25,6 @@ CAN::CAN(FDCAN_HandleTypeDef *hfdcan) : hfdcan(hfdcan) {
 	nodeStatus = {0};
 
 	canard.node_id = NODE_ID;
-
 }
 
 CAN::~CAN() {}
