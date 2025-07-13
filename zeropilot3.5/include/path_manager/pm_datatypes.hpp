@@ -10,13 +10,13 @@ typedef struct {
 } InputSF;
 
 typedef struct {
-    float roll              // degrees
-    float pitch             // degrees
-    uint8_t throttle        // %
+    float roll;             // degrees
+    float pitch;            // degrees
+    uint8_t throttle;       // %
 } OutputFBWA;
 
 typedef struct {
-    float roll              // degrees
-    uint8_t speed           // % (scales the max speed in AM)
-    int altitude_speed      // m/s
+    float roll;             // degrees
+    uint8_t speed;          // % (scales the max speed in AM)
+    int altitude_rate;     // m/s
 } OutputFBWB;
