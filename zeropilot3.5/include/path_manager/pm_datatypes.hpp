@@ -18,5 +18,5 @@ typedef struct {
 typedef struct {
     float roll;             // degrees
     uint8_t speed;          // % (scales the max speed in AM)
-    int altitude_rate;     // m/s
+    int altitude_rate;      // m/s
 } OutputFBWB;
