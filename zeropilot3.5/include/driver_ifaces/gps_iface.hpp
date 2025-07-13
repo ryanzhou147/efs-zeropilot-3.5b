@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gps_datatypes.hpp"
+#include "../gps/gps_datatypes.hpp"
 
 #include <cstdint>
 
