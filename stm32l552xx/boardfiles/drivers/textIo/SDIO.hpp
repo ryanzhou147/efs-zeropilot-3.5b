@@ -5,17 +5,18 @@
 
 class SDIO : public ITextIO {
     public:
-        SDIO(const *filename[100]) = default;
-        int open() override;
+
+        int mountFile() override;
+        int open(char *file) override;
         int close() override;
-        char* read(char *buffer, size_t bufferSize) override;
+        char* read(char *buffer, int bufferSize) override;
         int write(const char *buffer) override;
         int seek(int offset) override;
-        size_t tell() override;
+        uint64_t tell() override;
         int eof() override;
+        bool checkFileExist(char *file) override;
 
     private:
         FATFS FatFs;
         FIL fil;
-        char file[100];
 };

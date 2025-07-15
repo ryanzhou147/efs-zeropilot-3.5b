@@ -47,7 +47,7 @@ MotorGroupInstance_t steeringMotors;
 void initDrivers()
 {
     iwdgHandle = new IndependentWatchdog(&hiwdg);
-    loggerHandle = new Logger();
+    textIOHandle = new SDIO();
 
     leftAileronMotorHandle = new MotorControl(&htim3, TIM_CHANNEL_1, 5, 10);
     rightAileronMotorHandle = new MotorControl(&htim3, TIM_CHANNEL_2, 5, 10);

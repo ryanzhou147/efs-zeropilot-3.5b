@@ -2,15 +2,15 @@
 
 SystemManager::SystemManager(
     IIndependentWatchdog *iwdgDriver,
-    ILogger *loggerDriver,
     IRCReceiver *rcDriver, 
     IMessageQueue<RCMotorControlMessage_t> *amRCQueue, 
-    IMessageQueue<char[100]> *smLoggerQueue) : 
+    IMessageQueue<char[100]> *smLoggerQueue,
+    Logger *logger) :
         iwdgDriver_(iwdgDriver),
-        loggerDriver_(loggerDriver),
         rcDriver_(rcDriver), 
         amRCQueue_(amRCQueue),
-        smLoggerQueue_(smLoggerQueue) {}
+        smLoggerQueue_(smLoggerQueue),
+        logger(logger) {}
 
 void SystemManager::SMUpdate() {
     // Kick the watchdog
@@ -26,14 +26,14 @@ void SystemManager::SMUpdate() {
         sendRCDataToAttitudeManager(rcData);
 
         if (!rcConnected) {
-            loggerDriver_->log("RC Reconnected");
+            logger->log("RC Reconnected");
             rcConnected = true;
         }
     } else {
         oldDataCount += 1;
 
         if ((oldDataCount * SM_MAIN_DELAY > 500) && rcConnected) {
-            loggerDriver_->log("RC Disconnected");
+            logger->log("RC Disconnected");
             rcConnected = false;
         }
     }
@@ -66,5 +66,5 @@ void SystemManager::sendMessagesToLogger() {
         msgCount++;
     }
 
-    loggerDriver_->log(messages, msgCount);
+    logger->log(messages, msgCount);
 }

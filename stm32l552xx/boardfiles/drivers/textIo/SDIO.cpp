@@ -1,12 +1,11 @@
 #include "SDIO.hpp"
+#include <cstring>
 
-SDIO::SDIO(const char *filename) {
-    // Initialize the file name with the provided filename
-    strncpy(file, filename, sizeof(file) - 1);
-    file[sizeof(file) - 1] = '\0'; // Ensure null termination
+int SDIO::mountFile() {
+    return f_mount(&FatFs, "", 1);
 }
 
-int SDIO::open() {
+int SDIO::open(char *file) {
     if (f_open(&fil, file, FA_READ | FA_WRITE) != 0) {
         return 1; // Error opening file
     }
@@ -20,7 +19,7 @@ int SDIO::close() {
     return 0; // Success
 }
 
-char* SDIO::read(char *buffer, size_t bufferSize) {
+char* SDIO::read(char *buffer, int bufferSize) {
     return f_gets(buffer, bufferSize, &fil); // Reads a line from the file into the buffer
 }
 
@@ -35,10 +34,14 @@ int SDIO::seek(int offset) {
     return 0; // Success
 }
 
-size_t SDIO::tell() {
+uint64_t SDIO::tell() {
     return f_tell(&fil); // Returns the current position in the file
 }
 
 int SDIO::eof() {
     return f_eof(&fil); // Returns whether the end of file has been reached
+}
+
+bool SDIO::checkFileExist(char *file) {
+    return (f_stat(file, nullptr) == FR_NO_FILE);
 }

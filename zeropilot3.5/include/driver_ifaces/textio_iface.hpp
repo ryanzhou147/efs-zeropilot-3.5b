@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 class ITextIO {
     protected:
         ITextIO() = default;
@@ -7,11 +8,13 @@ class ITextIO {
     public:
         ~ITextIO() = default;
 
-        virtual int open() = 0;
+        virtual int mountFile() = 0;
+        virtual int open(char *file) = 0;
         virtual int close() = 0;
-        virtual char* read(char *buffer, size_t bufferSize) = 0;
+        virtual char* read(char *buffer, int bufferSize) = 0;
         virtual int write(const char *buffer) = 0;
         virtual int seek(int offset) = 0;
-        virtual size_t tell() = 0;
+        virtual uint64_t tell() = 0;
         virtual int eof() = 0;
-}
+        virtual bool checkFileExist(char *file) = 0;
+};

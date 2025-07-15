@@ -10,6 +10,7 @@ set(AM_INC
 # system manager files
 set(SM_SRC
     "src/system_manager/system_manager.cpp"
+    "src/system_manager/logger.cpp"
 )
 set(SM_INC
     "include/system_manager/"

@@ -6,10 +6,11 @@
 #include "motor_datatype.hpp"
 #include "rc.hpp"
 #include "rc_motor_control.hpp"
+#include "SDIO.hpp"
 #include "queue.hpp"
 
 extern IndependentWatchdog *iwdgHandle;
-extern Logger *loggerHandle;
+extern SDIO *textIOHandle;
 
 extern MotorControl *leftAileronMotorHandle;
 extern MotorControl *rightAileronMotorHandle;

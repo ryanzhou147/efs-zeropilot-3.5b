@@ -2,9 +2,12 @@
 #include "drivers.hpp"
 #include "managers.hpp"
 
-AttitudeManager *amHandle = nullptr;
-SystemManager *smHandle = nullptr;
 DirectMapping *flightMode = nullptr;
+AttitudeManager *amHandle = nullptr;
+
+Logger *loggerHandle = nullptr;
+SystemManager *smHandle = nullptr;
+
 
 
 void initManagers()
@@ -15,5 +18,6 @@ void initManagers()
     amHandle = new AttitudeManager(amRCQueueHandle, smLoggerQueueHandle, flightMode, &rollMotors, &pitchMotors, &yawMotors, &throttleMotors, &flapMotors, &steeringMotors);
 
     // SM initialization
-    smHandle = new SystemManager(iwdgHandle, loggerHandle, rcHandle, amRCQueueHandle, smLoggerQueueHandle);
+    loggerHandle = new Logger(textIOHandle);
+    smHandle = new SystemManager(iwdgHandle, rcHandle, amRCQueueHandle, smLoggerQueueHandle, loggerHandle);
 }
