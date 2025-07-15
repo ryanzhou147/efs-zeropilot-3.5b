@@ -52,10 +52,6 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
     } else if (RFD::instance && RFD::instance->getHuart() == huart) {
       RFD::instance->receiveCallback(Size);
     }
-    // GPS dma callback
-    else if (huart->Instance == USART2) {
-      gpsHandle->processGPSData();
-    }
 }
 
 uint32_t error;
