@@ -8,7 +8,6 @@
 
 #define AM_MAIN_DELAY 50
 
-
 typedef enum {
     YAW = 0,
     PITCH,
@@ -48,24 +47,6 @@ class AttitudeManager {
         MotorGroupInstance_t *throttleMotors;
         MotorGroupInstance_t *flapMotors;
         MotorGroupInstance_t *steeringMotors;
-
-        bool ifRollMotorsInvert=0;
-        bool ifPitchMotorsInvert=0;
-        bool ifYawMotorsInvert=0;
-        bool ifThrottleMotorsInvert=0;
-        bool ifFlapMotorsInvert=0;
-        bool ifSteeringMotorInvert=0;
-        
-        float rollmotorsTrim;
-        float pitchmotorsTrim;
-        float yawmotorsTrim;
-        float throttlemotorsTrim;
-        float flapmotorsTrim;
-        float steeringmotorsTrim;
-        
-        float const ADVERSE_YAW_COEFFICIENT=1.5f;
-        float adverseYaw = 0.0f;
-        float signedYaw = 0.0f;
 
         bool getControlInputs(RCMotorControlMessage_t *pControlMsg);
 
