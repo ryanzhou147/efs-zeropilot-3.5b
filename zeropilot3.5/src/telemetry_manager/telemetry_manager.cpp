@@ -18,23 +18,23 @@ void TelemetryManager::processMsgQueue() {
         tmQueueDriver_->get(&tmq_message);
 
         switch (tmq_message.DataType) {
-            case TMMessage_t::GPOS_DATA:
+            case TMMessage_t::GPOS_DATA: {
                 auto GPOSData = tmq_message.tm_message_data.GPOSData_t;
                 mavlink_msg_global_position_int_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message,tmq_message.time_boot_ms,
                     GPOSData.lat, GPOSData.lon, GPOSData.alt, GPOSData.relative_alt, GPOSData.vx, GPOSData.vy, GPOSData.vz, GPOSData.hdg);
-                break;
-            case TMMessage_t::RC_DATA:
+                break; }
+            case TMMessage_t::RC_DATA: {
                 auto RCData = tmq_message.tm_message_data.RCData_t;
                 mavlink_msg_rc_channels_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message, tmq_message.time_boot_ms, 6,
                     RCData.roll, RCData.pitch, RCData.yaw, RCData.throttle, RCData.arm, RCData.flap_angle,  // Channel arrangement from system manager
                     UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  UINT16_MAX,  UINT16_MAX, UINT16_MAX, UINT8_MAX);
-                break;
-            case TMMessage_t::BM_DATA:
+                break; }
+            case TMMessage_t::BM_DATA: {
                 auto BMData = tmq_message.tm_message_data.BMData_t;
                 mavlink_msg_battery_status_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message, 255, MAV_BATTERY_FUNCTION_UNKNOWN, MAV_BATTERY_TYPE_LIPO,
                  BMData.temperature, BMData.voltages, BMData.current_battery, BMData.current_consumed, BMData.energy_consumed, BMData.battery_remaining,
-                 BMData.time_remaining, BMData.charge_state, {}, 0, 0);
-            case default:
+                 BMData.time_remaining, BMData.charge_state, {}, 0, 0); }
+            default: {}
                 //WHOOPS
         }
         messageBuffer_->push(&mavlink_message);
@@ -80,7 +80,7 @@ void TelemetryManager::reconstructMsg() {
 
 void TelemetryManager::handleRxMsg(const mavlink_message_t &msg) {
     switch (msg.msgid) {
-        case MAVLINK_MSG_ID_PARAM_SET:
+        case MAVLINK_MSG_ID_PARAM_SET:{
             float value_to_set;
             char param_to_set[MAVLINK_MAX_IDENTIFIER_LEN] = {};
             uint8_t value_type;
@@ -96,7 +96,7 @@ void TelemetryManager::handleRxMsg(const mavlink_message_t &msg) {
             mavlink_message_t response = {};
             mavlink_msg_param_value_pack(SYSTEM_ID, COMPONENT_ID, &response, param_to_set, value_to_set, value_type, 1, 0);
             messageBuffer_->push(&response);
-            break;
+            break;}
         default:
             break;
     }
