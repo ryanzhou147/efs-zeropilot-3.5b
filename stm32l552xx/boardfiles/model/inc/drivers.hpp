@@ -8,6 +8,7 @@
 #include "rc_motor_control.hpp"
 #include "queue.hpp"
 #include "gps.hpp"
+#include "rfd.hpp"
 
 extern IndependentWatchdog *iwdgHandle;
 extern Logger *loggerHandle;
