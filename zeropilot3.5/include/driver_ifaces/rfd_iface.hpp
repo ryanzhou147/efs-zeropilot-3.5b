@@ -1,9 +1,6 @@
 #pragma once
 
-#ifdef __cplusplus
 #include <cstdint>
-#endif
-
 
 class IRFD {
 protected:
