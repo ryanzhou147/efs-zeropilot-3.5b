@@ -1,9 +1,6 @@
 #pragma once
 
-#include "../gps/gps_datatypes.hpp"
-
-#include <cstdint>
-
+#include "gps_datatypes.hpp"
 
 class IGPS {
 protected:

@@ -1,12 +1,8 @@
 #pragma once
 
-#include <stm32l5xx_hal_uart.h>
 #include "rfd_iface.hpp"
 #include "rfd_defines.hpp"
-
-#ifdef __cplusplus
-#include <cstdint>
-#endif
+#include "stm32l5xx_hal.h"
 
 class RFD : public IRFD {
 
@@ -17,7 +13,7 @@ public:
     ~RFD();
 
     void startReceive() override;
-    void transmit(uint8_t* data, uint16_t size) override;
+    void transmit(const uint8_t* data, uint16_t size) override;
     uint16_t receive(uint8_t* buffer, uint16_t bufferSize) override;
 
     // Getters
@@ -29,6 +25,6 @@ public:
 private:
     UART_HandleTypeDef* huart;
     uint8_t rxBuffer[BUFFER_SIZE];
-    uint16_t writeIndex;
     uint16_t readIndex;
+    uint16_t writeIndex;
 };

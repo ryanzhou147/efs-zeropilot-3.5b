@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stm32l5xx_hal_uart.h>
+#include "stm32l5xx_hal.h"
 #include "gps_iface.hpp"
 #include "gps_defines.hpp"
 
