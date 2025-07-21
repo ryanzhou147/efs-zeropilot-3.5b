@@ -33,6 +33,6 @@ jobs:
           /opt/st/stm32cubeide_1.18.1/stm32cubeide \
             --launcher.suppressErrors -nosplash \
             -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
-            -build stm32l552xx \
-            -importAll ./ \
+            -build stm32l552xx/Debug \
+            -import ./stm32l552xx \
             -data /local/temp
