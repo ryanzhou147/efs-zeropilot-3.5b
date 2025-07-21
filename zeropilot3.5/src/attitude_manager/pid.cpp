@@ -15,8 +15,6 @@ void PID::pidInitState() {
     prevError = 0.0f;
     pidDerivative = 0.0f;
     prevMeasurement = 0.0f;
-    pidControlEffort = 0.0f;
-    pidOut = 0.0f;
 }
 
 void PID::setConstants(float newKp, float newKi, float newKd, float newTau) {
@@ -45,7 +43,7 @@ float PID::pidOutput(float setpoint, float measurement) {
     pidDerivative = ((-1 * 2.0f * kd * (measurement - prevMeasurement)) + ((2 * tau - t) * pidDerivative)) / ((2.0f * tau) + t);
     
     // PID control effort
-    pidControlEffort = pidProportional + pidIntegral + pidDerivative;
+    float pidControlEffort = pidProportional + pidIntegral + pidDerivative;
     
     // Clamp control effort output
     if (pidControlEffort > outputMaxLim) { pidControlEffort = outputMaxLim; }
@@ -56,7 +54,7 @@ float PID::pidOutput(float setpoint, float measurement) {
     prevMeasurement = measurement;
 
     // Absolute motor control position
-    pidOut = measurement + pidControlEffort;
+    float pidOut = measurement + pidControlEffort; // Directly into motor control
 
     return pidOut; // Must go directly into motor control
 }

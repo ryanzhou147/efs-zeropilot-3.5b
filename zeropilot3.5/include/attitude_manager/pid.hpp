@@ -31,10 +31,4 @@ class PID {
         // State variables
         float pidDerivative, pidIntegral;
         float prevError, prevMeasurement;
-
-        // Control effort var
-        float pidControlEffort;
-        
-        // Output var, absolute position currently
-        float pidOut; // Directly into motor control
 };
