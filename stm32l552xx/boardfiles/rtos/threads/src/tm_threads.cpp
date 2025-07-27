@@ -17,7 +17,7 @@ void tmMainLoopWrapper(void *arg)
     tmHandle->heartBeatMsg();
     tmHandle->transmit();
     osDelay(timeToTicks(50));
-    tmHandle->processMsgQueue;
+    tmHandle->processMsgQueue();
   }
 }
 

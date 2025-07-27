@@ -72,8 +72,8 @@ void initDrivers()
 
     amRCQueueHandle = new MessageQueue<RCMotorControlMessage_t>(&amQueueId);
     smLoggerQueueHandle = new MessageQueue<char[100]>(&smLoggerQueueId);
-    tmQueueHandle = new MessageQueue<TMMessage_t>(&tmQueueId)
-    messageBufferHandle = new MessageQueue<mavlink_message_t>(&messageBufferId)
+    tmQueueHandle = new MessageQueue<TMMessage_t>(&tmQueueId);
+    messageBufferHandle = new MessageQueue<mavlink_message_t>(&messageBufferId);
     loggerHandle->init();
 
     leftAileronMotorHandle->init();
