@@ -6,6 +6,7 @@ extern IWDG_HandleTypeDef hiwdg;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart4;
 
@@ -24,8 +25,12 @@ MotorControl *steeringMotorHandle = nullptr;
 GPS *gpsHandle = nullptr;
 RCReceiver *rcHandle = nullptr;
 
+RFD *rfdHandle = nullptr;
+
 MessageQueue<RCMotorControlMessage_t> *amRCQueueHandle = nullptr;
 MessageQueue<char[100]> *smLoggerQueueHandle = nullptr;
+MessageQueue<TMMessage_t> *tmQueueHandle = nullptr;
+MessageQueue<mavlink_message_t> *messageBufferHandle = nullptr;
 
 MotorInstance_t rollLeftMotorInstance;
 MotorInstance_t rollRightMotorInstance;
@@ -63,9 +68,12 @@ void initDrivers()
     gpsHandle = new GPS(&huart2);
     rcHandle = new RCReceiver(&huart4);
 
+    rfdHandle = new RFD(&huart1);
+
     amRCQueueHandle = new MessageQueue<RCMotorControlMessage_t>(&amQueueId);
     smLoggerQueueHandle = new MessageQueue<char[100]>(&smLoggerQueueId);
-
+    tmQueueHandle = new MessageQueue<TMMessage_t>(&tmQueueId)
+    messageBufferHandle = new MessageQueue<mavlink_message_t>(&messageBufferId)
     loggerHandle->init();
 
     leftAileronMotorHandle->init();
