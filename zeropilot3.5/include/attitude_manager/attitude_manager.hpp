@@ -15,14 +15,14 @@ typedef enum {
     THROTTLE,
     FLAP_ANGLE,
     STEERING
-} ControlAxis_e;
+} ControlAxis_t;
 
 class AttitudeManager {
     public:
         AttitudeManager(
             IMessageQueue<RCMotorControlMessage_t> *amQueue,
             IMessageQueue<char[100]> *smLoggerQueue,
-            Flightmode *controlAlgorithm,  
+            Flightmode *controlAlgorithm,
             MotorGroupInstance_t *rollMotors,
             MotorGroupInstance_t *pitchMotors,
             MotorGroupInstance_t *yawMotors,
@@ -50,5 +50,5 @@ class AttitudeManager {
 
         bool getControlInputs(RCMotorControlMessage_t *pControlMsg);
 
-        void outputToMotor(ControlAxis_e axis, uint8_t percent);
+        void outputToMotor(ControlAxis_t axis, uint8_t percent);
 };

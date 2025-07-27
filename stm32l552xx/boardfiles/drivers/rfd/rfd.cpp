@@ -1,9 +1,15 @@
 #include "rfd.hpp"
 #include "stm32l5xx_hal_uart.h"
 
+/**
+ * Important consideraton when using this driver:
+ * Recieve should be called fast enough to never let the buffer overflow,
+ * since there is currently no way to recover from an overflow
+ */
+
 RFD* RFD::instance = nullptr; // global instance
 
-RFD::RFD(UART_HandleTypeDef* huart) : huart(huart), readIndex(0), writeIndex(0), overlapped(false), errorFlag(false){
+RFD::RFD(UART_HandleTypeDef* huart) : huart(huart), readIndex(0), writeIndex(0){
     instance = this;
 }
 
@@ -25,51 +31,22 @@ void RFD::startReceive() {
 
 uint16_t RFD::receive(uint8_t* buffer, uint16_t bufferSize) {
     for (uint16_t i = 0; i < bufferSize; i++) {
-        if (!overlapped) {
-            // Stop reading if readIndex catches up to writeIndex.
-            if (readIndex == writeIndex) {
-                return i;
-            }
-            buffer[i] = rxBuffer[readIndex];
-            readIndex++;
-        } else {
-            // Read until the end of the buffer, then wrap around.
-            buffer[i] = rxBuffer[readIndex];
-            readIndex++;
-            if (readIndex >= BUFFER_SIZE) {
-                readIndex = 0;
-                overlapped = false;
-            }
+        if (readIndex == writeIndex){
+            return i;
+        }
+        buffer[i] = rxBuffer[readIndex];
+        readIndex++;
+        if (readIndex >= BUFFER_SIZE) {
+            readIndex = 0;
         }
     }
     return bufferSize;
 }
 
 void RFD::receiveCallback(uint16_t size){
-    
-    uint16_t prevWriteIndex = writeIndex;
-    writeIndex = size % BUFFER_SIZE; // don't need % BUFFER_SIZE here
-
-    // assumes that size < BUFFER_LENGTH always
-    if (writeIndex < prevWriteIndex) overlapped = true;
-
-    // Overflow: writeIndex wrapped around and surpassed readIndex. (reads not fast enough)
-    if (overlapped && (writeIndex > readIndex)) {
-        errorFlag = true;
-        overlapped = false;
-    }
-
-    // HAL_UARTEx_ReceiveToIdle_DMA(huart, rxBuffer, BUFFER_SIZE);
+    writeIndex = size;
 }
 
 UART_HandleTypeDef* RFD::getHuart() const {
     return huart;
-}
-
-bool RFD::getErrorFlag() const {
-    return errorFlag;
-}
-
-void RFD::resetErrorFlag() {
-    errorFlag = false;
 }

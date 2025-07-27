@@ -7,6 +7,8 @@
 #include "rc.hpp"
 #include "rc_motor_control.hpp"
 #include "queue.hpp"
+#include "gps.hpp"
+#include "rfd.hpp"
 
 extern IndependentWatchdog *iwdgHandle;
 extern Logger *loggerHandle;
@@ -21,6 +23,7 @@ extern MotorControl *rightFlapMotorHandle;
 extern MotorControl *steeringMotorHandle;
 
 extern RCReceiver *rcHandle;
+extern GPS *gpsHandle;
 
 extern MessageQueue<RCMotorControlMessage_t> *amRCQueueHandle;
 extern MessageQueue<char[100]> *smLoggerQueueHandle;

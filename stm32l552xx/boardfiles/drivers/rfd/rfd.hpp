@@ -1,18 +1,12 @@
 #pragma once
 
-#include <stm32l5xx_hal_uart.h>
 #include "rfd_iface.hpp"
 #include "rfd_defines.hpp"
-
-#ifdef __cplusplus
-#include <cstdint>
-#endif
-
+#include "stm32l5xx_hal.h"
 
 class RFD : public IRFD {
 
 public:
-
     static RFD* instance; // assumes only one instance defined at a time
 
     RFD(UART_HandleTypeDef* huart);
@@ -24,10 +18,6 @@ public:
 
     // Getters
     UART_HandleTypeDef* getHuart() const;
-    bool getErrorFlag() const override;
-
-    // Setters
-    void resetErrorFlag() override;
 
     // DMA callback
     void receiveCallback(uint16_t size);
@@ -35,19 +25,6 @@ public:
 private:
     UART_HandleTypeDef* huart;
     uint8_t rxBuffer[BUFFER_SIZE];
-    uint16_t writeIndex;
     uint16_t readIndex;
-
-    /**
-     * Flag to keep track state in the circular buffer and detect error conditions
-     * 
-     * `true` when writeIndex < readIndex, `false` when writeIndex > readIndex
-     */
-    bool overlapped;
-
-    /**
-     * Flag to record that condition when writeIndex wraps around buffer &
-     * overwrites data that is yet to be read
-     */
-    bool errorFlag;
+    uint16_t writeIndex;
 };

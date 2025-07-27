@@ -11,5 +11,6 @@
 build/
 Debug/
 *.launch
-/zeropilot3.5/cmake-build-debug/
 
+# remove build host
+*build-host*

@@ -16,13 +16,13 @@ class SystemManager {
         SystemManager(
             IIndependentWatchdog *iwdgDriver,
             ILogger *loggerDriver,
-            IRCReceiver *rcDriver, 
+            IRCReceiver *rcDriver,
             IMessageQueue<RCMotorControlMessage_t> *amRCQueue,
             IMessageQueue<TMMessage_t> *tmQueue,
             IMessageQueue<char[100]> *smLoggerQueue
         );
 
-        void SMUpdate(); // This function is the main function of SM, it should be called in the main loop of the system.
+        void smUpdate(); // This function is the main function of SM, it should be called in the main loop of the system.
 
     private:
         IIndependentWatchdog *iwdgDriver_; // Independent Watchdog driver

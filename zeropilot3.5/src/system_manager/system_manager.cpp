@@ -14,7 +14,7 @@ SystemManager::SystemManager(
         tmQueue_(tmQueue),
         smLoggerQueue_(smLoggerQueue) {}
 
-void SystemManager::SMUpdate() {
+void SystemManager::smUpdate() {
     // Kick the watchdog
     iwdgDriver_->refreshWatchdog();
 
