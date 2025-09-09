@@ -3,6 +3,7 @@
 #include "rc_defines.hpp"
 #include "rc_iface.hpp"
 #include "stm32l5xx_hal.h"
+#include "error.hpp"
 
 typedef struct {
     int dataOffset;
@@ -14,7 +15,7 @@ class RCReceiver : public IRCReceiver {
     public:
         RCReceiver(UART_HandleTypeDef *uart);
 
-        RCControl getRCData() override;
+        ZP_ERROR_e getRCData(RCControl &rcData) override;
 
         void init();
         void startDMA();

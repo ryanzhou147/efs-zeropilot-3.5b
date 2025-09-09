@@ -7,6 +7,7 @@
 #include "rc_datatypes.hpp"
 #include "rc_motor_control.hpp"
 #include "iwdg_iface.hpp"
+#include "error.hpp"
 
 #define SM_MAIN_DELAY 50
 
@@ -20,7 +21,7 @@ class SystemManager {
             IMessageQueue<char[100]> *smLoggerQueue
         );
 
-        void smUpdate(); // This function is the main function of SM, it should be called in the main loop of the system.
+        ZP_ERROR_e smUpdate(); // This function is the main function of SM, it should be called in the main loop of the system.
 
     private:
         IIndependentWatchdog *iwdgDriver; // Independent Watchdog driver
@@ -30,6 +31,6 @@ class SystemManager {
         IMessageQueue<RCMotorControlMessage_t> *amRcQueue; // Queue driver for communication to the Attitude Manager
         IMessageQueue<char[100]> *smLoggerQueue;
 
-        void sendRCDataToAttitudeManager(const RCControl &rcData);
+        ZP_ERROR_e sendRCDataToAttitudeManager(const RCControl &rcData);
         void sendMessagesToLogger();
 };

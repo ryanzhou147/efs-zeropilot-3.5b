@@ -12,18 +12,22 @@ SystemManager::SystemManager(
         amRcQueue(amRCQueue),
         smLoggerQueue(smLoggerQueue) {}
 
-void SystemManager::smUpdate() {
+ZP_ERROR_e SystemManager::smUpdate() {
     // Kick the watchdog
     iwdgDriver->refreshWatchdog();
 
     // Get RC data from the RC receiver and passthrough to AM if new
     static int oldDataCount = 0;
     static bool rcConnected = true;
-
-    RCControl rcData = rcDriver->getRCData();
+    
+    RCControl rcData;
+    
+    ZP_ERROR_e rcSuccess = rcDriver->getRCData(rcData);
     if (rcData.isDataNew) {
         oldDataCount = 0;
-        sendRCDataToAttitudeManager(rcData);
+        ZP_ERROR_e status = sendRCDataToAttitudeManager(rcData);
+        
+        if (status != ZP_ERROR_OK) return status;
 
         if (!rcConnected) {
             loggerDriver->log("RC Reconnected");
@@ -40,11 +44,14 @@ void SystemManager::smUpdate() {
 
     // Log if new messages
     if (smLoggerQueue->count() > 0) {
-        sendMessagesToLogger();
+        ZP_ERROR_e status = sendMessagesToLogger();
+        if (status != ZP_ERROR_OK) return status;
     }
+
+    return rcSuccess;
 }
 
-void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
+ZP_ERROR_e SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
     RCMotorControlMessage_t rcDataMessage;
 
     rcDataMessage.roll = rcData.roll;
@@ -54,10 +61,22 @@ void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
     rcDataMessage.arm = rcData.arm;
     rcDataMessage.flapAngle = rcData.aux2;
 
-    amRcQueue->push(&rcDataMessage);
+    int statusCode = amRcQueue->push(&rcDataMessage);
+
+    switch (statusCode) {
+        case 0: return ZP_ERROR_OK;
+        case -1: return ZP_ERROR_FAIL;
+        case -2: return ZP_ERROR_TIMEOUT;
+        case -3: return ZP_ERROR_RESOURCE_UNAVAILABLE;
+        case -4: return ZP_ERROR_INVALID_PARAM;
+        case -5: return ZP_ERROR_OUT_OF_MEMORY;
+        case -6: return ZP_ERROR_FAIL;
+    }
+
+    return ZP_ERROR_FAIL;
 }
 
-void SystemManager::sendMessagesToLogger() {
+ZP_ERROR_e SystemManager::sendMessagesToLogger() {
     static char messages[16][100];
     int msgCount = 0;
 
@@ -67,4 +86,5 @@ void SystemManager::sendMessagesToLogger() {
     }
 
     loggerDriver->log(messages, msgCount);
+    return ZP_ERROR_OK;
 }

@@ -59,10 +59,11 @@ RCReceiver::RCReceiver(UART_HandleTypeDef* uart) : uart_(uart) {
     memset(rawSbus_, 0, SBUS_BYTE_COUNT);
 }
 
-RCControl RCReceiver::getRCData() {
+ZP_ERROR_e RCReceiver::getRCData(RCControl &data) {
     RCControl tmp = rcData_;
     rcData_.isDataNew = false;
-    return tmp;
+    data = tmp;
+    return ZP_ERROR_OK;
 }
 
 void RCReceiver::init() {

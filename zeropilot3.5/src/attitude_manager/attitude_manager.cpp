@@ -22,14 +22,14 @@ AttitudeManager::AttitudeManager(
     flapMotors(flapMotors),
     steeringMotors(steeringMotors) {}
 
-void AttitudeManager::runControlLoopIteration() {
+ZP_ERROR_e AttitudeManager::runControlLoopIteration() {
     // Get data from Queue and motor outputs
-    bool res = getControlInputs(&controlMsg);
+    ZP_ERROR_e res = getControlInputs(&controlMsg);
 
     // Failsafe
     static bool failsafeTriggered = false;
 
-    if (res != true) {
+    if (res != ZP_ERROR_OK) {
         ++noDataCount;
 
         if (noDataCount * AM_MAIN_DELAY > 1000) {
@@ -47,7 +47,7 @@ void AttitudeManager::runControlLoopIteration() {
             }
         }
 
-        return;
+        return ZP_ERROR_FAIL;
     } else {
         noDataCount = 0;
 
@@ -71,15 +71,17 @@ void AttitudeManager::runControlLoopIteration() {
     outputToMotor(THROTTLE, motorOutputs.throttle);
     outputToMotor(FLAP_ANGLE, motorOutputs.flapAngle);
     outputToMotor(STEERING, motorOutputs.yaw);
+
+    return ZP_ERROR_OK;
 }
 
-bool AttitudeManager::getControlInputs(RCMotorControlMessage_t *pControlMsg) {
+ZP_ERROR_e AttitudeManager::getControlInputs(RCMotorControlMessage_t *pControlMsg) {
     if (amQueue->count() == 0) {
-        return false;
+        return ZP_ERROR_FAIL;
     }
 
     amQueue->get(pControlMsg);
-    return true;
+    return ZP_ERROR_OK;
 }
 
 void AttitudeManager::outputToMotor(ControlAxis_t axis, uint8_t percent) {
