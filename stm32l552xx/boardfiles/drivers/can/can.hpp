@@ -38,7 +38,8 @@ private:
 	uavcan_protocol_NodeStatus nodeStatus;
 
 	uint32_t last1HzTick = 0;
-	uint32_t node_id = 0;
+	uint32_t node_id = NODE_ID;
+	static uint8_t transfer_id;
 
 
 public:
@@ -91,5 +92,4 @@ public:
 			, bool tao; ///< True if tail array optimization is enabled
 		#endif
 	);
-
 };

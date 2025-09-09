@@ -1,6 +1,8 @@
 
 #include "can.hpp"
 
+uint8_t CAN::transfer_id = 0;
+
 static void StaticOnTransferReception(CanardInstance* ins, CanardRxTransfer* transfer) {
     CAN* self = static_cast<CAN*>(ins->user_reference);
     self->CanardOnTransferReception(ins, transfer);
@@ -101,7 +103,6 @@ uint8_t CAN::dlcToLength(uint32_t dlc) {
 void CAN::handleRxFrame(FDCAN_RxHeaderTypeDef *rx_header, uint8_t * rx_data) {
 	const uint64_t timestamp_usec = HAL_GetTick() * 1000ULL;
 
-
 	CanardCANFrame frame;
 	frame.id = rx_header->Identifier;
 	frame.id |= (1UL << 31U); // Add EFF bit
@@ -160,7 +161,6 @@ void CAN::handleNodeAllocation(CanardRxTransfer *transfer){
 	uint8_t decode_buffer[UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_MAX_SIZE];
 	uint32_t encoded_size = uavcan_protocol_dynamic_node_id_Allocation_encode(&msg, decode_buffer);
 
-	uint8_t transfer_id = 0;
 	broadcast(
 		CanardTransferTypeBroadcast,
 		UAVCAN_PROTOCOL_DYNAMIC_NODE_ID_ALLOCATION_SIGNATURE,
@@ -234,6 +234,43 @@ void CAN::sendCANTx() {
 			canardPopTxQueue(&canard);
 		}
 	}
+	else if (hfdcan->Instance->TXBRP != 0) {
+//		HAL_FDCAN_AbortTxRequest(hfdcan, hfdcan->Instance->TXBRP);
+		HAL_FDCAN_Stop(hfdcan);
+		HAL_FDCAN_Start(hfdcan);
+//		if (HAL_FDCAN_Init(hfdcan) != HAL_OK) {
+//		   while (1) {
+//
+//		   }
+//	    }
+//	    FDCAN_FilterTypeDef sFilterConfig;
+//		sFilterConfig.IdType = FDCAN_EXTENDED_ID;
+//		sFilterConfig.FilterIndex = 0;
+//		sFilterConfig.FilterType = FDCAN_FILTER_MASK;
+//		sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+//		sFilterConfig.FilterID1 = 0x0;
+//		sFilterConfig.FilterID2 = 0x0;
+//
+//		if (HAL_FDCAN_ConfigFilter(hfdcan, &sFilterConfig) != HAL_OK) {
+//			while (1) {
+//
+//			}
+//		}
+//
+//		// 5. Reactivate notifications
+//		if (HAL_FDCAN_ActivateNotification(hfdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK) {
+//			while (1) {
+//
+//			}
+//		}
+//
+//		// 6. Start FDCAN
+//		if (HAL_FDCAN_Start(hfdcan) != HAL_OK) {
+//			while (1) {
+//
+//			}
+//		}
+	}
 
 }
 
@@ -266,7 +303,6 @@ void CAN::sendNodeStatus() {
     // incremeneted on each transfer, allowing for detection of packet
     // loss
 
-    uint8_t transfer_id = 0;
     broadcast(CanardTransferTypeBroadcast,
 			UAVCAN_PROTOCOL_NODESTATUS_SIGNATURE,
 			UAVCAN_PROTOCOL_NODESTATUS_ID,
