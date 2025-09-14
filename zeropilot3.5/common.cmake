@@ -20,7 +20,8 @@ set(TM_SRC
 
 )
 set(TM_INC
-    "include/telemetry_manager"
+    "include/telemetry_manager",
+    "include/telemetry_manager/mavlink2",
     "include/thread_msgs"
 )
 # combined files
