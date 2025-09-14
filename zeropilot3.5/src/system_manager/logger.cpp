@@ -22,8 +22,8 @@ int Logger::init() {
     int count = 1;
 
     while (exist == 0) {
-        snprintf(file, 100, "log%d.txt", count);
-        exist = textIO->checkFileExist(file);
+        snprintf(logFile, 100, "log%d.txt", count);
+        exist = textIO->checkFileExist(logFile);
         count++;
     }
 
@@ -42,7 +42,7 @@ int Logger::log(const char message[100]) {
 
 #if defined(SD_CARD_LOGGING)
     int res;
-    res = textIO->open(file);
+    res = textIO->open(logFile);
 
     snprintf(msgToSend + tsStrLen, 100, message);
     snprintf(msgToSend + tsStrLen + strlen(message), 3, "\r\n");
@@ -67,7 +67,7 @@ int Logger::log(const char message[][100], int count) {
 
 #if defined(SD_CARD_LOGGING)
     int res;
-    textIO->open(file);
+    textIO->open(logFile);
 
     for (int i = 0; i < count; i++) {
       snprintf(msgToSend + tsStrLen, 100, message[i]);

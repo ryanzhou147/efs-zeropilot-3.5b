@@ -1,23 +1,24 @@
 #pragma once
 
-#include "config_iface.hpp"
+#include "config_keys.hpp"
 #include "textio_iface.hpp"
 
 #define MAX_LINE_LENGTH 128
 #define MAX_VALUE_LENGTH 32
 #define MAX_KEY_LENGTH (MAX_LINE_LENGTH-MAX_VALUE_LENGTH)
 
-struct KeyValue {
+typedef struct {
     const char key[MAX_KEY_LENGTH];
     float value;
     bool reboot_on_change = false;
-}
+} Param_t;
 
-class Config : public IConfig {
+class Config {
     private:
-        ITextIO fil;
+        char configFile[100];
+        ITextIO *textIO;
 
-        KeyValue config_table[NUM_KEYS] = {
+        Param_t config_table[NUM_KEYS] = {
             #define _(name, default_val, reboot_flag) {#name, default_val, reboot_flag},
                 CONFIG_KEYS_LIST(_)
             #undef _
@@ -27,12 +28,21 @@ class Config : public IConfig {
          * @brief Moves read/write pointer to parameter
          * @param param parameter to find
          * @param val buffer to store value at parameter
+         * @param tableIdx buffer to store config table index of parameter
          * @retval Operation success
          */
+        int findParam(const char param[100], float &val, int &tableIdx);
         int findParam(const char param[100], float &val);
+        int findParam(const char param[100], int &tableIdx);
 
     public:
-        Config(TextIO &fil) = default;
+        Config(ITextIO *textIO);
+
+        /**
+         * @brief Adds textIO object and reads config file
+         * @retval Operation success
+         */
+        int init();
 
         /**
          * @brief reads parameter from config file
@@ -40,7 +50,7 @@ class Config : public IConfig {
          * @param val buffer to store value
          * @retval Operation success
          */
-        int readParam(ConfigKey key, float &val) override;
+        int readParam(ConfigKey key, float &val);
 
         /**
          * @brief writes parameter from config file
@@ -48,12 +58,5 @@ class Config : public IConfig {
          * @param newValue updated value
          * @retval Operation success
          */
-        int writeParam(ConfigKey key, float newValue) override;
-
-        /**
-         * @brief Adds textio object and reads config file
-         * @param fil TextIO object to read config file
-         * @retval Operation success
-         */
-        int init(ITextIO &fil);
+        int writeParam(ConfigKey key, float newValue);
 };

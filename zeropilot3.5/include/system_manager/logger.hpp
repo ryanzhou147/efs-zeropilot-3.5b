@@ -6,7 +6,7 @@
 
 class Logger {
     private:
-        char file[100];
+        char logFile[100];
         ITextIO *textIO;
         ISystemUtils *sysUtils;
 
