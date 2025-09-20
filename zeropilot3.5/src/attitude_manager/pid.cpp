@@ -3,10 +3,10 @@
 // Constructor
 PID::PID(float kp, float ki, float kd,
          float tau, float outputMinLim, float outputMaxLim,
-         float integralMinLim, float integralMaxLim, float t) : 
+         float integralMinLim, float integralMaxLim, float t) noexcept : 
             kp(kp), ki(ki), kd(kd), tau(tau), t(t),
             outputMinLim(outputMinLim), outputMaxLim(outputMaxLim),
-            integralMinLim(integralMinLim), integralMaxLim(integralMaxLim) noexcept
+            integralMinLim(integralMinLim), integralMaxLim(integralMaxLim)
 {}
 
 // Initialization method - Can be used as resetter

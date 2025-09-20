@@ -1,12 +1,12 @@
 #include "fbwa_mapping.hpp"
 
-FBWAMapping::FBWAMapping() :
+FBWAMapping::FBWAMapping() noexcept :
     rollPID(0.0f, 0.0f, 0.0f,
         0.0f, OUTPUT_MIN, OUTPUT_MAX,
         ROLL_INTEGRAL_MIN_LIM, ROLL_INTEGRAL_MAX_LIM, AM_MAIN_DELAY),
     pitchPID(0.0f, 0.0f, 0.0f,
         0.0f, OUTPUT_MIN, OUTPUT_MAX,
-        PITCH_INTEGRAL_MIN_LIM, PITCH_INTEGRAL_MAX_LIM, AM_MAIN_DELAY) noexcept
+        PITCH_INTEGRAL_MIN_LIM, PITCH_INTEGRAL_MAX_LIM, AM_MAIN_DELAY)
 {
     rollPID.pidInitState();
     pitchPID.pidInitState();
