@@ -3,21 +3,21 @@
 // Constructor
 PID::PID(float kp, float ki, float kd,
          float tau, float outputMinLim, float outputMaxLim,
-         float integralMinLim, float integralMaxLim, float t): 
+         float integralMinLim, float integralMaxLim, float t) : 
             kp(kp), ki(ki), kd(kd), tau(tau), t(t),
             outputMinLim(outputMinLim), outputMaxLim(outputMaxLim),
-            integralMinLim(integralMinLim), integralMaxLim(integralMaxLim)
+            integralMinLim(integralMinLim), integralMaxLim(integralMaxLim) noexcept
 {}
 
 // Initialization method - Can be used as resetter
-void PID::pidInitState() {
+void PID::pidInitState() noexcept {
     pidIntegral = 0.0f;
     prevError = 0.0f;
     pidDerivative = 0.0f;
     prevMeasurement = 0.0f;
 }
 
-void PID::setConstants(float newKp, float newKi, float newKd, float newTau) {
+void PID::setConstants(float newKp, float newKi, float newKd, float newTau) noexcept {
     kp = newKp;
     ki = newKi;
     kd = newKd;
@@ -33,7 +33,7 @@ float PID::pidOutput(float setpoint, float measurement) {
     float pidProportional = kp * error;
 
     // PID Integral 
-    pidIntegral += (0.5f * ki) * (error + prevError);
+    pidIntegral += (0.5f * ki * t) * (error + prevError);
 
     // Anti-integral windup
     if (pidIntegral > integralMaxLim) { pidIntegral = integralMaxLim; }
