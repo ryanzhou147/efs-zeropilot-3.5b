@@ -3,9 +3,16 @@
 #define COMPONENT_ID 1          // Suggested Component ID by MAVLINK
 
 
-TelemetryManager::TelemetryManager(IRFD *rfdDriver, IMessageQueue<TMMessage_t> *tmQueueDriver, IMessageQueue<RCMotorControlMessage_t> *amQueueDriver, IMessageQueue<mavlink_message_t> *messageBuffer):
-    amQueueDriver_(amQueueDriver), tmQueueDriver_(tmQueueDriver), rfdDriver_(rfdDriver), messageBuffer_(messageBuffer) {
-
+TelemetryManager::TelemetryManager(
+    IRFD *rfdDriver,
+    IMessageQueue<TMMessage_t> *tmQueueDriver,
+    IMessageQueue<RCMotorControlMessage_t> *amQueueDriver,
+    IMessageQueue<mavlink_message_t> *messageBuffer
+) :
+    rfdDriver_(rfdDriver),
+    tmQueueDriver_(tmQueueDriver),
+    amQueueDriver_(amQueueDriver),
+    messageBuffer_(messageBuffer) {
 }
 
 TelemetryManager::~TelemetryManager() = default;
@@ -84,7 +91,6 @@ void TelemetryManager::handleRxMsg(const mavlink_message_t &msg) {
             float value_to_set;
             char param_to_set[MAVLINK_MAX_IDENTIFIER_LEN] = {};
             uint8_t value_type;
-            uint16_t param_id_len = mavlink_msg_param_set_get_param_id(&msg, param_to_set);
             value_to_set = mavlink_msg_param_set_get_param_value(&msg);
             value_type = mavlink_msg_param_set_get_param_type(&msg);
 

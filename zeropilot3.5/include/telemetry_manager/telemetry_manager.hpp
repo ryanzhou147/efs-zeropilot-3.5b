@@ -10,10 +10,10 @@
 #include "rfd_iface.hpp"
 class TelemetryManager {
   private:
-    IMessageQueue<mavlink_message_t> *messageBuffer_{};            // GPOS, Attitude and Heartbeat/Connection Messages
-    IMessageQueue<TMMessage_t> *tmQueueDriver_;                  // Driver that receives messages from other managers
-    IMessageQueue<RCMotorControlMessage_t> *amQueueDriver_;          // Driver that currently is only used to set arm/disarm
-    IRFD *rfdDriver_;                                         // Driver used to actually send mavlink messages
+    IRFD *rfdDriver_;										// Driver used to actually send mavlink messages
+    IMessageQueue<TMMessage_t> *tmQueueDriver_;				// Driver that receives messages from other managers
+    IMessageQueue<RCMotorControlMessage_t> *amQueueDriver_;	// Driver that currently is only used to set arm/disarm
+    IMessageQueue<mavlink_message_t> *messageBuffer_{};		// GPOS, Attitude and Heartbeat/Connection Messages
     mavlink_status_t status_;
     mavlink_message_t message_;
     void handleRxMsg(const mavlink_message_t &msg);
