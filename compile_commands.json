@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/ryan/Downloads/efs-zeropilot-3.5b",
+    "command": "g++ -I/usr/include -I./zeropilot3.5/include -I./zeropilot3.5/include/driver_ifaces -I./zeropilot3.5/include/system_manager -I./zeropilot3.5/include/thread_msgs -I./zeropilot3.5/tests/driver_mocks -std=gnu++17 -c ./zeropilot3.5/tests/system_manager/21001_Default.cpp",
+    "file": "/home/ryan/Downloads/efs-zeropilot-3.5b/zeropilot3.5/tests/system_manager/21001_Default.cpp"
+  }
+]
