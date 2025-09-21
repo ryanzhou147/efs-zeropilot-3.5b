@@ -20,16 +20,12 @@ TEST(SMTest, 21004_Watchdog)
 
     SystemManager sm(&mockIWDG, &mockLogger, &mockRC, &mockAmQueue, &mockSmLoggerQueue);
 
-    // Test 1: Verify watchdog is refreshed on every smUpdate() call
-    EXPECT_CALL(mockIWDG, refreshWatchdog());
+    // Test: Verify watchdog is refreshed on every smUpdate() call (4 times total)
+    EXPECT_CALL(mockIWDG, refreshWatchdog())
+        .Times(4);
 
+    // Call smUpdate 4 times - each should trigger refreshWatchdog()
     sm.smUpdate();
-
-    // Test 2: Verify watchdog is called multiple times across multiple updates
-    EXPECT_CALL(mockIWDG, refreshWatchdog());
-    EXPECT_CALL(mockIWDG, refreshWatchdog());
-    EXPECT_CALL(mockIWDG, refreshWatchdog());
-
     sm.smUpdate();
     sm.smUpdate();
     sm.smUpdate();
