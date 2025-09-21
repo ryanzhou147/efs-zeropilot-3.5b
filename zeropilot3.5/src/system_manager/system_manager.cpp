@@ -39,7 +39,8 @@ void SystemManager::smUpdate() {
             rcConnected = false;
         }
     }
-    //Send to TM?
+
+    // Send to TM
     sendRCDataToTelemetryManager(rcData);
 
     // Log if new messages
