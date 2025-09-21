@@ -20,5 +20,5 @@ TEST(SMTest, 21001_Default)
     EXPECT_CALL(mockRC, getRCData());
     EXPECT_CALL(mockSmLoggerQueue, count());
 
-    sm.SMUpdate();
+    sm.smUpdate();
 }
