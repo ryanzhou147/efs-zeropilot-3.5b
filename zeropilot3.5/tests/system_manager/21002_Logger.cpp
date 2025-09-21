@@ -30,8 +30,8 @@ TEST(SMTest, 21002_Logger)
     EXPECT_EQ(mockSmLoggerQueue.count(), 17);
     EXPECT_CALL(mockLogger, log(_, 16));
 
-    sm.SMUpdate();
+    sm.smUpdate();
 
     EXPECT_CALL(mockLogger, log(_, 1));
-    sm.SMUpdate();
+    sm.smUpdate();
 }

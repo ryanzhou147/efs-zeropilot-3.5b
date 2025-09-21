@@ -61,10 +61,10 @@ void SystemManager::sendMessagesToLogger() {
     static char messages[MAX_MSG_COUNT][100];
     int msgIdx = 0;
 
-    while (smLoggerQueue_->count() > 0 && msgIdx < MAX_MSG_COUNT) {
-        smLoggerQueue_->get(&messages[msgIdx]);
+    while (smLoggerQueue->count() > 0 && msgIdx < MAX_MSG_COUNT) {
+        smLoggerQueue->get(&messages[msgIdx]);
         msgIdx++;
     }
 
-    loggerDriver_->log(messages, msgIdx);
+    loggerDriver->log(messages, msgIdx);
 }
