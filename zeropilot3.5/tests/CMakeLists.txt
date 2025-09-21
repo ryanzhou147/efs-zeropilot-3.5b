@@ -12,6 +12,8 @@ set(SM_TSRC
     "${CMAKE_SOURCE_DIR}/system_manager/21001_Default.cpp"
     "${CMAKE_SOURCE_DIR}/system_manager/21002_Logger.cpp"
     "${CMAKE_SOURCE_DIR}/system_manager/21003_AmQueue.cpp"
+    "${CMAKE_SOURCE_DIR}/system_manager/21004_Watchdog.cpp"
+
 )
 
 # all test files
