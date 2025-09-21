@@ -1,34 +1,34 @@
 #pragma once
 #include <cstdint>
 
-typedef union{
+typedef union TMMessageData_u {
   struct{
-      int32_t alt = 0;
-      int32_t lat = 0;
-      int32_t lon = 0;
-      int32_t relative_alt = 0;
-      int16_t vx = 0;
-      int16_t vy = 0;
-      int16_t vz = 0;
-      uint16_t hdg = 0;
+      int32_t alt;
+      int32_t lat;
+      int32_t lon;
+      int32_t relative_alt;
+      int16_t vx;
+      int16_t vy;
+      int16_t vz;
+      uint16_t hdg;
   } GPOSData_t;
   struct{
-      uint16_t roll = 0;
-      uint16_t pitch = 0;
-      uint16_t yaw = 0;
-      uint16_t throttle = 0;
-      uint16_t flap_angle = 0;
-      uint16_t arm = 0;
+      uint16_t roll;
+      uint16_t pitch;
+      uint16_t yaw;
+      uint16_t throttle;
+      uint16_t flap_angle;
+      uint16_t arm;
   } RCData_t;
   struct{
-      int16_t temperature = 0;
+      int16_t temperature;
       uint16_t* voltages;
-      int16_t current_battery = 0;
-      int32_t current_consumed = 0;
-      int32_t energy_consumed = 0;
-      int8_t battery_remaining = 0;
-      int32_t time_remaining = 0;
-      uint8_t charge_state = 0; // 1 = Normal, 2 = Low, 3 = Critical
+      int16_t current_battery;
+      int32_t current_consumed;
+      int32_t energy_consumed;
+      int8_t battery_remaining;
+      int32_t time_remaining;
+      uint8_t charge_state; // 1 = Normal, 2 = Low, 3 = Critical
   } BMData_t;
 } TMMessageData_t;
 
