@@ -7,7 +7,7 @@
 #include "rc.hpp"
 #include "rc_motor_control.hpp"
 #include "tm_queue.hpp"
-#include <mavlink2/common/mavlink.h>
+#include "mavlink.h"
 #include "queue.hpp"
 #include "gps.hpp"
 #include "rfd.hpp"

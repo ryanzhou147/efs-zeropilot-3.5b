@@ -3,7 +3,7 @@
 #define MAVLINK_MAX_IDENTIFIER_LEN 17
 #define RX_BUFFER_LEN 8192
 
-#include <mavlink2/common/mavlink.h>
+#include "mavlink.h"
 #include "queue_iface.hpp"
 #include "tm_queue.hpp"
 #include "rc_motor_control.hpp"
