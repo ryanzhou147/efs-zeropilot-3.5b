@@ -9,20 +9,20 @@ TelemetryManager::TelemetryManager(
     IMessageQueue<RCMotorControlMessage_t> *amQueueDriver,
     IMessageQueue<mavlink_message_t> *messageBuffer
 ) :
-    rfdDriver_(rfdDriver),
-    tmQueueDriver_(tmQueueDriver),
-    amQueueDriver_(amQueueDriver),
-    messageBuffer_(messageBuffer) {
+    rfdDriver(rfdDriver),
+    tmQueueDriver(tmQueueDriver),
+    amQueueDriver(amQueueDriver),
+    messageBuffer(messageBuffer) {
 }
 
 TelemetryManager::~TelemetryManager() = default;
 
 
 void TelemetryManager::processMsgQueue() {
-    while (tmQueueDriver_->count() > 0) {
+    while (tmQueueDriver->count() > 0) {
         mavlink_message_t mavlink_message = {};
         TMMessage_t tmq_message = {};
-        tmQueueDriver_->get(&tmq_message);
+        tmQueueDriver->get(&tmq_message);
 
         switch (tmq_message.DataType) {
             case TMMessage_t::GPOS_DATA: {
@@ -44,7 +44,7 @@ void TelemetryManager::processMsgQueue() {
             default: {}
                 //WHOOPS
         }
-        messageBuffer_->push(&mavlink_message);
+        messageBuffer->push(&mavlink_message);
     }
 }
 
@@ -56,16 +56,16 @@ void TelemetryManager::heartBeatMsg() {
 
     mavlink_msg_heartbeat_pack(SYSTEM_ID, COMPONENT_ID, &heartbeat_message, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_INVALID,
                                base_mode, 0, system_status);
-    messageBuffer_->push(&heartbeat_message);
+    messageBuffer->push(&heartbeat_message);
 }
 
 void TelemetryManager::transmit() {
     uint8_t transmit_buffer[MAVLINK_MSG_MAX_SIZE];
     mavlink_message_t msg_to_tx{};
-        while (messageBuffer_->count() > 0) {
-            messageBuffer_->get(&msg_to_tx);
+        while (messageBuffer->count() > 0) {
+            messageBuffer->get(&msg_to_tx);
             const uint8_t msg_len = mavlink_msg_to_send_buffer(transmit_buffer, &msg_to_tx);
-            rfdDriver_->transmit(transmit_buffer, msg_len);
+            rfdDriver->transmit(transmit_buffer, msg_len);
         }
 }
 
@@ -74,13 +74,13 @@ void TelemetryManager::reconstructMsg() {
 
     uint8_t rx_buffer[RX_BUFFER_LEN];
 
-    const uint16_t received_bytes = rfdDriver_->receive(rx_buffer, sizeof(rx_buffer));
+    const uint16_t received_bytes = rfdDriver->receive(rx_buffer, sizeof(rx_buffer));
 
     //Use mavlink_parse_char to process one byte at a time
     for (uint16_t i = 0; i < received_bytes; ++i) {
-        if (mavlink_parse_char(0, rx_buffer[i], &message_, &status_)) {
-            handleRxMsg(message_);
-            message_ = {};
+        if (mavlink_parse_char(0, rx_buffer[i], &message, &status)) {
+            handleRxMsg(message);
+            message = {};
         }
     }
 }
@@ -97,11 +97,11 @@ void TelemetryManager::handleRxMsg(const mavlink_message_t &msg) {
             if(param_to_set[0] == 'A'){ //Would prefer to do this using an ENUM LUT but if this is the only param being set its whatever
                 RCMotorControlMessage_t arm_disarm_msg{};
                 arm_disarm_msg.arm = value_to_set;
-                amQueueDriver_->push(&arm_disarm_msg);
+                amQueueDriver->push(&arm_disarm_msg);
             }
             mavlink_message_t response = {};
             mavlink_msg_param_value_pack(SYSTEM_ID, COMPONENT_ID, &response, param_to_set, value_to_set, value_type, 1, 0);
-            messageBuffer_->push(&response);
+            messageBuffer->push(&response);
             break;}
         default:
             break;
