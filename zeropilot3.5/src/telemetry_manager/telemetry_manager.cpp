@@ -26,21 +26,21 @@ void TelemetryManager::processMsgQueue() {
 
         switch (tmq_message.DataType) {
             case TMMessage_t::GPOS_DATA: {
-                auto GPOSData = tmq_message.tm_message_data.GPOSData_t;
+                auto GPOSData = tmq_message.tm_message_data.gposData;
                 mavlink_msg_global_position_int_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message,tmq_message.time_boot_ms,
-                    GPOSData.lat, GPOSData.lon, GPOSData.alt, GPOSData.relative_alt, GPOSData.vx, GPOSData.vy, GPOSData.vz, GPOSData.hdg);
+                    GPOSData.lat, GPOSData.lon, GPOSData.alt, GPOSData.relativeAlt, GPOSData.vx, GPOSData.vy, GPOSData.vz, GPOSData.hdg);
                 break; }
             case TMMessage_t::RC_DATA: {
-                auto RCData = tmq_message.tm_message_data.RCData_t;
+                auto RCData = tmq_message.tm_message_data.rcData;
                 mavlink_msg_rc_channels_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message, tmq_message.time_boot_ms, 6,
-                    RCData.roll, RCData.pitch, RCData.yaw, RCData.throttle, RCData.arm, RCData.flap_angle,  // Channel arrangement from system manager
+                    RCData.roll, RCData.pitch, RCData.yaw, RCData.throttle, RCData.arm, RCData.flapAngle,  // Channel arrangement from system manager
                     UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  UINT16_MAX,  UINT16_MAX, UINT16_MAX, UINT8_MAX);
                 break; }
             case TMMessage_t::BM_DATA: {
-                auto BMData = tmq_message.tm_message_data.BMData_t;
+                auto BMData = tmq_message.tm_message_data.bmData;
                 mavlink_msg_battery_status_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message, 255, MAV_BATTERY_FUNCTION_UNKNOWN, MAV_BATTERY_TYPE_LIPO,
-                 BMData.temperature, BMData.voltages, BMData.current_battery, BMData.current_consumed, BMData.energy_consumed, BMData.battery_remaining,
-                 BMData.time_remaining, BMData.charge_state, {}, 0, 0); }
+                 BMData.temperature, BMData.voltages, BMData.currentBattery, BMData.currentConsumed, BMData.energyConsumed, BMData.batteryRemaining,
+                 BMData.timeRemaining, BMData.chargeState, {}, 0, 0); }
             default: {}
                 //WHOOPS
         }
