@@ -20,43 +20,43 @@ TelemetryManager::~TelemetryManager() = default;
 
 void TelemetryManager::processMsgQueue() {
     while (tmQueueDriver->count() > 0) {
-        mavlink_message_t mavlink_message = {};
-        TMMessage_t tmq_message = {};
-        tmQueueDriver->get(&tmq_message);
+        mavlink_message_t mavlinkMessage = {};
+        TMMessage_t tmqMessage = {};
+        tmQueueDriver->get(&tmqMessage);
 
-        switch (tmq_message.DataType) {
+        switch (tmqMessage.dataType) {
             case TMMessage_t::GPOS_DATA: {
-                auto GPOSData = tmq_message.tm_message_data.gposData;
-                mavlink_msg_global_position_int_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message,tmq_message.time_boot_ms,
-                    GPOSData.lat, GPOSData.lon, GPOSData.alt, GPOSData.relativeAlt, GPOSData.vx, GPOSData.vy, GPOSData.vz, GPOSData.hdg);
+                auto gposData = tmqMessage.tmMessageData.gposData;
+                mavlink_msg_global_position_int_pack(SYSTEM_ID, COMPONENT_ID, &mavlinkMessage, tmqMessage.timeBootMs,
+                	gposData.lat, gposData.lon, gposData.alt, gposData.relativeAlt, gposData.vx, gposData.vy, gposData.vz, gposData.hdg);
                 break; }
             case TMMessage_t::RC_DATA: {
-                auto RCData = tmq_message.tm_message_data.rcData;
-                mavlink_msg_rc_channels_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message, tmq_message.time_boot_ms, 6,
-                    RCData.roll, RCData.pitch, RCData.yaw, RCData.throttle, RCData.arm, RCData.flapAngle,  // Channel arrangement from system manager
+                auto rcData = tmqMessage.tmMessageData.rcData;
+                mavlink_msg_rc_channels_pack(SYSTEM_ID, COMPONENT_ID, &mavlinkMessage, tmqMessage.timeBootMs, 6,
+                	rcData.roll, rcData.pitch, rcData.yaw, rcData.throttle, rcData.arm, rcData.flapAngle,  // Channel arrangement from system manager
                     UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,  UINT16_MAX,  UINT16_MAX, UINT16_MAX, UINT8_MAX);
                 break; }
             case TMMessage_t::BM_DATA: {
-                auto BMData = tmq_message.tm_message_data.bmData;
-                mavlink_msg_battery_status_pack(SYSTEM_ID, COMPONENT_ID, &mavlink_message, 255, MAV_BATTERY_FUNCTION_UNKNOWN, MAV_BATTERY_TYPE_LIPO,
-                 BMData.temperature, BMData.voltages, BMData.currentBattery, BMData.currentConsumed, BMData.energyConsumed, BMData.batteryRemaining,
-                 BMData.timeRemaining, BMData.chargeState, {}, 0, 0); }
+                auto bmData = tmqMessage.tmMessageData.bmData;
+                mavlink_msg_battery_status_pack(SYSTEM_ID, COMPONENT_ID, &mavlinkMessage, 255, MAV_BATTERY_FUNCTION_UNKNOWN, MAV_BATTERY_TYPE_LIPO,
+                	bmData.temperature, bmData.voltages, bmData.currentBattery, bmData.currentConsumed, bmData.energyConsumed, bmData.batteryRemaining,
+					bmData.timeRemaining, bmData.chargeState, {}, 0, 0); }
             default: {}
                 //WHOOPS
         }
-        messageBuffer->push(&mavlink_message);
+        messageBuffer->push(&mavlinkMessage);
     }
 }
 
 void TelemetryManager::heartBeatMsg() {
-    MAV_MODE_FLAG base_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED; // Ideally these two fields should be managed by something
-    MAV_STATE system_status = MAV_STATE_STANDBY;                  // else like system manager
+    MAV_MODE_FLAG baseMode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED; // Ideally these two fields should be managed by something
+    MAV_STATE systemStatus = MAV_STATE_STANDBY;                  // else like system manager
 
-    mavlink_message_t heartbeat_message = {0};
+    mavlink_message_t heartbeatMessage = {0};
 
-    mavlink_msg_heartbeat_pack(SYSTEM_ID, COMPONENT_ID, &heartbeat_message, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_INVALID,
-                               base_mode, 0, system_status);
-    messageBuffer->push(&heartbeat_message);
+    mavlink_msg_heartbeat_pack(SYSTEM_ID, COMPONENT_ID, &heartbeatMessage, MAV_TYPE_QUADROTOR, MAV_AUTOPILOT_INVALID,
+                               baseMode, 0, systemStatus);
+    messageBuffer->push(&heartbeatMessage);
 }
 
 void TelemetryManager::transmit() {

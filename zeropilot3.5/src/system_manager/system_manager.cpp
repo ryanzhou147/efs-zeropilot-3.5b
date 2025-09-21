@@ -49,8 +49,8 @@ void SystemManager::smUpdate() {
 }
 
 void SystemManager::sendRCDataToTelemetryManager(const RCControl &rcData) {
-    TMMessage_t rc_data_msg =  RCData_Pack(0, rcData.roll, rcData.pitch, rcData.yaw, rcData.throttle, rcData.aux2, rcData.arm);
-    tmQueue->push(&rc_data_msg);
+    TMMessage_t rcDataMsg =  rcDataPack(0, rcData.roll, rcData.pitch, rcData.yaw, rcData.throttle, rcData.aux2, rcData.arm);
+    tmQueue->push(&rcDataMsg);
 
 }
 
