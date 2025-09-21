@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include "system_manager.hpp"
 #include "iwdg_mock.hpp"
 #include "logger_mock.hpp"
@@ -8,11 +7,10 @@
 
 using ::testing::_;
 using ::testing::NiceMock;
-using ::testing::StrictMock;
 
-TEST(SMTest, 21004_Watchdog) 
+TEST(SMTest, 21005_RCData) 
 {  
-    StrictMock<MockWatchdog> mockIWDG;
+    NiceMock<MockWatchdog> mockIWDG;
     NiceMock<MockLogger> mockLogger;
     NiceMock<MockRCReceiver> mockRC;
     NiceMock<MockMessageQueue<RCMotorControlMessage_t>> mockAmQueue;
@@ -20,13 +18,9 @@ TEST(SMTest, 21004_Watchdog)
 
     SystemManager sm(&mockIWDG, &mockLogger, &mockRC, &mockAmQueue, &mockSmLoggerQueue);
 
-    // Test: Verify watchdog is refreshed on every smUpdate() call (4 times total)
-    EXPECT_CALL(mockIWDG, refreshWatchdog())
-        .Times(4);
+    mockRC.delegateToFake();
 
-    // Call smUpdate 4 times - each should trigger refreshWatchdog()
+    EXPECT_CALL(mockLogger, log("RC Reconnected"));
     sm.smUpdate();
-    sm.smUpdate();
-    sm.smUpdate();
-    sm.smUpdate();
+
 }
