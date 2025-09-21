@@ -8,8 +8,8 @@ class FakeRCReceiver : public IRCReceiver{
     private:
         RCControl rcData;
     public:
-       RCControl getRCData() override {
+        RCControl getRCData() override {
             rcData.isDataNew = true;
             return rcData;
-       }
+        }
 };
