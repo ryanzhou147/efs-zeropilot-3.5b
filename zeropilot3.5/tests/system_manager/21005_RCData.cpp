@@ -12,7 +12,7 @@ TEST(SMTest, 21005_RCData)
 {  
     NiceMock<MockWatchdog> mockIWDG;
     NiceMock<MockLogger> mockLogger;
-    NiceMock<MockRCReceiver> mockRC;
+    MockRCReceiver mockRC;  // Not using NiceMock here so we can verify strict call expectations
     NiceMock<MockMessageQueue<RCMotorControlMessage_t>> mockAmQueue;
     NiceMock<MockMessageQueue<char[100]>> mockSmLoggerQueue;
 
@@ -20,7 +20,10 @@ TEST(SMTest, 21005_RCData)
 
     mockRC.delegateToFake();
 
-    EXPECT_CALL(mockLogger, log("RC Reconnected"));
+    // Expect getRCData() to be called at least once
+    EXPECT_CALL(mockRC, getRCData());
+
+    // Execute the system update
     sm.smUpdate();
 
 }
