@@ -25,13 +25,13 @@ class SystemManager {
         void smUpdate(); // This function is the main function of SM, it should be called in the main loop of the system.
 
     private:
-        IIndependentWatchdog *iwdgDriver_; // Independent Watchdog driver
-        ILogger *loggerDriver_; // Logger driver
-        IRCReceiver *rcDriver_; // RC receiver driver
+        IIndependentWatchdog *iwdgDriver; // Independent Watchdog driver
+        ILogger *loggerDriver; // Logger driver
+        IRCReceiver *rcDriver; // RC receiver driver
         
-        IMessageQueue<RCMotorControlMessage_t> *amRCQueue_; // Queue driver for communication to the Attitude Manager
-        IMessageQueue<TMMessage_t> *tmQueue_;
-        IMessageQueue<char[100]> *smLoggerQueue_;
+        IMessageQueue<RCMotorControlMessage_t> *amRCQueue; // Queue driver for communication to the Attitude Manager
+        IMessageQueue<TMMessage_t> *tmQueue;
+        IMessageQueue<char[100]> *smLoggerQueue;
 
         void sendRCDataToAttitudeManager(const RCControl &rcData);
         void sendRCDataToTelemetryManager(const RCControl &rcData);
