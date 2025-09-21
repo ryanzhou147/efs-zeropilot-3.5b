@@ -42,3 +42,6 @@ Notes:
 
 - make sure to update `<path to gdb>` to reflect the path to your gdb executable
 - use `--gtest_filter` to run a specific or subset of tests: https://google.github.io/googletest/advanced.html#running-a-subset-of-the-tests
+
+
+- Run "g++ -I/usr/include -I./zeropilot3.5/include -I./zeropilot3.5/include/driver_ifaces -I./zeropilot3.5/tests/driver_mocks -std=gnu++17 ./zeropilot3.5/tests/system_manager/21004_Watchdog.cpp -lgtest -lgmock -lgtest_main -pthread -o 21004_Watchdog && ./21004_Watchdog" to test "21004_Watchdog.cpp"
