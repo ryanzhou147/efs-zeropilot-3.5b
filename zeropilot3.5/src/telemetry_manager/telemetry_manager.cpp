@@ -60,25 +60,25 @@ void TelemetryManager::heartBeatMsg() {
 }
 
 void TelemetryManager::transmit() {
-    uint8_t transmit_buffer[MAVLINK_MSG_MAX_SIZE];
-    mavlink_message_t msg_to_tx{};
+    uint8_t transmitBuffer[MAVLINK_MSG_MAX_SIZE];
+    mavlink_message_t msgToTx{};
         while (messageBuffer->count() > 0) {
-            messageBuffer->get(&msg_to_tx);
-            const uint8_t msg_len = mavlink_msg_to_send_buffer(transmit_buffer, &msg_to_tx);
-            rfdDriver->transmit(transmit_buffer, msg_len);
+            messageBuffer->get(&msgToTx);
+            const uint8_t MSG_LEN = mavlink_msg_to_send_buffer(transmitBuffer, &msgToTx);
+            rfdDriver->transmit(transmitBuffer, MSG_LEN);
         }
 }
 
 void TelemetryManager::reconstructMsg() {
 
 
-    uint8_t rx_buffer[RX_BUFFER_LEN];
+    uint8_t rxBuffer[RX_BUFFER_LEN];
 
-    const uint16_t received_bytes = rfdDriver->receive(rx_buffer, sizeof(rx_buffer));
+    const uint16_t RECEIVED_BYTES = rfdDriver->receive(rxBuffer, sizeof(rxBuffer));
 
     //Use mavlink_parse_char to process one byte at a time
-    for (uint16_t i = 0; i < received_bytes; ++i) {
-        if (mavlink_parse_char(0, rx_buffer[i], &message, &status)) {
+    for (uint16_t i = 0; i < RECEIVED_BYTES; ++i) {
+        if (mavlink_parse_char(0, rxBuffer[i], &message, &status)) {
             handleRxMsg(message);
             message = {};
         }
@@ -88,19 +88,19 @@ void TelemetryManager::reconstructMsg() {
 void TelemetryManager::handleRxMsg(const mavlink_message_t &msg) {
     switch (msg.msgid) {
         case MAVLINK_MSG_ID_PARAM_SET:{
-            float value_to_set;
-            char param_to_set[MAVLINK_MAX_IDENTIFIER_LEN] = {};
-            uint8_t value_type;
-            value_to_set = mavlink_msg_param_set_get_param_value(&msg);
-            value_type = mavlink_msg_param_set_get_param_type(&msg);
+            float valueToSet;
+            char paramToSet[MAVLINK_MAX_IDENTIFIER_LEN] = {};
+            uint8_t valueType;
+            valueToSet = mavlink_msg_param_set_get_param_value(&msg);
+            valueType = mavlink_msg_param_set_get_param_type(&msg);
 
-            if(param_to_set[0] == 'A'){ //Would prefer to do this using an ENUM LUT but if this is the only param being set its whatever
-                RCMotorControlMessage_t arm_disarm_msg{};
-                arm_disarm_msg.arm = value_to_set;
-                amQueueDriver->push(&arm_disarm_msg);
+            if(paramToSet[0] == 'A'){ //Would prefer to do this using an ENUM LUT but if this is the only param being set its whatever
+                RCMotorControlMessage_t armDisarmMsg{};
+                armDisarmMsg.arm = valueToSet;
+                amQueueDriver->push(&armDisarmMsg);
             }
             mavlink_message_t response = {};
-            mavlink_msg_param_value_pack(SYSTEM_ID, COMPONENT_ID, &response, param_to_set, value_to_set, value_type, 1, 0);
+            mavlink_msg_param_value_pack(SYSTEM_ID, COMPONENT_ID, &response, paramToSet, valueToSet, valueType, 1, 0);
             messageBuffer->push(&response);
             break;}
         default:
