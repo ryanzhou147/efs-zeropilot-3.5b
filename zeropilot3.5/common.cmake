@@ -17,13 +17,18 @@ set(SM_INC
 
 # telemetry manager files
 set(TM_SRC
-
+    "src/telemetry_manager/telemetry_manager.cpp"
 )
 set(TM_INC
     "include/telemetry_manager/"
     "include/thread_msgs/"
-    "src/mavlink2/all/"
 )
+
+# external library files (does not apply compiler warnings)
+set(EXTERNAL_INC
+    "../external/c_library_v2/all/"
+)
+
 # combined files
 set(ZP_SRC
     ${AM_SRC}
