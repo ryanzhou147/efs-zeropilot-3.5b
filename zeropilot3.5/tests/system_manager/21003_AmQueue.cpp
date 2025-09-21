@@ -23,7 +23,7 @@ TEST(SMTest, 21003_AmQueue)
 
     EXPECT_CALL(mockAmQueue, push);
 
-    sm.SMUpdate();
+    sm.smUpdate();
 
     EXPECT_CALL(mockAmQueue, count());
     EXPECT_EQ(mockAmQueue.count(), 1);
