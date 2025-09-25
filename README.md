@@ -286,4 +286,4 @@ g++ -I/usr/include -I./zeropilot3.5/include -I./zeropilot3.5/include/driver_ifac
 ```
 
 
-# Written by Ryan Zhou./*
+# Written by Ryan Zhou.
