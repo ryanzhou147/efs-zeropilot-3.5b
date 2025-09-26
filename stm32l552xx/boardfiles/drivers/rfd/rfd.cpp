@@ -17,7 +17,7 @@ RFD::~RFD() {
     instance = nullptr;
 }
 
-void RFD::transmit(uint8_t* data, uint16_t size) {
+void RFD::transmit(const uint8_t* data, uint16_t size) {
     if (huart) {
         HAL_UART_Transmit_DMA(huart, data, size);
     }
