@@ -38,7 +38,6 @@ TEST(SMTest, 21005_GetRCDataFlowsToTelemetryManager)
         .Times(1)
         .WillOnce(::testing::Return(testData));
 
-    // Verify that the data flows to the telemetry manager queue
     EXPECT_CALL(mockTMQueue, push)
         .WillOnce(::testing::Invoke([](TMMessage_t* msg) -> int {
             // Verify the message type is RC_DATA
@@ -55,6 +54,5 @@ TEST(SMTest, 21005_GetRCDataFlowsToTelemetryManager)
             return 0;
         }));
 
-    // Execute the system update
     sm.smUpdate();
 }
