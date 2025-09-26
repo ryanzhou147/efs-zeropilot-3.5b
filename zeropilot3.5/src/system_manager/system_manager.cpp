@@ -5,11 +5,13 @@ SystemManager::SystemManager(
     ILogger *loggerDriver,
     IRCReceiver *rcDriver,
     IMessageQueue<RCMotorControlMessage_t> *amRCQueue,
+    IMessageQueue<TMMessage_t> *tmQueue,
     IMessageQueue<char[100]> *smLoggerQueue) :
         iwdgDriver(iwdgDriver),
         loggerDriver(loggerDriver),
         rcDriver(rcDriver),
         amRcQueue(amRCQueue),
+        tmQueue(tmQueue),
         smLoggerQueue(smLoggerQueue) {}
 
 void SystemManager::smUpdate() {
@@ -24,6 +26,7 @@ void SystemManager::smUpdate() {
     if (rcData.isDataNew) {
         oldDataCount = 0;
         sendRCDataToAttitudeManager(rcData);
+        sendRCDataToTelemetryManager(rcData);
 
         if (!rcConnected) {
             loggerDriver->log("RC Reconnected");
@@ -55,6 +58,11 @@ void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
     rcDataMessage.flapAngle = rcData.aux2;
 
     amRcQueue->push(&rcDataMessage);
+}
+
+void SystemManager::sendRCDataToTelemetryManager(const RCControl &rcData) {
+    TMMessage_t tmMessage = rcDataPack(0, rcData.roll, rcData.pitch, rcData.yaw, rcData.throttle, rcData.aux2, rcData.arm);
+    tmQueue->push(&tmMessage);
 }
 
 void SystemManager::sendMessagesToLogger() {

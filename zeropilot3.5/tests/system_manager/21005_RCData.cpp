@@ -4,6 +4,7 @@
 #include "logger_mock.hpp"
 #include "rc_mock.hpp"
 #include "queue_mock.hpp"
+#include "tm_mock.hpp"
 
 using ::testing::_;
 using ::testing::NiceMock;
@@ -15,9 +16,10 @@ TEST(SMTest, 21005_RCData)
     NiceMock<MockLogger> mockLogger;
     MockRCReceiver mockRC;  // Not using NiceMock here so we can verify strict call expectations
     NiceMock<MockMessageQueue<RCMotorControlMessage_t>> mockAmQueue;
+    NiceMock<MockTMQueue> mockTMQueue;
     NiceMock<MockMessageQueue<char[100]>> mockSmLoggerQueue;
 
-    SystemManager sm(&mockIWDG, &mockLogger, &mockRC, &mockAmQueue, &mockSmLoggerQueue);
+    SystemManager sm(&mockIWDG, &mockLogger, &mockRC, &mockAmQueue, &mockTMQueue, &mockSmLoggerQueue);
 
     mockRC.delegateToFake();
 
@@ -36,9 +38,10 @@ TEST(SMTest, 21005_GetRCDataFlowsToQueue)
     NiceMock<MockLogger> mockLogger;
     MockRCReceiver mockRC;
     MockMessageQueue<RCMotorControlMessage_t> mockAmQueue; 
+    NiceMock<MockTMQueue> mockTMQueue;
     NiceMock<MockMessageQueue<char[100]>> mockSmLoggerQueue;
 
-    SystemManager sm(&mockIWDG, &mockLogger, &mockRC, &mockAmQueue, &mockSmLoggerQueue);
+    SystemManager sm(&mockIWDG, &mockLogger, &mockRC, &mockAmQueue, &mockTMQueue, &mockSmLoggerQueue);
 
     // Create test RC data
     RCControl testData;
