@@ -10,11 +10,7 @@ SystemManager::SystemManager(
         iwdgDriver(iwdgDriver),
         loggerDriver(loggerDriver),
         rcDriver(rcDriver),
-<<<<<<< HEAD
-        amRcQueue(amRCQueue),
-=======
         amRCQueue(amRCQueue),
->>>>>>> upstream/main
         tmQueue(tmQueue),
         smLoggerQueue(smLoggerQueue) {}
 
@@ -45,18 +41,10 @@ void SystemManager::smUpdate() {
         }
     }
 
-    // Send RC data to TM
-    sendRCDataToTelemetryManager(rcData);
-
     // Log if new messages
     if (smLoggerQueue->count() > 0) {
         sendMessagesToLogger();
     }
-}
-
-void SystemManager::sendRCDataToTelemetryManager(const RCControl &rcData) {
-    TMMessage_t rcDataMsg =  rcDataPack(0, rcData.roll, rcData.pitch, rcData.yaw, rcData.throttle, rcData.aux2, rcData.arm);
-    tmQueue->push(&rcDataMsg);
 }
 
 void SystemManager::sendRCDataToAttitudeManager(const RCControl &rcData) {
