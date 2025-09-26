@@ -59,10 +59,10 @@ inline TMMessage_t rcDataPack(uint32_t time_boot_ms, float roll, float pitch, fl
 }
 
 inline TMMessage_t bmDataPack(uint32_t time_boot_ms, int16_t temperature, float *voltages, uint8_t voltage_len, int16_t current_battery, int32_t current_consumed,
-                             int32_t energy_consumed, int8_t battery_remaining, int32_t time_remaining, uint8_t charge_state) {
+    int32_t energy_consumed, int8_t battery_remaining, int32_t time_remaining, uint8_t charge_state) {
     uint16_t mavlinkVoltageArray[16] = {UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX};
     for (int i = 0; i < voltage_len; i++) {
-        mavlinkVoltageArray[i] = static_cast<uint16_t>(voltages[i]);
+    	mavlinkVoltageArray[i] = static_cast<uint16_t>(voltages[i]);
     }
     if (temperature == -1) {
         temperature = INT16_MAX;
