@@ -31,14 +31,16 @@ zeropilot3.5/tests/
 │   ├── iwdg_mock.hpp       # Watchdog mock
 │   ├── logger_mock.hpp     # Logger mock
 │   ├── rc_mock.hpp         # RC receiver mock
-│   ├── queue_mock.hpp      # Message queue mock
+│   ├── queue_mock.hpp      # Telemetry queue mock
+│   ├── tm_mock.hpp         # Message queue mock
 │   └── *_fake.hpp          # Fake implementations for testing
 ├── system_manager/         # System Manager unit tests
 │   ├── 21001_Default.cpp   # Basic functionality test
 │   ├── 21002_Logger.cpp    # Logger message batching test
 │   ├── 21003_AmQueue.cpp   # Attitude Manager queue test
 │   ├── 21004_Watchdog.cpp  # Watchdog refresh test
-│   └── 21005_RCData.cpp    # RC data handling test
+│   ├── 21005_RCData.cpp    # RC data handling test
+│   └── 21006_Telemetry.cpp # Telemetry data handling test
 └── attitude_manager/       # Attitude Manager unit tests (future)
 ```
 
@@ -124,6 +126,10 @@ cd zeropilot3.5/tests/build
   - Mock vs. custom data return testing  
   - End-to-end data flow from RC receiver to attitude manager queue
   - Connection status monitoring and timeout handling
+- **21006_Telemetry**: Comprehensive RC data handling tests including:
+  - Ensures RC input data is converted to telemetry messages
+  - Validates PPM scaling transformation (`1000 + value*10`)
+  - Verifies correct message push to the Telemetry Manager queue
 
 ### Mock Framework Details
 
@@ -159,8 +165,8 @@ mockRC.delegateToFake();  // Uses FakeRCReceiver for realistic behavior
 [       OK ] SMTest.21005_RCData (0 ms)
 [ RUN      ] SMTest.21005_GetRCDataReturnsData
 [       OK ] SMTest.21005_GetRCDataReturnsData (0 ms)
-[ RUN      ] SMTest.21005_GetRCDataReturnsCustomData
-[       OK ] SMTest.21005_GetRCDataReturnsCustomData (0 ms)
+[ RUN      ] SMTest.21005_GetRCDataFlowsToTelemetryManager
+[       OK ] SMTest.21005_GetRCDataFlowsToTelemetryManager (0 ms)
 [ RUN      ] SMTest.21005_GetRCDataFlowsToQueue
 [       OK ] SMTest.21005_GetRCDataFlowsToQueue (0 ms)
 [----------] 4 tests from SMTest (0 ms total)
@@ -284,6 +290,87 @@ g++ -I/usr/include -I./zeropilot3.5/include -I./zeropilot3.5/include/driver_ifac
     ./zeropilot3.5/src/system_manager/system_manager.cpp \
     -lgtest -lgmock -lgtest_main -pthread -o test_output && ./test_output && rm test_output
 ```
+
+## Code Coverage Testing
+
+### Prerequisites
+Before running code coverage analysis, ensure you have the required tools installed:
+
+```bash
+# Install coverage tools
+sudo apt update
+sudo apt install lcov gcov
+```
+
+### Coverage Analysis
+The project includes a comprehensive code coverage analysis tool that provides detailed metrics on test coverage:
+
+```bash
+# Navigate to tests directory
+cd zeropilot3.5/tests
+
+# Run complete coverage analysis
+./coverage.bash
+
+# Skip HTML report generation (faster)
+./coverage.bash -n
+```
+
+### Coverage Script Features
+The `coverage.bash` script provides:
+- **Individual test compilation** with coverage flags for better isolation
+- **Comprehensive coverage metrics** including line and function coverage
+- **Clean, professional output** with suppressed verbose warnings  
+- **HTML coverage reports** with interactive file-by-file analysis
+- **Exclusion of system files** to focus on project code only
+
+### Coverage Output Example
+```
+=== ZeroPilot3.5 Manual Coverage Analysis ===
+
+Cleaning previous coverage data...
+
+Compiling SystemManager with coverage flags...
+Compiling and running individual tests...
+
+=== Testing 21001_Default ===
+[  PASSED  ] 1 test.
+
+=== Testing 21002_Logger ===
+[  PASSED  ] 1 test.
+
+=== Testing 21003_AmQueue ===
+[  PASSED  ] 1 test.
+
+=== Testing 21004_Watchdog ===
+[  PASSED  ] 1 test.
+
+=== Testing 21005_RCData ===
+[  PASSED  ] 2 tests.
+
+=== Testing 21006_Telemetry ===
+[  PASSED  ] 1 test.
+
+=== Coverage Summary ===
+Summary coverage rate:
+  lines......: 95.1% (77 of 81 lines)
+  functions..: 76.0% (19 of 25 functions)
+  branches...: no data found
+
+=== Coverage Report Generated ===
+HTML report: file:///.../zeropilot3.5/tests/coverage_report/html/index.html
+Open with: firefox .../zeropilot3.5/tests/coverage_report/html/index.html
+```
+
+### Coverage Files Generated
+- **`coverage_report/filtered.info`** - Raw LCOV coverage data (can be imported to other tools)
+- **`coverage_report/html/index.html`** - Interactive HTML coverage report
+- **`coverage_build/`** - Individual test executables and coverage artifacts
+
+### Interpreting Coverage Results
+- **Line Coverage**: Percentage of code lines executed during tests
+- **Function Coverage**: Percentage of functions called during tests  
+- **Branch Coverage**: Percentage of conditional branches taken (when available)
 
 
 # Written by Ryan Zhou
